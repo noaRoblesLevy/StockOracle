@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StockOracle — AI Price Predictor</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --warn: #e3b341;
+    --danger: #f85149;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --radius: 10px;
+    --up: #3fb950;
+    --down: #f85149;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  /* ─── HEADER ─── */
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  .logo { font-size: 1.3rem; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+  .logo span { color: var(--text2); font-weight: 400; font-size: 0.85rem; margin-left: 8px; }
+
+  /* ─── SEARCH ─── */
+  .search-wrap { display: flex; gap: 10px; flex: 1; max-width: 600px; position: relative; }
+  .search-input {
+    flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 9px 14px; color: var(--text); font-size: 0.95rem; outline: none; transition: border 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-dropdown {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+    max-height: 340px; overflow-y: auto; z-index: 200; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .search-dropdown.open { display: block; }
+  .dd-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; transition: background 0.1s;
+    border-bottom: 1px solid var(--border);
+  }
+  .dd-item:last-child { border-bottom: none; }
+  .dd-item:hover { background: var(--border); }
+  .dd-symbol { font-weight: 700; font-size: 0.9rem; color: var(--accent); min-width: 60px; }
+  .dd-name { font-size: 0.82rem; color: var(--text2); flex: 1; }
+  .dd-badge { font-size: 0.7rem; padding: 2px 7px; border-radius: 20px; font-weight: 600; }
+  .badge-stock { background: rgba(88,166,255,0.15); color: var(--accent); }
+  .badge-etf { background: rgba(63,185,80,0.15); color: var(--accent2); }
+
+  /* ─── HORIZON TABS ─── */
+  .tabs { display: flex; gap: 6px; margin-left: auto; }
+  .tab {
+    padding: 7px 16px; border-radius: 20px; border: 1px solid var(--border);
+    cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: all 0.2s; color: var(--text2);
+    background: transparent;
+  }
+  .tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+  /* ─── MAIN ─── */
+  .main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  /* ─── LANDING ─── */
+  .landing {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 65vh; text-align: center; gap: 16px;
+  }
+  .landing-icon { font-size: 4rem; margin-bottom: 8px; }
+  .landing h2 { font-size: 2rem; font-weight: 700; color: var(--text); }
+  .landing p { font-size: 1rem; color: var(--text2); max-width: 480px; line-height: 1.6; }
+  .popular-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
+  .pop-chip {
+    padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px;
+    cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--accent);
+    transition: all 0.15s; background: rgba(88,166,255,0.06);
+  }
+  .pop-chip:hover { background: rgba(88,166,255,0.15); border-color: var(--accent); }
+
+  /* ─── TICKER HEADER ─── */
+  .ticker-hero { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .ticker-name { font-size: 1.6rem; font-weight: 700; }
+  .ticker-sub { font-size: 0.9rem; color: var(--text2); }
+  .price-block { margin-left: auto; text-align: right; }
+  .price-current { font-size: 2rem; font-weight: 700; }
+  .price-change { font-size: 0.95rem; font-weight: 600; }
+  .up { color: var(--up); }
+  .down { color: var(--down); }
+  .neutral { color: var(--text2); }
+
+  /* ─── GRID LAYOUT ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+  .span-2 { grid-column: span 2; }
+  .span-3 { grid-column: span 3; }
+  .span-4 { grid-column: span 4; }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px; overflow: hidden;
+  }
+  .card-title { font-size: 0.78rem; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px; }
+
+  /* ─── STAT GRID ─── */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+  .stat-item { background: var(--surface2); border-radius: 8px; padding: 12px 14px; }
+  .stat-label { font-size: 0.72rem; color: var(--text2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .stat-value { font-size: 1.05rem; font-weight: 700; }
+
+  /* ─── PREDICTION CARDS ─── */
+  .pred-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .pred-card {
+    background: var(--surface2); border-radius: 8px; padding: 16px;
+    border: 1px solid var(--border); transition: border-color 0.2s;
+  }
+  .pred-card.ensemble { border-color: var(--accent); background: rgba(88,166,255,0.05); }
+  .pred-label { font-size: 0.75rem; color: var(--text2); margin-bottom: 4px; font-weight: 600; }
+  .pred-price { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+  .pred-change { font-size: 0.82rem; font-weight: 600; margin-bottom: 8px; }
+  .pred-conf { font-size: 0.75rem; color: var(--text2); }
+  .conf-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .conf-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
+
+  /* ─── SIGNAL INDICATORS ─── */
+  .signals { display: flex; flex-wrap: wrap; gap: 8px; }
+  .signal {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+    border: 1px solid transparent;
+  }
+  .signal-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .sig-buy { background: rgba(63,185,80,0.12); color: var(--up); border-color: rgba(63,185,80,0.3); }
+  .sig-sell { background: rgba(248,81,73,0.12); color: var(--down); border-color: rgba(248,81,73,0.3); }
+  .sig-neutral { background: rgba(139,148,158,0.12); color: var(--text2); border-color: var(--border); }
+  .sig-buy .signal-dot { background: var(--up); }
+  .sig-sell .signal-dot { background: var(--down); }
+  .sig-neutral .signal-dot { background: var(--text2); }
+
+  /* ─── MODEL COMPARISON TABLE ─── */
+  .model-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .model-table th { text-align: left; padding: 8px 12px; color: var(--text2); font-size: 0.72rem; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  .model-table td { padding: 10px 12px; border-bottom: 1px solid rgba(48,54,61,0.5); }
+  .model-table tr:last-child td { border-bottom: none; }
+  .model-table tr:hover td { background: rgba(48,54,61,0.4); }
+  .model-name { font-weight: 600; }
+  .model-badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
+  .badge-ensemble { background: rgba(88,166,255,0.2); color: var(--accent); }
+
+  /* ─── CARD HEADER ROW (title + toggle) ─── */
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+  .card-header .card-title { margin-bottom: 0; }
+
+  /* ─── CHART MODE TOGGLE ─── */
+  .ctog-group { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .ctog {
+    padding: 4px 11px; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+    background: transparent; color: var(--text2); border: none; outline: none;
+    transition: background 0.15s, color 0.15s; letter-spacing: 0.3px;
+  }
+  .ctog + .ctog { border-left: 1px solid var(--border); }
+  .ctog.active { background: var(--accent); color: #000; }
+
+  /* ─── RSI GAUGE ─── */
+  .rsi-bar { height: 10px; border-radius: 5px; background: linear-gradient(to right, var(--down), var(--warn), var(--up)); position: relative; margin: 8px 0; }
+  .rsi-needle { position: absolute; top: -4px; width: 4px; height: 18px; background: white; border-radius: 2px; transform: translateX(-50%); }
+
+  /* ─── LOADING / ERROR ─── */
+  .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; gap: 16px; }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-box { background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.3); border-radius: var(--radius); padding: 20px; text-align: center; color: var(--down); }
+
+  /* ─── DISCLAIMER ─── */
+  .disclaimer { font-size: 0.72rem; color: var(--text2); text-align: center; padding: 16px; margin-top: 16px; border-top: 1px solid var(--border); line-height: 1.5; }
+
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .span-2, .span-3, .span-4 { grid-column: span 1; }
+    .header { flex-wrap: wrap; }
+    .tabs { order: 3; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">StockOracle <span>AI Price Predictor</span></div>
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" placeholder="Search stocks or ETFs (e.g. AAPL, SPY)..." autocomplete="off" />
+    <div class="search-dropdown" id="searchDropdown"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab" data-horizon="day">1 Day</button>
+    <button class="tab active" data-horizon="week">1 Week</button>
+    <button class="tab" data-horizon="month">1 Month</button>
+  </div>
+</div>
+
+<div class="main" id="mainContent">
+  <div class="landing" id="landing">
+    <div class="landing-icon">📈</div>
+    <h2>AI-Powered Stock Predictions</h2>
+    <p>Select any stock or ETF to get next-day, weekly, and monthly price predictions powered by 4 independent ML models.</p>
+    <div class="popular-grid" id="popularGrid"></div>
+  </div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let currentSymbol = null;
+let currentHorizon = 'week';
+let allTickers = [];
+let searchTimeout = null;
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const res = await fetch('/api/tickers');
+    allTickers = await res.json();
+    renderPopular();
+  } catch(e) {}
+  setupSearch();
+  setupTabs();
+}
+
+// ─── Popular chips ────────────────────────────────────────────────────────────
+function renderPopular() {
+  const popular = ['AAPL','MSFT','NVDA','TSLA','SPY','QQQ','GOOGL','AMZN','META','AMD'];
+  const grid = document.getElementById('popularGrid');
+  grid.innerHTML = popular.map(sym => `<div class="pop-chip" onclick="selectSymbol('${sym}')">${sym}</div>`).join('');
+}
+
+// ─── Search ───────────────────────────────────────────────────────────────────
+function setupSearch() {
+  const input = document.getElementById('searchInput');
+  const dd = document.getElementById('searchDropdown');
+
+  input.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    const q = input.value.trim();
+    if (!q) { dd.classList.remove('open'); return; }
+    searchTimeout = setTimeout(() => doSearch(q), 200);
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { dd.classList.remove('open'); input.blur(); }
+    if (e.key === 'Enter') {
+      const q = input.value.trim().toUpperCase();
+      if (q) selectSymbol(q);
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap')) dd.classList.remove('open');
+  });
+}
+
+async function doSearch(q) {
+  const dd = document.getElementById('searchDropdown');
+  try {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+    const results = await res.json();
+    if (!results.length) { dd.classList.remove('open'); return; }
+    dd.innerHTML = results.map(t => `
+      <div class="dd-item" onclick="selectSymbol('${t.symbol}')">
+        <span class="dd-symbol">${t.symbol}</span>
+        <span class="dd-name">${t.name}</span>
+        <span class="dd-badge ${t.type === 'ETF' ? 'badge-etf' : 'badge-stock'}">${t.type}</span>
+        <small style="color:var(--text2);font-size:0.7rem">${t.sector}</small>
+      </div>`).join('');
+    dd.classList.add('open');
+  } catch(e) {}
+}
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+function setupTabs() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentHorizon = tab.dataset.horizon;
+      if (currentSymbol) loadPrediction(currentSymbol, currentHorizon);
+    });
+  });
+}
+
+// ─── Select & Load ────────────────────────────────────────────────────────────
+function selectSymbol(symbol) {
+  currentSymbol = symbol;
+  document.getElementById('searchInput').value = symbol;
+  document.getElementById('searchDropdown').classList.remove('open');
+  loadPrediction(symbol, currentHorizon);
+}
+
+async function loadPrediction(symbol, horizon) {
+  const main = document.getElementById('mainContent');
+  main.innerHTML = `<div class="loading"><div class="spinner"></div><div style="color:var(--text2)">Analyzing ${symbol}...</div></div>`;
+  try {
+    const res = await fetch(`/api/predict?symbol=${symbol}&horizon=${horizon}`);
+    const data = await res.json();
+    if (data.error) { showError(data.error); return; }
+    renderDashboard(data);
+  } catch(e) {
+    showError('Failed to connect to server. Make sure app.py is running.');
+  }
+}
+
+function showError(msg) {
+  document.getElementById('mainContent').innerHTML = `
+    <div style="padding:40px">
+      <div class="error-box"><strong>Error:</strong> ${msg}<br/><br/>
+      <button onclick="document.getElementById('mainContent').innerHTML=''; document.getElementById('landing').style.display='flex';"
+        style="margin-top:10px;padding:8px 20px;background:var(--down);color:#fff;border:none;border-radius:6px;cursor:pointer">
+        Go Back
+      </button></div>
+    </div>`;
+}
+
+// ─── Render Dashboard ─────────────────────────────────────────────────────────
+function renderDashboard(data) {
+  const { symbol, name, horizon, stats, predictions, historical, forecast_dates } = data;
+  const last = historical.close[historical.close.length - 1];
+
+  const main = document.getElementById('mainContent');
+  main.innerHTML = `
+    <!-- HERO -->
+    <div class="ticker-hero">
+      <div>
+        <div class="ticker-name">${symbol}</div>
+        <div class="ticker-sub">${name || symbol} &nbsp;·&nbsp; ${horizonLabel(horizon)} forecast</div>
+      </div>
+      <div class="price-block">
+        <div class="price-current">$${fmt(stats.current_price)}</div>
+        <div class="price-change ${stats.change >= 0 ? 'up' : 'down'}">
+          ${stats.change >= 0 ? '+' : ''}${fmt(stats.change)} (${stats.change >= 0 ? '+' : ''}${fmt(stats.change_pct)}%) today
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNALS -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Technical Signals</div>
+      <div class="signals" id="signalsArea"></div>
+    </div>
+
+    <!-- PREDICTION CARDS -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Model Predictions — ${horizonLabel(horizon)}</div>
+      <div class="pred-grid" id="predCards"></div>
+    </div>
+
+    <!-- CHARTS ROW 1: Main Price Chart -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header">
+        <span class="card-title">Price Chart — Bollinger Bands & EMAs</span>
+        <div class="ctog-group" id="priceToggle">
+          <button class="ctog active" onclick="togglePriceMode('price')">Price ($)</button>
+          <button class="ctog" onclick="togglePriceMode('cum')">Cumulative %</button>
+        </div>
+      </div>
+      <div id="priceChart" style="height:380px"></div>
+    </div>
+
+    <!-- CHARTS ROW 2: Forecast & Daily Returns -->
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Forecast Comparison</span>
+          <div class="ctog-group" id="forecastToggle">
+            <button class="ctog active" onclick="toggleForecastMode('price')">Price ($)</button>
+            <button class="ctog" onclick="toggleForecastMode('pct')">% from Today</button>
+          </div>
+        </div>
+        <div id="forecastChart" style="height:300px"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Daily Returns (%)</span>
+          <div class="ctog-group" id="returnsToggle">
+            <button class="ctog active" onclick="toggleReturnsMode('daily')">Daily %</button>
+            <button class="ctog" onclick="toggleReturnsMode('volume')">Volume</button>
+          </div>
+        </div>
+        <div id="returnsChart" style="height:300px"></div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW 3: RSI & MACD -->
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-title">RSI (14)</div>
+        <div id="rsiChart" style="height:220px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">MACD</div>
+        <div id="macdChart" style="height:220px"></div>
+      </div>
+    </div>
+
+    <!-- MODEL TABLE + STATS -->
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-title">Model Comparison</div>
+        <table class="model-table" id="modelTable"></table>
+      </div>
+      <div class="card">
+        <div class="card-title">Risk & Return Statistics</div>
+        <div class="stat-grid" id="statGrid"></div>
+      </div>
+    </div>
+
+    <!-- FUNDAMENTALS -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Fundamental Data</div>
+      <div class="stat-grid" id="fundGrid"></div>
+    </div>
+
+    <div class="disclaimer">
+      ⚠️ StockOracle is for educational and research purposes only. Predictions are generated by statistical models and do NOT constitute financial advice.
+      Past performance and model accuracy do not guarantee future results. Always consult a qualified financial advisor before making investment decisions.
+    </div>
+  `;
+
+  window.currentData = data;
+  window.priceMode = 'price';
+  window.forecastMode = 'price';
+  window.returnsMode = 'daily';
+
+  renderSignals(stats);
+  renderPredCards(predictions, last, forecast_dates);
+  renderPriceChart(historical, forecast_dates, predictions, 'price');
+  renderForecastChart(historical, forecast_dates, predictions, 'price');
+  renderReturnsChart(historical, 'daily');
+  renderRSIChart(historical);
+  renderMACDChart(historical);
+  renderModelTable(predictions, last);
+  renderStatGrid(stats);
+  renderFundGrid(stats);
+}
+
+// ─── Signals ──────────────────────────────────────────────────────────────────
+function renderSignals(stats) {
+  const signals = [];
+
+  // RSI
+  if (stats.rsi !== null) {
+    if (stats.rsi < 30) signals.push({cls: 'sig-buy', dot: '', label: `RSI Oversold (${stats.rsi})`});
+    else if (stats.rsi > 70) signals.push({cls: 'sig-sell', dot: '', label: `RSI Overbought (${stats.rsi})`});
+    else signals.push({cls: 'sig-neutral', dot: '', label: `RSI Neutral (${stats.rsi})`});
+  }
+
+  // MACD
+  if (stats.macd !== null && stats.macd_signal !== null) {
+    if (stats.macd > stats.macd_signal) signals.push({cls: 'sig-buy', dot: '', label: 'MACD Bullish Cross'});
+    else signals.push({cls: 'sig-sell', dot: '', label: 'MACD Bearish Cross'});
+  }
+
+  // Golden cross
+  if (stats.golden_cross) signals.push({cls: 'sig-buy', dot: '', label: 'Golden Cross (EMA50 > EMA200)'});
+  else signals.push({cls: 'sig-sell', dot: '', label: 'Death Cross (EMA50 < EMA200)'});
+
+  // Price vs EMA50
+  if (stats.current_price > stats.ema_50) signals.push({cls: 'sig-buy', dot: '', label: 'Above EMA50'});
+  else signals.push({cls: 'sig-sell', dot: '', label: 'Below EMA50'});
+
+  // Trend
+  const trendPct = ((stats.current_price - stats.low_52w) / (stats.high_52w - stats.low_52w)) * 100;
+  if (trendPct > 70) signals.push({cls: 'sig-sell', dot: '', label: `Near 52W High (${Math.round(trendPct)}%)`});
+  else if (trendPct < 30) signals.push({cls: 'sig-buy', dot: '', label: `Near 52W Low (${Math.round(trendPct)}%)`});
+
+  const el = document.getElementById('signalsArea');
+  el.innerHTML = signals.map(s => `
+    <div class="signal ${s.cls}"><span class="signal-dot"></span>${s.label}</div>`).join('');
+}
+
+// ─── Prediction Cards ─────────────────────────────────────────────────────────
+function renderPredCards(predictions, currentPrice, forecast_dates) {
+  const order = ['ensemble', 'arima', 'linear_regression', 'ema_crossover', 'holt_winters'];
+  const el = document.getElementById('predCards');
+  let html = '';
+  for (const key of order) {
+    const m = predictions[key];
+    if (!m) continue;
+    const target = m.predictions[m.predictions.length - 1];
+    const chg = ((target - currentPrice) / currentPrice) * 100;
+    const conf = Math.round((m.confidence || 0) * 100);
+    const confColor = conf > 60 ? '#3fb950' : conf > 35 ? '#e3b341' : '#f85149';
+    html += `
+      <div class="pred-card ${key === 'ensemble' ? 'ensemble' : ''}">
+        <div class="pred-label">${m.label}${key === 'ensemble' ? ' <span class="model-badge badge-ensemble">BEST</span>' : ''}</div>
+        <div class="pred-price ${chg >= 0 ? 'up' : 'down'}">$${fmt(target)}</div>
+        <div class="pred-change ${chg >= 0 ? 'up' : 'down'}">${chg >= 0 ? '+' : ''}${fmt(chg)}%</div>
+        <div class="pred-conf">Confidence: ${conf}%</div>
+        <div class="conf-bar"><div class="conf-fill" style="width:${conf}%;background:${confColor}"></div></div>
+      </div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ─── Chart toggle handlers ────────────────────────────────────────────────────
+function togglePriceMode(mode) {
+  window.priceMode = mode;
+  document.querySelectorAll('#priceToggle .ctog').forEach(b => b.classList.remove('active'));
+  document.querySelector(`#priceToggle .ctog:${mode === 'price' ? 'first' : 'last'}-child`).classList.add('active');
+  const d = window.currentData;
+  renderPriceChart(d.historical, d.forecast_dates, d.predictions, mode);
+}
+function toggleForecastMode(mode) {
+  window.forecastMode = mode;
+  document.querySelectorAll('#forecastToggle .ctog').forEach(b => b.classList.remove('active'));
+  document.querySelector(`#forecastToggle .ctog:${mode === 'price' ? 'first' : 'last'}-child`).classList.add('active');
+  const d = window.currentData;
+  renderForecastChart(d.historical, d.forecast_dates, d.predictions, mode);
+}
+function toggleReturnsMode(mode) {
+  window.returnsMode = mode;
+  document.querySelectorAll('#returnsToggle .ctog').forEach(b => b.classList.remove('active'));
+  document.querySelector(`#returnsToggle .ctog:${mode === 'daily' ? 'first' : 'last'}-child`).classList.add('active');
+  renderReturnsChart(window.currentData.historical, mode);
+}
+
+// ─── Price Chart ──────────────────────────────────────────────────────────────
+function renderPriceChart(historical, forecast_dates, predictions, mode) {
+  const dates = historical.dates;
+  const ensemble = predictions.ensemble;
+  const lastPrice = historical.close[historical.close.length - 1];
+  const firstPrice = historical.close[0];
+  const isPct = mode === 'cum';
+
+  // Convert a price series to cumulative % from firstPrice
+  const toPct = arr => arr.map(v => v === null ? null : round2(((v - firstPrice) / firstPrice) * 100));
+  const yClose   = isPct ? historical.cum_pct      : historical.close;
+  const yBbU     = isPct ? toPct(historical.bb_upper) : historical.bb_upper;
+  const yBbL     = isPct ? toPct(historical.bb_lower) : historical.bb_lower;
+  const yEma21   = isPct ? toPct(historical.ema_21)   : historical.ema_21;
+  const yEma50   = isPct ? toPct(historical.ema_50)   : historical.ema_50;
+  const yAxisLabel = isPct ? '% Change' : 'Price (USD)';
+  const yTickSuf   = isPct ? '%' : '';
+
+  const traces = [
+    { x: dates, y: yClose, type: 'scatter', mode: 'lines', name: 'Close',
+      line: {color: '#58a6ff', width: 2} },
+    { x: dates, y: yBbU, type: 'scatter', mode: 'lines', name: 'BB Upper',
+      line: {color: 'rgba(227,179,65,0.5)', width: 1, dash: 'dot'}, showlegend: true },
+    { x: dates, y: yBbL, type: 'scatter', mode: 'lines', name: 'BB Lower',
+      line: {color: 'rgba(227,179,65,0.5)', width: 1, dash: 'dot'},
+      fill: 'tonexty', fillcolor: 'rgba(227,179,65,0.05)', showlegend: false },
+    { x: dates, y: yEma21, type: 'scatter', mode: 'lines', name: 'EMA 21',
+      line: {color: 'rgba(63,185,80,0.7)', width: 1.5} },
+    { x: dates, y: yEma50, type: 'scatter', mode: 'lines', name: 'EMA 50',
+      line: {color: 'rgba(248,81,73,0.7)', width: 1.5} },
+  ];
+
+  if (ensemble) {
+    const connDates  = [dates[dates.length - 1], ...forecast_dates];
+    const connPrices = [lastPrice, ...ensemble.predictions];
+    const connY = isPct ? connPrices.map(p => round2(((p - firstPrice) / firstPrice) * 100)) : connPrices;
+    const bandPct = isPct ? 2 : 0;   // ±2 pp in % mode
+    const bandMul = isPct ? 0 : 0.02; // ±2% in price mode
+    const upper = connY.map(v => isPct ? v + bandPct : v * (1 + bandMul));
+    const lower = connY.map(v => isPct ? v - bandPct : v * (1 - bandMul));
+
+    traces.push({ x: connDates, y: connY, type: 'scatter', mode: 'lines+markers',
+      name: 'Ensemble Forecast', line: {color: '#c084fc', width: 2, dash: 'dash'}, marker: {size: 6} });
+    traces.push({ x: connDates, y: upper, type: 'scatter', mode: 'lines',
+      showlegend: false, line: {color: 'rgba(192,132,252,0.2)', width: 0} });
+    traces.push({ x: connDates, y: lower, type: 'scatter', mode: 'lines',
+      showlegend: false, fill: 'tonexty', fillcolor: 'rgba(192,132,252,0.12)',
+      line: {color: 'rgba(192,132,252,0.2)', width: 0} });
+  }
+
+  const layout = {...chartLayout(), yaxis: {...chartLayout().yaxis, title: {text: yAxisLabel, font:{size:11,color:'#8b949e'}}, ticksuffix: yTickSuf}};
+  Plotly.newPlot('priceChart', traces, layout, {responsive: true, displayModeBar: false});
+}
+
+// ─── Forecast Comparison ──────────────────────────────────────────────────────
+function renderForecastChart(historical, forecast_dates, predictions, mode) {
+  const lastPrice = historical.close[historical.close.length - 1];
+  const lastDate  = historical.dates[historical.dates.length - 1];
+  const isPct = mode === 'pct';
+  const modelColors = { ensemble:'#c084fc', arima:'#58a6ff', linear_regression:'#3fb950', ema_crossover:'#e3b341', holt_winters:'#f97316' };
+  const traces = [];
+
+  for (const [key, m] of Object.entries(predictions)) {
+    const rawPrices = [lastPrice, ...m.predictions];
+    const yVals = isPct
+      ? rawPrices.map(p => round2(((p - lastPrice) / lastPrice) * 100))
+      : rawPrices;
+    traces.push({
+      x: [lastDate, ...forecast_dates], y: yVals,
+      type: 'scatter', mode: 'lines+markers', name: m.label,
+      line: {color: modelColors[key] || '#fff', width: key === 'ensemble' ? 3 : 1.5, dash: key === 'ensemble' ? 'solid' : 'dot'},
+      marker: {size: key === 'ensemble' ? 7 : 4}
+    });
+  }
+
+  // Zero baseline in % mode
+  if (isPct) {
+    traces.unshift({ x: [lastDate, ...forecast_dates], y: new Array(forecast_dates.length + 1).fill(0),
+      type: 'scatter', mode: 'lines', name: 'Current', showlegend: true,
+      line: {color: 'rgba(255,255,255,0.2)', width: 1, dash: 'dot'} });
+  }
+
+  const layout = {...chartLayout(true),
+    yaxis: {...chartLayout(true).yaxis,
+      title: {text: isPct ? '% Change from Today' : 'Price (USD)', font:{size:11,color:'#8b949e'}},
+      ticksuffix: isPct ? '%' : '' }};
+  Plotly.newPlot('forecastChart', traces, layout, {responsive: true, displayModeBar: false});
+}
+
+// ─── Daily Returns / Volume toggle chart ─────────────────────────────────────
+function renderReturnsChart(historical, mode) {
+  if (mode === 'daily') {
+    const colors = historical.daily_pct.map(v => v === null ? '#8b949e' : v >= 0 ? '#3fb950' : '#f85149');
+    // Shade zero line
+    const traces = [
+      { x: historical.dates, y: historical.daily_pct, type: 'bar', name: 'Daily Return',
+        marker: {color: colors},
+        hovertemplate: '%{x}<br>Daily Return: %{y:.3f}%<extra></extra>' },
+    ];
+    const layout = {...chartLayout(true),
+      yaxis: {...chartLayout(true).yaxis, title: {text: 'Daily Return (%)', font:{size:11,color:'#8b949e'}}, ticksuffix: '%', zeroline: true, zerolinecolor: 'rgba(255,255,255,0.15)'},
+      bargap: 0.1};
+    Plotly.newPlot('returnsChart', traces, layout, {responsive: true, displayModeBar: false});
+  } else {
+    // Volume mode
+    const colors = historical.close.map((c, i) =>
+      i === 0 ? '#58a6ff' : (c >= historical.close[i-1] ? '#3fb950' : '#f85149'));
+    Plotly.newPlot('returnsChart', [{
+      x: historical.dates, y: historical.volume, type: 'bar', name: 'Volume',
+      marker: {color: colors},
+      hovertemplate: '%{x}<br>Volume: %{y:,.0f}<extra></extra>'
+    }], chartLayout(true), {responsive: true, displayModeBar: false});
+  }
+}
+
+// ─── RSI ──────────────────────────────────────────────────────────────────────
+function renderRSIChart(historical) {
+  const colors = historical.rsi.map(v => v === null ? '#8b949e' : v > 70 ? '#f85149' : v < 30 ? '#3fb950' : '#8b949e');
+  Plotly.newPlot('rsiChart', [
+    {x: historical.dates, y: historical.rsi, type: 'scatter', mode: 'lines', name: 'RSI',
+     line: {color: '#58a6ff', width: 2}},
+    {x: [historical.dates[0], historical.dates[historical.dates.length-1]], y: [70,70],
+     type: 'scatter', mode: 'lines', showlegend: false, line: {color: '#f85149', dash: 'dash', width: 1}},
+    {x: [historical.dates[0], historical.dates[historical.dates.length-1]], y: [30,30],
+     type: 'scatter', mode: 'lines', showlegend: false, line: {color: '#3fb950', dash: 'dash', width: 1}},
+  ], {...chartLayout(true), yaxis: {range: [0, 100], color: '#8b949e'}}, {responsive: true, displayModeBar: false});
+}
+
+// ─── MACD ─────────────────────────────────────────────────────────────────────
+function renderMACDChart(historical) {
+  const histColors = historical.macd_hist.map(v => v === null ? '#8b949e' : v >= 0 ? '#3fb950' : '#f85149');
+  Plotly.newPlot('macdChart', [
+    {x: historical.dates, y: historical.macd, type: 'scatter', mode: 'lines', name: 'MACD',
+     line: {color: '#58a6ff', width: 2}},
+    {x: historical.dates, y: historical.macd_signal, type: 'scatter', mode: 'lines', name: 'Signal',
+     line: {color: '#e3b341', width: 1.5}},
+    {x: historical.dates, y: historical.macd_hist, type: 'bar', name: 'Histogram',
+     marker: {color: histColors}},
+  ], chartLayout(true), {responsive: true, displayModeBar: false});
+}
+
+// ─── Model Table ──────────────────────────────────────────────────────────────
+function renderModelTable(predictions, currentPrice) {
+  const rows = Object.entries(predictions).map(([key, m]) => {
+    const target = m.predictions[m.predictions.length - 1];
+    const chg = ((target - currentPrice) / currentPrice) * 100;
+    const conf = Math.round((m.confidence || 0) * 100);
+    return `<tr>
+      <td class="model-name">${m.label}${key === 'ensemble' ? '<span class="model-badge badge-ensemble">BEST</span>' : ''}</td>
+      <td>$${fmt(target)}</td>
+      <td class="${chg >= 0 ? 'up' : 'down'}">${chg >= 0 ? '+' : ''}${fmt(chg)}%</td>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+          <div style="width:${conf}%;height:100%;background:${conf>60?'var(--up)':conf>35?'var(--warn)':'var(--down)'};border-radius:3px"></div>
+        </div>${conf}%</div></td>
+    </tr>`;
+  });
+  document.getElementById('modelTable').innerHTML =
+    `<tr><th>Model</th><th>Target Price</th><th>Change</th><th>Confidence</th></tr>${rows.join('')}`;
+}
+
+// ─── Stat Grid ────────────────────────────────────────────────────────────────
+function renderStatGrid(stats) {
+  const items = [
+    ['Annual Volatility', stats.annual_volatility !== null ? `${stats.annual_volatility}%` : 'N/A'],
+    ['Sharpe Ratio', stats.sharpe_ratio !== null ? stats.sharpe_ratio : 'N/A'],
+    ['Max Drawdown', stats.max_drawdown !== null ? `${stats.max_drawdown}%` : 'N/A'],
+    ['1W Return', stats.ret_1w !== null ? `${stats.ret_1w > 0 ? '+' : ''}${stats.ret_1w}%` : 'N/A', stats.ret_1w],
+    ['1M Return', stats.ret_1m !== null ? `${stats.ret_1m > 0 ? '+' : ''}${stats.ret_1m}%` : 'N/A', stats.ret_1m],
+    ['3M Return', stats.ret_3m !== null ? `${stats.ret_3m > 0 ? '+' : ''}${stats.ret_3m}%` : 'N/A', stats.ret_3m],
+    ['1Y Return', stats.ret_1y !== null ? `${stats.ret_1y > 0 ? '+' : ''}${stats.ret_1y}%` : 'N/A', stats.ret_1y],
+    ['52W High', `$${fmt(stats.high_52w)}`],
+    ['52W Low', `$${fmt(stats.low_52w)}`],
+    ['Support', `$${fmt(stats.support)}`],
+    ['Resistance', `$${fmt(stats.resistance)}`],
+    ['Avg Volume (20d)', fmtVol(stats.avg_volume)],
+  ];
+  document.getElementById('statGrid').innerHTML = items.map(([label, val, num]) => `
+    <div class="stat-item">
+      <div class="stat-label">${label}</div>
+      <div class="stat-value ${num !== undefined ? (num >= 0 ? 'up' : 'down') : ''}">${val}</div>
+    </div>`).join('');
+}
+
+// ─── Fundamental Grid ─────────────────────────────────────────────────────────
+function renderFundGrid(stats) {
+  const items = [
+    ['Market Cap', stats.market_cap ? fmtMktCap(stats.market_cap) : 'N/A'],
+    ['P/E Ratio', stats.pe_ratio ? fmt(stats.pe_ratio) : 'N/A'],
+    ['Forward P/E', stats.forward_pe ? fmt(stats.forward_pe) : 'N/A'],
+    ['Dividend Yield', stats.dividend_yield ? `${fmt(stats.dividend_yield * 100)}%` : 'N/A'],
+    ['Beta', stats.beta ? fmt(stats.beta) : 'N/A'],
+    ['EMA 50', `$${fmt(stats.ema_50)}`],
+    ['EMA 200', `$${fmt(stats.ema_200)}`],
+    ['RSI (14)', stats.rsi ? stats.rsi : 'N/A'],
+  ];
+  document.getElementById('fundGrid').innerHTML = items.map(([label, val]) => `
+    <div class="stat-item">
+      <div class="stat-label">${label}</div>
+      <div class="stat-value">${val}</div>
+    </div>`).join('');
+}
+
+// ─── Chart Layout ─────────────────────────────────────────────────────────────
+function chartLayout(compact = false) {
+  return {
+    paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+    margin: {t: 10, b: compact ? 40 : 50, l: 60, r: 20},
+    font: {color: '#8b949e', size: 11},
+    xaxis: {gridcolor: '#21262d', linecolor: '#30363d', tickcolor: '#30363d'},
+    yaxis: {gridcolor: '#21262d', linecolor: '#30363d', tickcolor: '#30363d'},
+    legend: {bgcolor: 'transparent', font: {color: '#8b949e'}},
+    hoverlabel: {bgcolor: '#1c2128', bordercolor: '#30363d', font: {color: '#e6edf3'}},
+  };
+}
+
+// ─── Formatters ───────────────────────────────────────────────────────────────
+function round2(n) { return Math.round(n * 100) / 100; }
+function fmt(n) { if (n === null || n === undefined) return 'N/A'; return parseFloat(n).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+function fmtVol(n) { if (!n) return 'N/A'; if (n >= 1e9) return (n/1e9).toFixed(1) + 'B'; if (n >= 1e6) return (n/1e6).toFixed(1) + 'M'; if (n >= 1e3) return (n/1e3).toFixed(1) + 'K'; return n; }
+function fmtMktCap(n) { if (!n) return 'N/A'; if (n >= 1e12) return '$' + (n/1e12).toFixed(2) + 'T'; if (n >= 1e9) return '$' + (n/1e9).toFixed(1) + 'B'; if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M'; return '$' + n; }
+function horizonLabel(h) { return {day: 'Next Day', week: 'Next Week', month: 'Next Month'}[h] || h; }
+
+init();
+</script>
+</body>
+</html>
