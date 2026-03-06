@@ -9,6 +9,7 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import warnings
 import os
 import json
+import time
 from datetime import datetime, timedelta
 
 warnings.filterwarnings('ignore')
@@ -693,6 +694,68 @@ def compute_stats(df, ticker_info):
     }
 
 
+# ─── Rankings infrastructure ──────────────────────────────────────────────────
+
+# 30 high-interest tickers screened on the home page
+RANK_TICKERS = [
+    'AAPL', 'MSFT', 'NVDA', 'META', 'GOOGL', 'AMZN', 'TSLA', 'AVGO',
+    'AMD',  'PLTR', 'APP',  'CRWD', 'NET',   'DDOG', 'PANW', 'CRM',
+    'NFLX', 'COIN', 'SMCI', 'ARM',
+    'SPY',  'QQQ',  'SMH',  'ARKK',
+    'JPM',  'GS',   'BAC',  'LLY',  'XOM',   'GLD',
+]
+
+_rankings_cache: dict = {}   # key = horizon_days → {data, ts}
+RANK_CACHE_TTL = 900         # 15 minutes
+
+
+def _fast_screen(closes: pd.Series, horizon: int):
+    """
+    Quickly predict direction + magnitude for a single ticker using
+    LR trend extrapolation and EMA momentum — no ARIMA, very fast.
+    Returns (pred_pct, signal_conf) where conf is a 5-window mini-backtest.
+    """
+    closes = closes.dropna()
+    if len(closes) < 30:
+        return None, None
+
+    last = float(closes.iloc[-1])
+
+    # ── LR predicted % change ────────────────────────────────────────────────
+    lr_pred = _lr_predict_fast(closes.values, horizon)
+    lr_pct  = (lr_pred - last) / last * 100
+
+    # ── EMA momentum ─────────────────────────────────────────────────────────
+    ema_pred = _ema_predict_fast(closes, horizon)
+    ema_pct  = (ema_pred - last) / last * 100
+
+    # Weighted average (LR trend carries more weight)
+    agree   = (lr_pct > 0) == (ema_pct > 0)
+    pred_pct = lr_pct * 0.6 + ema_pct * 0.4 if agree else lr_pct
+
+    # ── 5-window mini-backtest (LR + EMA) ────────────────────────────────────
+    n_win, train_w = 5, 40
+    needed = train_w + n_win + horizon
+    correct = total = 0
+    if len(closes) >= needed:
+        for i in range(n_win):
+            end    = len(closes) - n_win - horizon + i
+            tr     = closes.iloc[end - train_w:end]
+            actual_up = float(closes.iloc[end + horizon - 1]) >= float(tr.iloc[-1])
+            base   = float(tr.iloc[-1])
+            for pred_fn in (_lr_predict_fast, _ema_predict_fast):
+                try:
+                    arg = tr.values if pred_fn is _lr_predict_fast else tr
+                    p   = pred_fn(arg, horizon)
+                    correct += int((p >= base) == actual_up)
+                    total   += 1
+                except Exception:
+                    pass
+    conf = round(correct / total, 3) if total > 0 else 0.5
+
+    return round(pred_pct, 2), conf
+
+
 # ─── API Routes ───────────────────────────────────────────────────────────────
 
 @app.route('/')
@@ -720,6 +783,87 @@ def search_ticker():
     except Exception:
         pass
     return jsonify(results[:20])
+
+@app.route('/api/rankings')
+def get_rankings():
+    horizon_map = {'day': 1, 'week': 5, 'month': 21}
+    horizon_key = request.args.get('horizon', 'week')
+    horizon     = horizon_map.get(horizon_key, 5)
+    force       = request.args.get('refresh', 'false') == 'true'
+
+    cached = _rankings_cache.get(horizon_key)
+    if not force and cached and (time.time() - cached['ts']) < RANK_CACHE_TTL:
+        return jsonify({**cached['data'], 'from_cache': True})
+
+    try:
+        # Batch download — much faster than individual calls
+        raw = yf.download(
+            RANK_TICKERS, period='3mo', interval='1d',
+            auto_adjust=True, progress=False, group_by='ticker'
+        )
+
+        results = []
+        for sym in RANK_TICKERS:
+            try:
+                # Extract close series for this symbol
+                if isinstance(raw.columns, pd.MultiIndex):
+                    closes = raw[sym]['Close'].dropna()
+                else:
+                    closes = raw['Close'].dropna()
+
+                pred_pct, conf = _fast_screen(closes, horizon)
+                if pred_pct is None:
+                    continue
+
+                last_price = float(closes.iloc[-1])
+
+                # RSI for context
+                delta = closes.diff()
+                gain  = delta.clip(lower=0).rolling(14).mean()
+                loss  = (-delta.clip(upper=0)).rolling(14).mean()
+                rs    = gain.iloc[-1] / loss.iloc[-1] if float(loss.iloc[-1]) != 0 else 0
+                rsi   = round(100 - (100 / (1 + rs)), 1)
+
+                # 5-day % change (momentum context)
+                mom_5d = round(((last_price / float(closes.iloc[-5])) - 1) * 100, 2) if len(closes) >= 5 else None
+
+                meta = next((t for t in POPULAR_TICKERS if t['symbol'] == sym),
+                            {'name': sym, 'sector': 'Unknown', 'type': 'Stock'})
+
+                results.append({
+                    'symbol':    sym,
+                    'name':      meta['name'],
+                    'sector':    meta['sector'],
+                    'type':      meta['type'],
+                    'price':     round(last_price, 2),
+                    'pred_pct':  pred_pct,
+                    'direction': 'UP' if pred_pct >= 0 else 'DOWN',
+                    'confidence': conf,
+                    'rsi':       float(rsi),
+                    'mom_5d':    mom_5d,
+                })
+            except Exception:
+                continue
+
+        # Sort: gainers first (highest pred_pct at top)
+        results.sort(key=lambda x: x['pred_pct'], reverse=True)
+        # Add rank
+        for i, r in enumerate(results):
+            r['rank'] = i + 1
+
+        data = {
+            'rankings':     results,
+            'horizon':      horizon_key,
+            'horizon_days': horizon,
+            'generated_at': datetime.now().isoformat(),
+            'from_cache':   False,
+        }
+        _rankings_cache[horizon_key] = {'data': data, 'ts': time.time()}
+        return jsonify(data)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/predict')
 def predict():

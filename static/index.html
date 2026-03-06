@@ -180,11 +180,69 @@
   /* ─── DISCLAIMER ─── */
   .disclaimer { font-size: 0.72rem; color: var(--text2); text-align: center; padding: 16px; margin-top: 16px; border-top: 1px solid var(--border); line-height: 1.5; }
 
+  /* ─── BACK BUTTON ─── */
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px;
+    cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--text2);
+    background: transparent; margin-bottom: 18px; transition: all 0.15s;
+  }
+  .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ─── RANKINGS TABLE ─── */
+  .rank-wrap { overflow-x: auto; }
+  .rank-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  .rank-table th {
+    text-align: left; padding: 9px 12px; color: var(--text2);
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border); cursor: pointer; user-select: none;
+    white-space: nowrap;
+  }
+  .rank-table th:hover { color: var(--text); }
+  .rank-table th.sort-asc::after  { content: ' ↑'; color: var(--accent); }
+  .rank-table th.sort-desc::after { content: ' ↓'; color: var(--accent); }
+  .rank-table td { padding: 10px 12px; border-bottom: 1px solid rgba(48,54,61,0.4); vertical-align: middle; }
+  .rank-table tr:last-child td { border-bottom: none; }
+  .rank-table tr:hover td { background: rgba(48,54,61,0.4); cursor: pointer; }
+  .rank-num { font-size: 0.75rem; color: var(--text2); font-weight: 700; min-width: 28px; text-align: center; }
+  .rank-sym { font-weight: 800; color: var(--accent); font-size: 0.9rem; }
+  .rank-name { color: var(--text2); font-size: 0.78rem; display: block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rank-sector { font-size: 0.68rem; color: var(--text2); opacity: 0.7; }
+  .dir-up   { color: var(--up);   font-weight: 800; }
+  .dir-down { color: var(--down); font-weight: 800; }
+  .conf-mini { display: flex; align-items: center; gap: 6px; }
+  .conf-mini-bar { width: 60px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; position: relative; }
+  .conf-mini-mid { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.2); }
+  .conf-mini-fill { height: 100%; border-radius: 3px; }
+
+  /* ─── HOME PAGE HEADER ─── */
+  .home-hero { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .home-hero h2 { font-size: 1.4rem; font-weight: 700; flex: 1; }
+  .rank-controls { display: flex; align-items: center; gap: 8px; }
+  .rank-horizon { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .rank-horizon button {
+    padding: 5px 13px; font-size: 0.75rem; font-weight: 600;
+    background: transparent; border: none; color: var(--text2); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .rank-horizon button + button { border-left: 1px solid var(--border); }
+  .rank-horizon button.active { background: var(--accent); color: #000; }
+  .refresh-btn {
+    padding: 5px 12px; border: 1px solid var(--border); border-radius: 6px;
+    background: transparent; color: var(--text2); font-size: 0.75rem; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 5px;
+  }
+  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .refresh-btn.spinning svg { animation: spin 1s linear infinite; }
+  .cache-note { font-size: 0.68rem; color: var(--text2); opacity: 0.7; }
+  .pop-chips-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+
   @media (max-width: 900px) {
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .span-2, .span-3, .span-4 { grid-column: span 1; }
     .header { flex-wrap: wrap; }
     .tabs { order: 3; width: 100%; }
+    .rank-name { max-width: 120px; }
   }
 </style>
 </head>
@@ -203,38 +261,205 @@
   </div>
 </div>
 
-<div class="main" id="mainContent">
-  <div class="landing" id="landing">
-    <div class="landing-icon">📈</div>
-    <h2>AI-Powered Stock Predictions</h2>
-    <p>Select any stock or ETF to get next-day, weekly, and monthly price predictions powered by 4 independent ML models.</p>
-    <div class="popular-grid" id="popularGrid"></div>
+<!-- ─── HOME PAGE ─── -->
+<div id="landingView" class="main">
+  <div class="home-hero">
+    <h2>Market Rankings</h2>
+    <div class="rank-controls">
+      <div class="rank-horizon" id="rankHorizonBtns">
+        <button class="active" data-h="day"   onclick="setRankHorizon('day')">1 Day</button>
+        <button             data-h="week"  onclick="setRankHorizon('week')">1 Week</button>
+        <button             data-h="month" onclick="setRankHorizon('month')">1 Month</button>
+      </div>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadRankings(true)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Refresh
+      </button>
+    </div>
   </div>
+  <div class="pop-chips-row" id="popularGrid"></div>
+  <div id="rankingsArea">
+    <div class="loading"><div class="spinner"></div><div style="color:var(--text2)">Loading market rankings...</div></div>
+  </div>
+</div>
+
+<!-- ─── STOCK DASHBOARD ─── -->
+<div id="dashboardView" class="main" style="display:none">
+  <button class="back-btn" onclick="showLanding()">&#8592; Back to Rankings</button>
+  <div id="dashboardContent"></div>
 </div>
 
 <script>
 // ─── State ───────────────────────────────────────────────────────────────────
-let currentSymbol = null;
+let currentSymbol  = null;
 let currentHorizon = 'week';
-let allTickers = [];
-let searchTimeout = null;
+let rankHorizon    = 'week';
+let allTickers     = [];
+let searchTimeout  = null;
+let rankSortCol    = 'pred_pct';
+let rankSortAsc    = false;   // descending by default (biggest gainers first)
+let rankData       = [];
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   try {
     const res = await fetch('/api/tickers');
     allTickers = await res.json();
-    renderPopular();
   } catch(e) {}
+  renderPopularChips();
   setupSearch();
   setupTabs();
+  loadRankings(false);
 }
 
-// ─── Popular chips ────────────────────────────────────────────────────────────
-function renderPopular() {
+// ─── View switching ───────────────────────────────────────────────────────────
+function showLanding() {
+  document.getElementById('landingView').style.display   = 'block';
+  document.getElementById('dashboardView').style.display = 'none';
+  document.getElementById('searchInput').value = '';
+  currentSymbol = null;
+}
+function showDashboard() {
+  document.getElementById('landingView').style.display   = 'none';
+  document.getElementById('dashboardView').style.display = 'block';
+}
+
+// ─── Popular quick-select chips ───────────────────────────────────────────────
+function renderPopularChips() {
   const popular = ['AAPL','MSFT','NVDA','TSLA','SPY','QQQ','GOOGL','AMZN','META','AMD'];
-  const grid = document.getElementById('popularGrid');
-  grid.innerHTML = popular.map(sym => `<div class="pop-chip" onclick="selectSymbol('${sym}')">${sym}</div>`).join('');
+  document.getElementById('popularGrid').innerHTML =
+    popular.map(sym => `<div class="pop-chip" onclick="selectSymbol('${sym}')">${sym}</div>`).join('');
+}
+
+// ─── Rankings ─────────────────────────────────────────────────────────────────
+function setRankHorizon(h) {
+  rankHorizon = h;
+  document.querySelectorAll('#rankHorizonBtns button').forEach(b => {
+    b.classList.toggle('active', b.dataset.h === h);
+  });
+  // sync the prediction tabs too
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.horizon === h);
+  });
+  currentHorizon = h;
+  loadRankings(false);
+}
+
+async function loadRankings(force) {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  document.getElementById('rankingsArea').innerHTML =
+    `<div class="loading"><div class="spinner"></div><div style="color:var(--text2)">Screening 30 stocks${force ? ' (refreshing)' : ''}...</div></div>`;
+
+  try {
+    const res  = await fetch(`/api/rankings?horizon=${rankHorizon}${force ? '&refresh=true' : ''}`);
+    const data = await res.json();
+    if (data.error) {
+      document.getElementById('rankingsArea').innerHTML =
+        `<div class="error-box">Rankings error: ${data.error}</div>`;
+      return;
+    }
+    rankData   = data.rankings;
+    const cached = data.from_cache;
+    const genAt  = new Date(data.generated_at).toLocaleTimeString();
+    renderRankingsTable(cached, genAt, data.horizon);
+  } catch(e) {
+    document.getElementById('rankingsArea').innerHTML =
+      `<div class="error-box">Failed to load rankings. Is the server running?</div>`;
+  } finally {
+    btn.classList.remove('spinning');
+  }
+}
+
+function renderRankingsTable(fromCache, genAt, horizon) {
+  const horizonLabel = {day:'Next Day', week:'Next Week', month:'Next Month'}[horizon] || horizon;
+  const sorted = [...rankData].sort((a, b) => {
+    const av = a[rankSortCol] ?? 0, bv = b[rankSortCol] ?? 0;
+    return rankSortAsc ? av - bv : bv - av;
+  });
+
+  const colDefs = [
+    {key:'rank',       label:'#'},
+    {key:'symbol',     label:'Symbol'},
+    {key:'price',      label:'Price'},
+    {key:'pred_pct',   label:`Predicted (${horizonLabel})`},
+    {key:'confidence', label:'Signal Conf.'},
+    {key:'rsi',        label:'RSI'},
+    {key:'mom_5d',     label:'5D Momentum'},
+  ];
+
+  const thHtml = colDefs.map(c => {
+    const cls = c.key === rankSortCol ? (rankSortAsc ? 'sort-asc' : 'sort-desc') : '';
+    return `<th class="${cls}" onclick="sortRankings('${c.key}')">${c.label}</th>`;
+  }).join('');
+
+  const rows = sorted.map(r => {
+    const pctCls  = r.pred_pct >= 0 ? 'dir-up' : 'dir-down';
+    const pctStr  = `${r.pred_pct >= 0 ? '+' : ''}${r.pred_pct.toFixed(2)}%`;
+    const confPct = Math.round(r.confidence * 100);
+    const confCol = confPct >= 58 ? '#3fb950' : confPct >= 53 ? '#e3b341' : '#8b949e';
+    const edge    = confPct - 50;
+    const rsiCol  = r.rsi > 70 ? 'var(--down)' : r.rsi < 30 ? 'var(--up)' : 'var(--text2)';
+    const momStr  = r.mom_5d != null ? `${r.mom_5d >= 0 ? '+' : ''}${r.mom_5d.toFixed(2)}%` : '—';
+    const momCls  = r.mom_5d >= 0 ? 'dir-up' : 'dir-down';
+    return `
+      <tr onclick="selectSymbol('${r.symbol}')">
+        <td><span class="rank-num">${r.rank}</span></td>
+        <td>
+          <span class="rank-sym">${r.symbol}</span>
+          <span class="rank-name">${r.name}</span>
+          <span class="rank-sector">${r.sector}</span>
+        </td>
+        <td>$${r.price.toFixed(2)}</td>
+        <td class="${pctCls}" style="font-weight:700;font-size:0.95rem">${pctStr}</td>
+        <td>
+          <div class="conf-mini">
+            <div class="conf-mini-bar">
+              <div class="conf-mini-mid"></div>
+              <div class="conf-mini-fill" style="width:${confPct}%;background:${confCol}"></div>
+            </div>
+            <span style="font-size:0.78rem;color:${confCol}">${confPct}%</span>
+            <span style="font-size:0.68rem;color:var(--text2)">${edge>=0?'+':''}${edge}pp</span>
+          </div>
+        </td>
+        <td style="color:${rsiCol};font-weight:600">${r.rsi}</td>
+        <td class="${momCls}">${momStr}</td>
+      </tr>`;
+  }).join('');
+
+  const cacheNote = fromCache
+    ? `<span class="cache-note">Cached at ${genAt} · <a href="#" onclick="loadRankings(true);return false" style="color:var(--accent)">refresh now</a></span>`
+    : `<span class="cache-note">Updated at ${genAt}</span>`;
+
+  document.getElementById('rankingsArea').innerHTML = `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <span style="font-size:0.78rem;color:var(--text2)">
+          30 tickers ranked by predicted ${horizonLabel.toLowerCase()} move.
+          Confidence = 5-window walk-forward backtest on LR+EMA. Click any row to analyze.
+        </span>
+        ${cacheNote}
+      </div>
+      <div class="rank-wrap">
+        <table class="rank-table">
+          <thead><tr>${thHtml}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="disclaimer">
+      Rankings use fast screening models (LR + EMA). For full analysis with ARIMA, Holt-Winters and 15-window backtesting, click a row.
+      Not financial advice.
+    </div>`;
+}
+
+function sortRankings(col) {
+  if (rankSortCol === col) rankSortAsc = !rankSortAsc;
+  else { rankSortCol = col; rankSortAsc = col === 'rank'; }
+  if (rankData.length) {
+    const cached = true;
+    renderRankingsTable(cached, '', rankHorizon);
+  }
 }
 
 // ─── Search ───────────────────────────────────────────────────────────────────
@@ -300,8 +525,9 @@ function selectSymbol(symbol) {
 }
 
 async function loadPrediction(symbol, horizon) {
-  const main = document.getElementById('mainContent');
-  main.innerHTML = `<div class="loading"><div class="spinner"></div><div style="color:var(--text2);text-align:center">Analyzing ${symbol}...<br><span style="font-size:0.78rem;opacity:0.7">Running 4 models + walk-forward backtesting</span></div></div>`;
+  showDashboard();
+  document.getElementById('dashboardContent').innerHTML =
+    `<div class="loading"><div class="spinner"></div><div style="color:var(--text2);text-align:center">Analyzing ${symbol}...<br><span style="font-size:0.78rem;opacity:0.7">Running 4 models + walk-forward backtesting</span></div></div>`;
   try {
     const res = await fetch(`/api/predict?symbol=${symbol}&horizon=${horizon}`);
     const data = await res.json();
@@ -313,12 +539,12 @@ async function loadPrediction(symbol, horizon) {
 }
 
 function showError(msg) {
-  document.getElementById('mainContent').innerHTML = `
+  document.getElementById('dashboardContent').innerHTML = `
     <div style="padding:40px">
       <div class="error-box"><strong>Error:</strong> ${msg}<br/><br/>
-      <button onclick="document.getElementById('mainContent').innerHTML=''; document.getElementById('landing').style.display='flex';"
-        style="margin-top:10px;padding:8px 20px;background:var(--down);color:#fff;border:none;border-radius:6px;cursor:pointer">
-        Go Back
+      <button onclick="showLanding()"
+        style="margin-top:10px;padding:8px 20px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:6px;cursor:pointer">
+        Back to Rankings
       </button></div>
     </div>`;
 }
@@ -328,7 +554,7 @@ function renderDashboard(data) {
   const { symbol, name, horizon, stats, predictions, historical, forecast_dates, backtest } = data;
   const last = historical.close[historical.close.length - 1];
 
-  const main = document.getElementById('mainContent');
+  const main = document.getElementById('dashboardContent');
   main.innerHTML = `
     <!-- HERO -->
     <div class="ticker-hero">
