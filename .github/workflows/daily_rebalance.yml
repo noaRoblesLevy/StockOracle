@@ -1,0 +1,39 @@
+name: Daily Portfolio Rebalance
+
+on:
+  schedule:
+    # 21:15 UTC = ~4:15 PM ET (after NYSE close), Mon–Fri
+    - cron: '15 21 * * 1-5'
+  workflow_dispatch:   # allow manual trigger from GitHub UI
+
+jobs:
+  rebalance:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit portfolio.json back to repo
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas numpy scikit-learn
+
+      - name: Run daily rebalance
+        run: python daily_rebalance.py --horizon week
+
+      - name: Commit updated portfolio.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add portfolio.json
+          git diff --cached --quiet || git commit -m "chore: daily portfolio rebalance $(date -u '+%Y-%m-%d')"
+          git push

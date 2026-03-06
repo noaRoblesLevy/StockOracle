@@ -1,0 +1,16 @@
+{
+  "initial_balance": 50000.0,
+  "cash": 50000.0,
+  "positions": {},
+  "trades": [],
+  "daily_values": [
+    {
+      "date": "2026-03-06",
+      "value": 50000.0,
+      "cash": 50000.0,
+      "positions_value": 0.0
+    }
+  ],
+  "last_updated": null,
+  "created": "2026-03-06"
+}

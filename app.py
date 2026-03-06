@@ -11,6 +11,7 @@ import os
 import json
 import time
 from datetime import datetime, timedelta
+from portfolio import load_portfolio, rebalance, save_portfolio, portfolio_value
 
 warnings.filterwarnings('ignore')
 
@@ -996,6 +997,83 @@ def predict():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/portfolio')
+def get_portfolio():
+    """Return current portfolio state enriched with live mark-to-market prices."""
+    p = load_portfolio()
+
+    # Fetch live prices for open positions
+    price_map = {}
+    if p['positions']:
+        syms = list(p['positions'].keys())
+        try:
+            raw = yf.download(syms, period='5d', interval='1d',
+                              auto_adjust=True, progress=False, group_by='ticker')
+            for sym in syms:
+                try:
+                    closes = (raw[sym]['Close'] if isinstance(raw.columns, pd.MultiIndex)
+                              else raw['Close']).dropna()
+                    if not closes.empty:
+                        price_map[sym] = round(float(closes.iloc[-1]), 2)
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+    # Build enriched positions list
+    positions_list = []
+    for sym, pos in p['positions'].items():
+        current = price_map.get(sym, pos['entry_price'])
+        cost    = pos['shares'] * pos['entry_price']
+        value   = pos['shares'] * current
+        pnl     = value - cost
+        pnl_pct = (pnl / cost * 100) if cost else 0
+        positions_list.append({
+            'symbol':          sym,
+            'shares':          pos['shares'],
+            'entry_price':     pos['entry_price'],
+            'entry_date':      pos['entry_date'],
+            'entry_conf':      pos['entry_conf'],
+            'entry_pred_pct':  pos['entry_pred_pct'],
+            'current_price':   round(current, 2),
+            'cost_basis':      round(cost, 2),
+            'current_value':   round(value, 2),
+            'pnl':             round(pnl, 2),
+            'pnl_pct':         round(pnl_pct, 2),
+        })
+
+    total_val    = portfolio_value(p, price_map)
+    positions_val = total_val - p['cash']
+    total_pnl    = total_val - p['initial_balance']
+    total_pnl_pct = total_pnl / p['initial_balance'] * 100
+
+    return jsonify({
+        'initial_balance': p['initial_balance'],
+        'cash':            round(p['cash'], 2),
+        'positions_value': round(positions_val, 2),
+        'total_value':     round(total_val, 2),
+        'total_pnl':       round(total_pnl, 2),
+        'total_pnl_pct':   round(total_pnl_pct, 2),
+        'positions':       positions_list,
+        'trades':          list(reversed(p['trades']))[:50],   # last 50, newest first
+        'daily_values':    p['daily_values'],
+        'last_updated':    p.get('last_updated'),
+        'created':         p.get('created'),
+    })
+
+
+@app.route('/api/portfolio/rebalance', methods=['POST'])
+def trigger_rebalance():
+    """Manually trigger a rebalance (ignores today-already-ran guard)."""
+    horizon = request.json.get('horizon', 'week') if request.is_json else 'week'
+    p = load_portfolio()
+    # Allow re-run by clearing last_updated
+    p['last_updated'] = None
+    p, summary = rebalance(p, horizon)
+    save_portfolio(p)
+    return jsonify({'ok': True, 'summary': summary})
 
 
 if __name__ == '__main__':

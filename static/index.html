@@ -237,12 +237,53 @@
   .cache-note { font-size: 0.68rem; color: var(--text2); opacity: 0.7; }
   .pop-chips-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
 
+  /* ─── PORTFOLIO NAV BUTTON ─── */
+  .portfolio-nav-btn {
+    padding: 7px 16px; border-radius: 20px; border: 1px solid var(--border);
+    cursor: pointer; font-size: 0.82rem; font-weight: 600; transition: all 0.2s;
+    color: var(--text2); background: transparent; margin-left: 6px;
+  }
+  .portfolio-nav-btn:hover, .portfolio-nav-btn.active { background: #e3b341; color: #000; border-color: #e3b341; }
+
+  /* ─── PORTFOLIO VIEW ─── */
+  .pf-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .pf-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .pf-card-label { font-size: 0.7rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .pf-card-val { font-size: 1.4rem; font-weight: 800; }
+  .pf-card-sub { font-size: 0.72rem; color: var(--text2); margin-top: 3px; }
+  .pf-actions { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .pf-rebalance-btn {
+    padding: 8px 20px; border-radius: 8px; border: 1px solid var(--accent);
+    background: transparent; color: var(--accent); font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .pf-rebalance-btn:hover { background: var(--accent); color: #000; }
+  .pf-rebalance-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pf-meta { font-size: 0.72rem; color: var(--text2); }
+  .pf-pos-table, .pf-trade-table {
+    width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px;
+  }
+  .pf-pos-table th, .pf-trade-table th {
+    padding: 8px 10px; text-align: left; color: var(--text2); font-size: 0.68rem;
+    text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid var(--border);
+    white-space: nowrap; cursor: default;
+  }
+  .pf-pos-table td, .pf-trade-table td {
+    padding: 9px 10px; border-bottom: 1px solid rgba(48,54,61,0.4); vertical-align: middle;
+  }
+  .pf-pos-table tr:last-child td, .pf-trade-table tr:last-child td { border-bottom: none; }
+  .pf-sym { font-weight: 800; color: var(--accent); }
+  .trade-buy  { background: rgba(63,185,80,0.1);  }
+  .trade-sell { background: rgba(248,81,73,0.07); }
+  .pf-empty { color: var(--text2); text-align: center; padding: 30px; font-size: 0.85rem; }
+
   @media (max-width: 900px) {
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .span-2, .span-3, .span-4 { grid-column: span 1; }
     .header { flex-wrap: wrap; }
     .tabs { order: 3; width: 100%; }
     .rank-name { max-width: 120px; }
+    .pf-summary { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -259,6 +300,7 @@
     <button class="tab active" data-horizon="week">1 Week</button>
     <button class="tab" data-horizon="month">1 Month</button>
   </div>
+  <button class="portfolio-nav-btn" id="portfolioNavBtn" onclick="showPortfolio()">&#128200; Portfolio</button>
 </div>
 
 <!-- ─── HOME PAGE ─── -->
@@ -289,6 +331,14 @@
   <div id="dashboardContent"></div>
 </div>
 
+<!-- ─── PORTFOLIO VIEW ─── -->
+<div id="portfolioView" class="main" style="display:none">
+  <button class="back-btn" onclick="showLanding()">&#8592; Back to Rankings</button>
+  <div id="portfolioContent">
+    <div class="loading"><div class="spinner"></div><div style="color:var(--text2)">Loading portfolio...</div></div>
+  </div>
+</div>
+
 <script>
 // ─── State ───────────────────────────────────────────────────────────────────
 let currentSymbol  = null;
@@ -316,12 +366,23 @@ async function init() {
 function showLanding() {
   document.getElementById('landingView').style.display   = 'block';
   document.getElementById('dashboardView').style.display = 'none';
+  document.getElementById('portfolioView').style.display = 'none';
+  document.getElementById('portfolioNavBtn').classList.remove('active');
   document.getElementById('searchInput').value = '';
   currentSymbol = null;
 }
 function showDashboard() {
   document.getElementById('landingView').style.display   = 'none';
   document.getElementById('dashboardView').style.display = 'block';
+  document.getElementById('portfolioView').style.display = 'none';
+  document.getElementById('portfolioNavBtn').classList.remove('active');
+}
+function showPortfolio() {
+  document.getElementById('landingView').style.display   = 'none';
+  document.getElementById('dashboardView').style.display = 'none';
+  document.getElementById('portfolioView').style.display = 'block';
+  document.getElementById('portfolioNavBtn').classList.add('active');
+  loadPortfolio();
 }
 
 // ─── Popular quick-select chips ───────────────────────────────────────────────
@@ -1105,6 +1166,201 @@ function fmtMktCap(n) { if (!n) return 'N/A'; if (n >= 1e12) return '$' + (n/1e1
 function horizonLabel(h) { return {day: 'Next Day', week: 'Next Week', month: 'Next Month'}[h] || h; }
 
 init();
+
+// ─── Portfolio ─────────────────────────────────────────────────────────────────
+async function loadPortfolio() {
+  document.getElementById('portfolioContent').innerHTML =
+    `<div class="loading"><div class="spinner"></div><div style="color:var(--text2)">Loading portfolio...</div></div>`;
+  try {
+    const res  = await fetch('/api/portfolio');
+    const data = await res.json();
+    renderPortfolio(data);
+  } catch(e) {
+    document.getElementById('portfolioContent').innerHTML =
+      `<div class="error-box">Failed to load portfolio: ${e.message}</div>`;
+  }
+}
+
+async function triggerRebalance() {
+  const btn = document.getElementById('rebalanceBtn');
+  btn.disabled = true; btn.textContent = 'Rebalancing…';
+  try {
+    const res = await fetch('/api/portfolio/rebalance', {method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({horizon:'week'})});
+    const d = await res.json();
+    btn.textContent = d.summary || 'Done';
+    setTimeout(() => loadPortfolio(), 800);
+  } catch(e) {
+    btn.textContent = 'Error – retry';
+    btn.disabled = false;
+  }
+}
+
+function renderPortfolio(d) {
+  const pnlColor  = d.total_pnl >= 0 ? 'var(--up)' : 'var(--down)';
+  const pnlSign   = d.total_pnl >= 0 ? '+' : '';
+  const cashPct   = (d.cash / d.total_value * 100).toFixed(0);
+  const invPct    = (d.positions_value / d.total_value * 100).toFixed(0);
+  const daysSince = d.created ? Math.round((Date.now() - new Date(d.created)) / 86400000) : '?';
+
+  // ── Summary cards ────────────────────────────────────────────────────────
+  const summaryHTML = `
+  <div class="pf-summary">
+    <div class="pf-card">
+      <div class="pf-card-label">Total Value</div>
+      <div class="pf-card-val">$${fmtK(d.total_value)}</div>
+      <div class="pf-card-sub">${d.positions.length} position${d.positions.length!==1?'s':''} + cash</div>
+    </div>
+    <div class="pf-card">
+      <div class="pf-card-label">Total P&amp;L</div>
+      <div class="pf-card-val" style="color:${pnlColor}">${pnlSign}$${fmtK(Math.abs(d.total_pnl))}</div>
+      <div class="pf-card-sub" style="color:${pnlColor}">${pnlSign}${d.total_pnl_pct.toFixed(2)}% since start</div>
+    </div>
+    <div class="pf-card">
+      <div class="pf-card-label">Cash Available</div>
+      <div class="pf-card-val">$${fmtK(d.cash)}</div>
+      <div class="pf-card-sub">${cashPct}% cash · ${invPct}% invested</div>
+    </div>
+    <div class="pf-card">
+      <div class="pf-card-label">Starting Balance</div>
+      <div class="pf-card-val">$${fmtK(d.initial_balance)}</div>
+      <div class="pf-card-sub">Started ${d.created || '—'}</div>
+    </div>
+    <div class="pf-card">
+      <div class="pf-card-label">Days Running</div>
+      <div class="pf-card-val">${daysSince}</div>
+      <div class="pf-card-sub">${d.daily_values ? d.daily_values.length : 0} snapshots</div>
+    </div>
+    <div class="pf-card">
+      <div class="pf-card-label">Trades Made</div>
+      <div class="pf-card-val">${d.trades ? (d.trades.length > 50 ? '50+' : d.trades.length) : 0}</div>
+      <div class="pf-card-sub">Last updated: ${d.last_updated || 'never'}</div>
+    </div>
+  </div>`;
+
+  // ── Actions bar ──────────────────────────────────────────────────────────
+  const actionsHTML = `
+  <div class="pf-actions">
+    <button class="pf-rebalance-btn" id="rebalanceBtn" onclick="triggerRebalance()">&#9654; Run Rebalance Now</button>
+    <span class="pf-meta">Auto-runs daily at ~4:15 PM ET via GitHub Actions &nbsp;·&nbsp;
+      Strategy: top-5 picks, max 20% per position, min conf 54%</span>
+  </div>`;
+
+  // ── Equity curve ─────────────────────────────────────────────────────────
+  const equityHTML = `
+  <div class="card span-4" style="margin-bottom:16px">
+    <div class="card-title">Equity Curve</div>
+    <div id="pfEquityChart" style="height:220px"></div>
+  </div>`;
+
+  // ── Open positions ────────────────────────────────────────────────────────
+  let posHTML = '';
+  if (d.positions.length === 0) {
+    posHTML = `<div class="pf-empty">No open positions. Click "Run Rebalance Now" to pick today's top stocks.</div>`;
+  } else {
+    const rows = d.positions.map(p => {
+      const pnlColor = p.pnl >= 0 ? 'var(--up)' : 'var(--down)';
+      const pnlSign  = p.pnl >= 0 ? '+' : '';
+      return `<tr>
+        <td><span class="pf-sym">${p.symbol}</span></td>
+        <td>${p.shares}</td>
+        <td>$${fmt(p.entry_price)}</td>
+        <td>$${fmt(p.current_price)}</td>
+        <td>$${fmtK(p.cost_basis)}</td>
+        <td style="color:${pnlColor};font-weight:700">${pnlSign}$${fmtK(Math.abs(p.pnl))}</td>
+        <td style="color:${pnlColor};font-weight:700">${pnlSign}${p.pnl_pct.toFixed(2)}%</td>
+        <td>${p.entry_date}</td>
+        <td style="font-size:0.7rem">${(p.entry_conf*100).toFixed(0)}% · ${p.entry_pred_pct>0?'+':''}${p.entry_pred_pct}%</td>
+      </tr>`;
+    }).join('');
+    posHTML = `<table class="pf-pos-table">
+      <thead><tr>
+        <th>Ticker</th><th>Shares</th><th>Entry</th><th>Current</th>
+        <th>Cost Basis</th><th>P&L</th><th>P&L %</th><th>Entered</th><th>Signal (conf·pred)</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  // ── Trades ────────────────────────────────────────────────────────────────
+  let tradeHTML = '';
+  if (!d.trades || d.trades.length === 0) {
+    tradeHTML = `<div class="pf-empty">No trades yet.</div>`;
+  } else {
+    const rows = d.trades.slice(0, 30).map(t => {
+      const cls  = t.action === 'BUY' ? 'trade-buy' : 'trade-sell';
+      const actColor = t.action === 'BUY' ? 'var(--up)' : 'var(--down)';
+      const pnlStr = t.pnl != null
+        ? `<span style="color:${t.pnl>=0?'var(--up)':'var(--down)'};">${t.pnl>=0?'+':''}$${fmtK(Math.abs(t.pnl))}</span>`
+        : '—';
+      return `<tr class="${cls}">
+        <td>${t.date}</td>
+        <td><span class="pf-sym">${t.ticker}</span></td>
+        <td style="font-weight:700;color:${actColor}">${t.action}</td>
+        <td>${t.shares}</td>
+        <td>$${fmt(t.price)}</td>
+        <td>$${fmtK(t.value)}</td>
+        <td>${pnlStr}</td>
+        <td style="font-size:0.7rem;color:var(--text2)">${t.reason || ''}</td>
+      </tr>`;
+    }).join('');
+    tradeHTML = `<table class="pf-trade-table">
+      <thead><tr>
+        <th>Date</th><th>Ticker</th><th>Action</th><th>Shares</th>
+        <th>Price</th><th>Value</th><th>P&L</th><th>Reason</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  document.getElementById('portfolioContent').innerHTML = `
+    ${summaryHTML}
+    ${actionsHTML}
+    ${equityHTML}
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Open Positions</div>
+      ${posHTML}
+    </div>
+    <div class="card">
+      <div class="card-title">Trade History <span style="font-size:0.7rem;color:var(--text2);font-weight:400">(last 30)</span></div>
+      ${tradeHTML}
+    </div>`;
+
+  // ── Render equity curve with Plotly ───────────────────────────────────────
+  if (d.daily_values && d.daily_values.length > 1) {
+    const dates   = d.daily_values.map(v => v.date);
+    const vals    = d.daily_values.map(v => v.value);
+    const pcts    = vals.map(v => ((v - d.initial_balance) / d.initial_balance * 100).toFixed(2));
+    const lineCol = vals[vals.length-1] >= d.initial_balance ? '#3fb950' : '#f85149';
+    Plotly.newPlot('pfEquityChart', [{
+      x: dates, y: vals, type: 'scatter', mode: 'lines',
+      line: {color: lineCol, width: 2},
+      fill: 'tozeroy', fillcolor: lineCol.replace(')', ',0.1)').replace('rgb', 'rgba'),
+      hovertemplate: '%{x}<br>$%{y:,.0f}<extra></extra>',
+    }, {
+      x: [dates[0], dates[dates.length-1]],
+      y: [d.initial_balance, d.initial_balance],
+      type: 'scatter', mode: 'lines',
+      line: {color: 'rgba(255,255,255,0.2)', width: 1, dash: 'dot'},
+      hoverinfo: 'none', showlegend: false,
+    }], {
+      paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+      margin: {t:10, b:40, l:65, r:10},
+      xaxis: {color:'#8b949e', gridcolor:'rgba(48,54,61,0.6)', tickfont:{size:10}},
+      yaxis: {color:'#8b949e', gridcolor:'rgba(48,54,61,0.6)', tickfont:{size:10},
+              tickprefix:'$', tickformat:',.0f'},
+      showlegend: false,
+    }, {responsive:true, displayModeBar:false});
+  } else {
+    document.getElementById('pfEquityChart').innerHTML =
+      `<div class="pf-empty">Equity curve will appear after the first rebalance day.</div>`;
+  }
+}
+
+function fmtK(n) {
+  if (Math.abs(n) >= 1000) return (n/1000).toFixed(1) + 'k';
+  return n.toFixed(2);
+}
 </script>
 </body>
 </html>
