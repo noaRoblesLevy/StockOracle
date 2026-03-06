@@ -39,7 +39,22 @@ def _fetch_portfolio_from_github() -> dict | None:
 
 warnings.filterwarnings('ignore')
 
+# ─── Numpy-aware JSON provider ────────────────────────────────────────────────
+# Flask's default encoder can't serialize numpy scalar types (numpy.bool_,
+# numpy.float64, numpy.int64) that leak in from pandas/sklearn results.
+from flask.json.provider import DefaultJSONProvider
+
+class _NumpyJSONProvider(DefaultJSONProvider):
+    def default(self, o):
+        if isinstance(o, np.bool_):    return bool(o)
+        if isinstance(o, np.integer):  return int(o)
+        if isinstance(o, np.floating): return float(o)
+        if isinstance(o, np.ndarray):  return o.tolist()
+        return super().default(o)
+
 app = Flask(__name__, static_folder='static')
+app.json_provider_class = _NumpyJSONProvider
+app.json = _NumpyJSONProvider(app)
 
 # ─── Popular stocks / ETFs for the searchable list ───────────────────────────
 POPULAR_TICKERS = [
