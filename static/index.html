@@ -349,6 +349,8 @@ let searchTimeout  = null;
 let rankSortCol    = 'pred_pct';
 let rankSortAsc    = false;   // descending by default (biggest gainers first)
 let rankData       = [];
+let pfPollTimer    = null;    // portfolio auto-refresh interval
+let pfLastFetch    = null;    // timestamp of last portfolio fetch
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
@@ -363,7 +365,12 @@ async function init() {
 }
 
 // ─── View switching ───────────────────────────────────────────────────────────
+function _stopPfPoll() {
+  if (pfPollTimer) { clearInterval(pfPollTimer); pfPollTimer = null; }
+  if (window._pfAgoTimer) { clearInterval(window._pfAgoTimer); window._pfAgoTimer = null; }
+}
 function showLanding() {
+  _stopPfPoll();
   document.getElementById('landingView').style.display   = 'block';
   document.getElementById('dashboardView').style.display = 'none';
   document.getElementById('portfolioView').style.display = 'none';
@@ -372,17 +379,21 @@ function showLanding() {
   currentSymbol = null;
 }
 function showDashboard() {
+  _stopPfPoll();
   document.getElementById('landingView').style.display   = 'none';
   document.getElementById('dashboardView').style.display = 'block';
   document.getElementById('portfolioView').style.display = 'none';
   document.getElementById('portfolioNavBtn').classList.remove('active');
 }
 function showPortfolio() {
+  _stopPfPoll();
   document.getElementById('landingView').style.display   = 'none';
   document.getElementById('dashboardView').style.display = 'none';
   document.getElementById('portfolioView').style.display = 'block';
   document.getElementById('portfolioNavBtn').classList.add('active');
   loadPortfolio();
+  // Refresh prices every 30 s while tab is open
+  pfPollTimer = setInterval(() => loadPortfolio(true), 30000);
 }
 
 // ─── Popular quick-select chips ───────────────────────────────────────────────
@@ -1168,16 +1179,21 @@ function horizonLabel(h) { return {day: 'Next Day', week: 'Next Week', month: 'N
 init();
 
 // ─── Portfolio ─────────────────────────────────────────────────────────────────
-async function loadPortfolio() {
-  document.getElementById('portfolioContent').innerHTML =
-    `<div class="loading"><div class="spinner"></div><div style="color:var(--text2)">Loading portfolio...</div></div>`;
+async function loadPortfolio(silent = false) {
+  if (!silent) {
+    document.getElementById('portfolioContent').innerHTML =
+      `<div class="loading"><div class="spinner"></div><div style="color:var(--text2)">Loading portfolio...</div></div>`;
+  }
   try {
     const res  = await fetch('/api/portfolio');
     const data = await res.json();
+    pfLastFetch = Date.now();
     renderPortfolio(data);
   } catch(e) {
-    document.getElementById('portfolioContent').innerHTML =
-      `<div class="error-box">Failed to load portfolio: ${e.message}</div>`;
+    if (!silent) {
+      document.getElementById('portfolioContent').innerHTML =
+        `<div class="error-box">Failed to load portfolio: ${e.message}</div>`;
+    }
   }
 }
 
@@ -1242,9 +1258,20 @@ function renderPortfolio(d) {
   const actionsHTML = `
   <div class="pf-actions">
     <button class="pf-rebalance-btn" id="rebalanceBtn" onclick="triggerRebalance()">&#9654; Run Rebalance Now</button>
-    <span class="pf-meta">Auto-runs daily at ~4:15 PM ET via GitHub Actions &nbsp;·&nbsp;
-      Strategy: top-5 picks, max 20% per position, min conf 54%</span>
+    <span class="pf-meta">
+      Prices refresh every 30 s &nbsp;·&nbsp; <span id="pfAgo">just updated</span>
+      &nbsp;·&nbsp; Auto-rebalances daily ~4:15 PM ET via GitHub Actions
+      &nbsp;·&nbsp; Strategy: top-5, max 20% each, min conf 54%
+    </span>
   </div>`;
+  // Kick off "X seconds ago" counter (re-uses pfLastFetch)
+  clearInterval(window._pfAgoTimer);
+  window._pfAgoTimer = setInterval(() => {
+    const el = document.getElementById('pfAgo');
+    if (!el) { clearInterval(window._pfAgoTimer); return; }
+    const sec = Math.round((Date.now() - pfLastFetch) / 1000);
+    el.textContent = sec < 5 ? 'just updated' : `updated ${sec}s ago`;
+  }, 1000);
 
   // ── Equity curve ─────────────────────────────────────────────────────────
   const equityHTML = `
