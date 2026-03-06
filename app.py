@@ -1594,25 +1594,27 @@ def get_portfolio():
     scheduled GitHub Actions job are visible without a git pull."""
     p = _fetch_portfolio_from_github() or load_portfolio()
 
-    # Fetch live prices for open positions
-    price_map = {}
+    # Fetch 3-month history for open positions (needed for current-signal screen)
+    price_map  = {}
+    closes_map = {}   # sym → full close series for _fast_screen
     if p['positions']:
         syms = list(p['positions'].keys())
         try:
-            raw = yf.download(syms, period='5d', interval='1d',
+            raw = yf.download(syms, period='3mo', interval='1d',
                               auto_adjust=True, progress=False, group_by='ticker')
             for sym in syms:
                 try:
                     closes = (raw[sym]['Close'] if isinstance(raw.columns, pd.MultiIndex)
                               else raw['Close']).dropna()
                     if not closes.empty:
-                        price_map[sym] = round(float(closes.iloc[-1]), 2)
+                        price_map[sym]  = round(float(closes.iloc[-1]), 2)
+                        closes_map[sym] = closes
                 except Exception:
                     pass
         except Exception:
             pass
 
-    # Build enriched positions list
+    # Build enriched positions list with live signal check
     positions_list = []
     for sym, pos in p['positions'].items():
         current = price_map.get(sym, pos['entry_price'])
@@ -1620,18 +1622,34 @@ def get_portfolio():
         value   = pos['shares'] * current
         pnl     = value - cost
         pnl_pct = (pnl / cost * 100) if cost else 0
+
+        # Re-run fast screen to get the signal as it stands RIGHT NOW
+        cur_pred_pct, cur_conf = None, None
+        if sym in closes_map:
+            try:
+                cur_pred_pct, cur_conf = _fast_screen(closes_map[sym], horizon=5)
+            except Exception:
+                pass
+
+        # A signal is "stale" when the model has flipped to bearish (pred_pct < 0)
+        # or confidence has dropped below our entry threshold
+        signal_stale = (cur_pred_pct is not None and cur_pred_pct < 0)
+
         positions_list.append({
-            'symbol':          sym,
-            'shares':          pos['shares'],
-            'entry_price':     pos['entry_price'],
-            'entry_date':      pos['entry_date'],
-            'entry_conf':      pos['entry_conf'],
-            'entry_pred_pct':  pos['entry_pred_pct'],
-            'current_price':   round(current, 2),
-            'cost_basis':      round(cost, 2),
-            'current_value':   round(value, 2),
-            'pnl':             round(pnl, 2),
-            'pnl_pct':         round(pnl_pct, 2),
+            'symbol':           sym,
+            'shares':           pos['shares'],
+            'entry_price':      pos['entry_price'],
+            'entry_date':       pos['entry_date'],
+            'entry_conf':       pos['entry_conf'],
+            'entry_pred_pct':   pos['entry_pred_pct'],
+            'current_price':    round(current, 2),
+            'cost_basis':       round(cost, 2),
+            'current_value':    round(value, 2),
+            'pnl':              round(pnl, 2),
+            'pnl_pct':          round(pnl_pct, 2),
+            'current_pred_pct': round(cur_pred_pct, 2) if cur_pred_pct is not None else None,
+            'current_conf':     round(cur_conf, 4)     if cur_conf     is not None else None,
+            'signal_stale':     signal_stale,
         })
 
     total_val    = portfolio_value(p, price_map)

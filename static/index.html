@@ -276,6 +276,12 @@
   .trade-buy  { background: rgba(63,185,80,0.1);  }
   .trade-sell { background: rgba(248,81,73,0.07); }
   .pf-empty { color: var(--text2); text-align: center; padding: 30px; font-size: 0.85rem; }
+  .signal-stale { background: rgba(248,81,73,0.08); }
+  .stale-badge {
+    display: inline-block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.3px;
+    padding: 2px 5px; border-radius: 4px; background: rgba(248,81,73,0.18);
+    color: #f85149; margin-left: 5px; vertical-align: middle; white-space: nowrap;
+  }
 
   @media (max-width: 900px) {
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
@@ -1286,9 +1292,25 @@ function renderPortfolio(d) {
     posHTML = `<div class="pf-empty">No open positions. Click "Run Rebalance Now" to pick today's top stocks.</div>`;
   } else {
     const rows = d.positions.map(p => {
-      const pnlColor = p.pnl >= 0 ? 'var(--up)' : 'var(--down)';
-      const pnlSign  = p.pnl >= 0 ? '+' : '';
-      return `<tr>
+      const pnlColor  = p.pnl >= 0 ? 'var(--up)' : 'var(--down)';
+      const pnlSign   = p.pnl >= 0 ? '+' : '';
+      const rowClass  = p.signal_stale ? 'signal-stale' : '';
+
+      // Entry signal (at time of buy)
+      const entryStr = `${(p.entry_conf*100).toFixed(0)}% · ${p.entry_pred_pct>0?'+':''}${p.entry_pred_pct}%`;
+
+      // Live signal (current)
+      let liveStr = '…';
+      if (p.current_pred_pct !== null && p.current_pred_pct !== undefined) {
+        const liveDir   = p.current_pred_pct >= 0 ? '▲' : '▼';
+        const liveColor = p.current_pred_pct >= 0 ? 'var(--up)' : 'var(--down)';
+        const liveConf  = p.current_conf != null ? `${(p.current_conf*100).toFixed(0)}%` : '?';
+        const badge     = p.signal_stale
+          ? `<span class="stale-badge">SELL NEXT RUN</span>` : '';
+        liveStr = `<span style="color:${liveColor};font-weight:700">${liveDir} ${liveConf} · ${p.current_pred_pct>0?'+':''}${p.current_pred_pct}%</span>${badge}`;
+      }
+
+      return `<tr class="${rowClass}">
         <td><span class="pf-sym">${p.symbol}</span></td>
         <td>${p.shares}</td>
         <td>$${fmt(p.entry_price)}</td>
@@ -1296,14 +1318,14 @@ function renderPortfolio(d) {
         <td>$${fmtK(p.cost_basis)}</td>
         <td style="color:${pnlColor};font-weight:700">${pnlSign}$${fmtK(Math.abs(p.pnl))}</td>
         <td style="color:${pnlColor};font-weight:700">${pnlSign}${p.pnl_pct.toFixed(2)}%</td>
-        <td>${p.entry_date}</td>
-        <td style="font-size:0.7rem">${(p.entry_conf*100).toFixed(0)}% · ${p.entry_pred_pct>0?'+':''}${p.entry_pred_pct}%</td>
+        <td style="font-size:0.75rem;color:var(--text2)">${p.entry_date}<br><span style="font-size:0.68rem">Entry: ${entryStr}</span></td>
+        <td style="font-size:0.78rem">${liveStr}</td>
       </tr>`;
     }).join('');
     posHTML = `<table class="pf-pos-table">
       <thead><tr>
-        <th>Ticker</th><th>Shares</th><th>Entry</th><th>Current</th>
-        <th>Cost Basis</th><th>P&L</th><th>P&L %</th><th>Entered</th><th>Signal (conf·pred)</th>
+        <th>Ticker</th><th>Shares</th><th>Entry $</th><th>Current $</th>
+        <th>Cost</th><th>P&L</th><th>P&L %</th><th>Bought · Entry signal</th><th>Live signal</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
