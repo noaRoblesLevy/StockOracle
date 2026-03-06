@@ -940,11 +940,17 @@ function renderBacktestPanel(backtest, predictions) {
     const edgeStr = edge >= 0 ? `+${edge}pp` : `${edge}pp`;
     const color = acc >= 0.58 ? '#3fb950' : acc >= 0.53 ? '#e3b341' : '#8b949e';
     const meta  = modelMeta[key] || {label: key, color: '#8b949e'};
+    const modelPred = predictions[key] || {};
+    const correct = modelPred.bt_correct ?? '?';
+    const total   = modelPred.bt_total   ?? '?';
+    const sampleStr = total !== '?' ? `${correct}/${total} windows` : '';
     return `
       <div style="margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
           <span style="font-size:0.82rem;font-weight:600">${meta.label}</span>
-          <span style="font-size:0.82rem;color:${color};font-weight:700">${pct}% <span style="font-size:0.7rem;color:var(--text2)">(${edgeStr} vs random)</span></span>
+          <span style="font-size:0.82rem;color:${color};font-weight:700">${pct}%
+            <span style="font-size:0.7rem;color:var(--text2)">(${edgeStr} vs random${sampleStr ? ', ' + sampleStr : ''})</span>
+          </span>
         </div>
         <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;position:relative">
           <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.2)"></div>
@@ -953,9 +959,10 @@ function renderBacktestPanel(backtest, predictions) {
       </div>`;
   });
   const note = `<div style="font-size:0.7rem;color:var(--text2);margin-top:12px;line-height:1.5;border-top:1px solid var(--border);padding-top:10px">
-    Measured over 15 out-of-sample walk-forward windows. 50% = coin flip.
-    Academic research finds 52–58% is typical for quant models on liquid equities.
-    Above 60% is considered strong edge.
+    Bayesian-adjusted accuracy over 20 out-of-sample walk-forward windows.
+    Small sample counts are pulled toward 50% (coin-flip baseline) to prevent overconfidence —
+    a model that went 5/5 on trending data still shows ~65%, not 100%.
+    Academic research finds 52–58% is typical for quant models on liquid equities; above 60% is considered strong edge.
   </div>`;
   document.getElementById('btPanel').innerHTML = rows.join('') + note;
 }

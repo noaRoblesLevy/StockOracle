@@ -371,6 +371,27 @@ def compute_technical_indicators(df):
     return df
 
 
+def _shrink(correct: int, total: int, alpha: float = 8.0) -> float:
+    """
+    Bayesian shrinkage toward 50% (the random baseline).
+
+    Formula: (correct + α) / (total + 2α)
+
+    With small samples the estimate is pulled strongly toward 0.5.
+    As total grows, the shrinkage effect diminishes.
+
+    α = 8 examples:
+      9/10  raw → 65%   (was 90%)
+      5/10  raw → 50%   (stays at random)
+     13/15  raw → 68%   (was 87%)
+     10/15  raw → 58%
+     20/20  raw → 77%   (cap near 80%)
+    """
+    if total == 0:
+        return 0.5
+    return round((correct + alpha) / (total + 2 * alpha), 4)
+
+
 def _lr_predict_fast(train_vals, horizon_days):
     """Minimal LR predict used by backtester."""
     n = len(train_vals)
@@ -394,33 +415,31 @@ def _ema_predict_fast(train_ser, horizon_days):
     return current
 
 
-def compute_backtest_accuracy(prices, horizon_days, n_windows=15, train_window=80):
+def compute_backtest_accuracy(prices, horizon_days, n_windows=20, train_window=80):
     """
-    Walk-forward backtesting over the last n_windows periods.
-    For each window, trains on train_window days, predicts horizon_days ahead,
-    and records whether the predicted direction (up/down) matched reality.
-
-    Returns dict with per-model directional accuracy (0.0–1.0).
-    Honest baseline: 0.50 = random coin-flip.
+    Walk-forward backtesting over n_windows periods.
+    Returns Bayesian-shrunk directional accuracy per model.
+    Shrinkage pulls small-sample estimates toward 0.50 (random baseline).
+    Also returns raw correct/total counts for transparency.
     """
     prices = prices.dropna()
     needed = train_window + n_windows + horizon_days
     if len(prices) < needed:
-        return {k: 0.5 for k in ['linear_regression', 'arima', 'ema_crossover', 'holt_winters']}
+        return {k: {'acc': 0.5, 'correct': 0, 'total': 0}
+                for k in ['linear_regression', 'arima', 'ema_crossover', 'holt_winters']}
 
     correct = {k: 0 for k in ['linear_regression', 'arima', 'ema_crossover', 'holt_winters']}
     total   = {k: 0 for k in ['linear_regression', 'arima', 'ema_crossover', 'holt_winters']}
 
     for i in range(n_windows):
         end_train = len(prices) - n_windows - horizon_days + i
-        train = prices.iloc[end_train - train_window:end_train]
+        train  = prices.iloc[end_train - train_window:end_train]
         future = prices.iloc[end_train:end_train + horizon_days]
         if len(train) < 20 or len(future) < horizon_days:
             continue
 
-        baseline    = float(train.iloc[-1])
-        actual_end  = float(future.iloc[-1])
-        actual_up   = actual_end >= baseline
+        baseline   = float(train.iloc[-1])
+        actual_up  = float(future.iloc[-1]) >= baseline
 
         # ── Linear Regression ────────────────────────────────────────────────
         try:
@@ -430,7 +449,7 @@ def compute_backtest_accuracy(prices, horizon_days, n_windows=15, train_window=8
         except Exception:
             pass
 
-        # ── ARIMA(1,1,0) — faster order for backtesting ──────────────────────
+        # ── ARIMA(1,1,0) ─────────────────────────────────────────────────────
         try:
             res  = ARIMA(train.values, order=(1, 1, 0)).fit()
             pred = float(res.forecast(horizon_days)[-1])
@@ -447,9 +466,9 @@ def compute_backtest_accuracy(prices, horizon_days, n_windows=15, train_window=8
         except Exception:
             pass
 
-        # ── Holt-Winters (fixed params, no optimization for speed) ───────────
+        # ── Holt-Winters ─────────────────────────────────────────────────────
         try:
-            hw  = ExponentialSmoothing(
+            hw   = ExponentialSmoothing(
                 train.values, trend='add', initialization_method='estimated'
             ).fit(optimized=False, smoothing_level=0.2, smoothing_trend=0.1)
             pred = float(hw.forecast(horizon_days)[-1])
@@ -459,7 +478,11 @@ def compute_backtest_accuracy(prices, horizon_days, n_windows=15, train_window=8
             pass
 
     return {
-        k: round(correct[k] / total[k], 4) if total[k] > 0 else 0.5
+        k: {
+            'acc':     _shrink(correct[k], total[k]),
+            'correct': correct[k],
+            'total':   total[k],
+        }
         for k in correct
     }
 
@@ -537,80 +560,93 @@ def ensemble_predict(prices, horizon_days):
 
     # 1. Linear Regression
     lr_pred = predict_linear_regression(prices, horizon_days)
+    bt_lr   = bt_acc['linear_regression']
     results['linear_regression'] = {
         'predictions': lr_pred.tolist(),
-        'confidence': bt_acc['linear_regression'],
+        'confidence':  bt_lr['acc'],
+        'bt_correct':  bt_lr['correct'],
+        'bt_total':    bt_lr['total'],
         'label': 'Linear Regression',
     }
 
     # 2. ARIMA
     arima_pred, ci_lower, ci_upper = predict_arima(prices, horizon_days)
+    bt_ar = bt_acc['arima']
     if arima_pred is not None:
         results['arima'] = {
-            'predictions': arima_pred.tolist(),
-            'confidence': bt_acc['arima'],
-            'label': 'ARIMA',
+            'predictions':    arima_pred.tolist(),
+            'confidence':     bt_ar['acc'],
+            'bt_correct':     bt_ar['correct'],
+            'bt_total':       bt_ar['total'],
+            'label':          'ARIMA',
             'conf_int_lower': ci_lower,
             'conf_int_upper': ci_upper,
         }
 
     # 3. EMA Crossover
     ema_pred, ema_signal = predict_ema_crossover(prices, horizon_days)
+    bt_ema = bt_acc['ema_crossover']
     results['ema_crossover'] = {
         'predictions': ema_pred.tolist(),
-        'confidence': bt_acc['ema_crossover'],
-        'label': 'EMA Crossover',
-        'signal': ema_signal,
+        'confidence':  bt_ema['acc'],
+        'bt_correct':  bt_ema['correct'],
+        'bt_total':    bt_ema['total'],
+        'label':       'EMA Crossover',
+        'signal':      ema_signal,
     }
 
     # 4. Holt-Winters
     hw_pred = predict_holt_winters(prices, horizon_days)
+    bt_hw   = bt_acc['holt_winters']
     if hw_pred is not None:
         results['holt_winters'] = {
             'predictions': hw_pred.tolist(),
-            'confidence': bt_acc['holt_winters'],
-            'label': 'Holt-Winters',
+            'confidence':  bt_hw['acc'],
+            'bt_correct':  bt_hw['correct'],
+            'bt_total':    bt_hw['total'],
+            'label':       'Holt-Winters',
         }
 
-    # ── Weighted ensemble (weights = backtest accuracy) ───────────────────────
+    # ── Weighted ensemble (weights = shrunk backtest accuracy) ────────────────
     valid = [(v['predictions'], v['confidence']) for v in results.values() if v.get('predictions')]
     if valid:
         weights = np.array([c for _, c in valid])
         weights = weights / weights.sum() if weights.sum() > 0 else np.ones(len(valid)) / len(valid)
-        preds_matrix = np.array([p for p, _ in valid])
+        preds_matrix  = np.array([p for p, _ in valid])
         ensemble_preds = np.average(preds_matrix, axis=0, weights=weights)
 
-        # Model agreement on direction (vs current price)
         current_price = float(prices.dropna().iloc[-1])
-        directions = [p[-1] >= current_price for p, _ in valid]
-        agree_count = max(sum(directions), len(directions) - sum(directions))
-        agreement   = agree_count / len(directions)  # 0.5–1.0
-        consensus   = 'UP' if sum(directions) >= len(directions) / 2 else 'DOWN'
+        directions    = [p[-1] >= current_price for p, _ in valid]
+        agree_count   = max(sum(directions), len(directions) - sum(directions))
+        agreement     = agree_count / len(directions)
+        consensus     = 'UP' if sum(directions) >= len(directions) / 2 else 'DOWN'
 
-        # Prediction range across all models (last-step forecasts)
         all_final = [p[-1] for p, _ in valid]
         pred_range = {
-            'low':  round(float(min(all_final)), 2),
-            'high': round(float(max(all_final)), 2),
+            'low':        round(float(min(all_final)), 2),
+            'high':       round(float(max(all_final)), 2),
             'spread_pct': round((max(all_final) - min(all_final)) / current_price * 100, 2),
         }
 
-        # Ensemble confidence = mean backtest accuracy, boosted slightly when models agree
-        base_conf = float(np.mean([c for _, c in valid]))
-        agree_boost = (agreement - 0.5) * 0.10   # up to +5 pp when unanimous
-        ensemble_conf = round(min(0.80, base_conf + agree_boost), 4)
+        # Ensemble confidence: shrunk mean, small boost for model agreement
+        base_conf     = float(np.mean([c for _, c in valid]))
+        agree_boost   = (agreement - 0.5) * 0.08   # up to +4 pp when unanimous
+        ensemble_conf = round(min(0.78, base_conf + agree_boost), 4)
+        total_windows = sum(v.get('bt_total', 0) for v in results.values())
 
         results['ensemble'] = {
-            'predictions': ensemble_preds.tolist(),
-            'confidence': ensemble_conf,
-            'label': 'Ensemble (Weighted)',
-            'agreement': round(agreement, 3),
-            'consensus': consensus,
-            'pred_range': pred_range,
-            'backtest_windows': 15,
+            'predictions':     ensemble_preds.tolist(),
+            'confidence':      ensemble_conf,
+            'label':           'Ensemble (Weighted)',
+            'agreement':       round(agreement, 3),
+            'consensus':       consensus,
+            'pred_range':      pred_range,
+            'backtest_windows': total_windows,
         }
 
-    return results, bt_acc
+    # Return flat accuracy dict for the /api/predict response
+    bt_flat = {k: v['acc'] for k, v in bt_acc.items()}
+    return results, bt_flat
 
 
 def compute_stats(df, ticker_info):
@@ -713,7 +749,7 @@ def _fast_screen(closes: pd.Series, horizon: int):
     """
     Quickly predict direction + magnitude for a single ticker using
     LR trend extrapolation and EMA momentum — no ARIMA, very fast.
-    Returns (pred_pct, signal_conf) where conf is a 5-window mini-backtest.
+    Returns (pred_pct, signal_conf) where conf is a Bayesian-shrunk 12-window mini-backtest.
     """
     closes = closes.dropna()
     if len(closes) < 30:
@@ -733,8 +769,8 @@ def _fast_screen(closes: pd.Series, horizon: int):
     agree   = (lr_pct > 0) == (ema_pct > 0)
     pred_pct = lr_pct * 0.6 + ema_pct * 0.4 if agree else lr_pct
 
-    # ── 5-window mini-backtest (LR + EMA) ────────────────────────────────────
-    n_win, train_w = 5, 40
+    # ── 12-window mini-backtest (LR + EMA) with Bayesian shrinkage ──────────
+    n_win, train_w = 12, 40
     needed = train_w + n_win + horizon
     correct = total = 0
     if len(closes) >= needed:
@@ -751,7 +787,7 @@ def _fast_screen(closes: pd.Series, horizon: int):
                     total   += 1
                 except Exception:
                     pass
-    conf = round(correct / total, 3) if total > 0 else 0.5
+    conf = _shrink(correct, total)
 
     return round(pred_pct, 2), conf
 
