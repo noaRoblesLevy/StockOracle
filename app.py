@@ -10,8 +10,32 @@ import warnings
 import os
 import json
 import time
+import urllib.request
 from datetime import datetime, timedelta
 from portfolio import load_portfolio, rebalance, save_portfolio, portfolio_value
+
+# Optional: set GITHUB_REPO=owner/repo so /api/portfolio always reads the
+# latest portfolio.json committed by GitHub Actions (no git pull needed).
+GITHUB_REPO = os.environ.get('GITHUB_REPO', 'noaRoblesLevy/StockOracle')
+
+def _fetch_portfolio_from_github() -> dict | None:
+    """Download portfolio.json from GitHub raw and save locally if newer."""
+    if not GITHUB_REPO:
+        return None
+    url = f'https://raw.githubusercontent.com/{GITHUB_REPO}/master/portfolio.json'
+    try:
+        with urllib.request.urlopen(url, timeout=5) as resp:
+            remote = json.loads(resp.read().decode())
+        local = load_portfolio()
+        # Use remote if it was updated more recently (or local has never been updated)
+        remote_date = remote.get('last_updated') or ''
+        local_date  = local.get('last_updated')  or ''
+        if remote_date > local_date:
+            save_portfolio(remote)
+            return remote
+        return local
+    except Exception:
+        return None
 
 warnings.filterwarnings('ignore')
 
@@ -1001,8 +1025,10 @@ def predict():
 
 @app.route('/api/portfolio')
 def get_portfolio():
-    """Return current portfolio state enriched with live mark-to-market prices."""
-    p = load_portfolio()
+    """Return current portfolio state enriched with live mark-to-market prices.
+    Pulls the latest portfolio.json from GitHub first so trades made by the
+    scheduled GitHub Actions job are visible without a git pull."""
+    p = _fetch_portfolio_from_github() or load_portfolio()
 
     # Fetch live prices for open positions
     price_map = {}
