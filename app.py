@@ -370,155 +370,246 @@ def compute_technical_indicators(df):
     return df
 
 
+def _lr_predict_fast(train_vals, horizon_days):
+    """Minimal LR predict used by backtester."""
+    n = len(train_vals)
+    X = np.arange(n, dtype=float).reshape(-1, 1)
+    mn, mx = X.min(), X.max()
+    Xs = (X - mn) / (mx - mn + 1e-9)
+    lr = LinearRegression().fit(Xs, train_vals)
+    fX = (np.arange(n, n + horizon_days, dtype=float).reshape(-1, 1) - mn) / (mx - mn + 1e-9)
+    return float(lr.predict(fX)[-1])
+
+
+def _ema_predict_fast(train_ser, horizon_days):
+    """Minimal EMA momentum predict used by backtester."""
+    es = float(train_ser.ewm(span=9,  adjust=False).mean().iloc[-1])
+    el = float(train_ser.ewm(span=21, adjust=False).mean().iloc[-1])
+    base = float(train_ser.iloc[-1])
+    momentum = (es - el) / base
+    current = base
+    for i in range(horizon_days):
+        current += momentum * base * 0.1 * np.exp(-i * 0.05)
+    return current
+
+
+def compute_backtest_accuracy(prices, horizon_days, n_windows=15, train_window=80):
+    """
+    Walk-forward backtesting over the last n_windows periods.
+    For each window, trains on train_window days, predicts horizon_days ahead,
+    and records whether the predicted direction (up/down) matched reality.
+
+    Returns dict with per-model directional accuracy (0.0–1.0).
+    Honest baseline: 0.50 = random coin-flip.
+    """
+    prices = prices.dropna()
+    needed = train_window + n_windows + horizon_days
+    if len(prices) < needed:
+        return {k: 0.5 for k in ['linear_regression', 'arima', 'ema_crossover', 'holt_winters']}
+
+    correct = {k: 0 for k in ['linear_regression', 'arima', 'ema_crossover', 'holt_winters']}
+    total   = {k: 0 for k in ['linear_regression', 'arima', 'ema_crossover', 'holt_winters']}
+
+    for i in range(n_windows):
+        end_train = len(prices) - n_windows - horizon_days + i
+        train = prices.iloc[end_train - train_window:end_train]
+        future = prices.iloc[end_train:end_train + horizon_days]
+        if len(train) < 20 or len(future) < horizon_days:
+            continue
+
+        baseline    = float(train.iloc[-1])
+        actual_end  = float(future.iloc[-1])
+        actual_up   = actual_end >= baseline
+
+        # ── Linear Regression ────────────────────────────────────────────────
+        try:
+            pred = _lr_predict_fast(train.values, horizon_days)
+            correct['linear_regression'] += int((pred >= baseline) == actual_up)
+            total['linear_regression']   += 1
+        except Exception:
+            pass
+
+        # ── ARIMA(1,1,0) — faster order for backtesting ──────────────────────
+        try:
+            res  = ARIMA(train.values, order=(1, 1, 0)).fit()
+            pred = float(res.forecast(horizon_days)[-1])
+            correct['arima'] += int((pred >= baseline) == actual_up)
+            total['arima']   += 1
+        except Exception:
+            pass
+
+        # ── EMA Crossover ────────────────────────────────────────────────────
+        try:
+            pred = _ema_predict_fast(train, horizon_days)
+            correct['ema_crossover'] += int((pred >= baseline) == actual_up)
+            total['ema_crossover']   += 1
+        except Exception:
+            pass
+
+        # ── Holt-Winters (fixed params, no optimization for speed) ───────────
+        try:
+            hw  = ExponentialSmoothing(
+                train.values, trend='add', initialization_method='estimated'
+            ).fit(optimized=False, smoothing_level=0.2, smoothing_trend=0.1)
+            pred = float(hw.forecast(horizon_days)[-1])
+            correct['holt_winters'] += int((pred >= baseline) == actual_up)
+            total['holt_winters']   += 1
+        except Exception:
+            pass
+
+    return {
+        k: round(correct[k] / total[k], 4) if total[k] > 0 else 0.5
+        for k in correct
+    }
+
+
 def predict_linear_regression(prices, horizon_days):
-    """Trend-based linear regression with feature engineering."""
+    """Trend-based linear regression."""
     prices = prices.dropna()
     n = len(prices)
     X = np.arange(n).reshape(-1, 1)
     y = prices.values
-
     scaler = MinMaxScaler()
     X_scaled = scaler.fit_transform(X)
-
     model = LinearRegression()
     model.fit(X_scaled, y)
-
-    future_X = np.arange(n, n + horizon_days).reshape(-1, 1)
-    future_X_scaled = scaler.transform(future_X)
-    predictions = model.predict(future_X_scaled)
-
-    # Confidence: R² score on in-sample
-    r2 = model.score(X_scaled, y)
-
-    return predictions, r2
+    future_X_scaled = scaler.transform(np.arange(n, n + horizon_days).reshape(-1, 1))
+    return model.predict(future_X_scaled)
 
 
 def predict_arima(prices, horizon_days):
     """ARIMA(2,1,2) for mean-reverting statistical forecasting."""
     prices = prices.dropna()
-    try:
-        model = ARIMA(prices.values, order=(2, 1, 2))
-        result = model.fit()
-        forecast = result.forecast(steps=horizon_days)
-        conf_int = result.get_forecast(steps=horizon_days).conf_int()
-        confidence = max(0.0, 1 - result.aic / (len(prices) * 10))
-        return np.array(forecast), confidence, conf_int
-    except Exception:
-        # Fallback: ARIMA(1,1,0)
+    for order in [(2, 1, 2), (1, 1, 1), (1, 1, 0)]:
         try:
-            model = ARIMA(prices.values, order=(1, 1, 0))
-            result = model.fit()
+            result = ARIMA(prices.values, order=order).fit()
             forecast = result.forecast(steps=horizon_days)
-            conf_int = result.get_forecast(steps=horizon_days).conf_int()
-            confidence = 0.4
-            return np.array(forecast), confidence, conf_int
+            ci = result.get_forecast(steps=horizon_days).conf_int()
+            if isinstance(ci, np.ndarray):
+                ci_lower, ci_upper = ci[:, 0].tolist(), ci[:, 1].tolist()
+            else:
+                ci_lower, ci_upper = ci.iloc[:, 0].tolist(), ci.iloc[:, 1].tolist()
+            return np.array(forecast), ci_lower, ci_upper
         except Exception:
-            return None, 0, None
+            continue
+    return None, [], []
 
 
 def predict_ema_crossover(prices, horizon_days):
     """EMA-based momentum extrapolation."""
     prices = prices.dropna()
-    ema_short = prices.ewm(span=9, adjust=False).mean()
-    ema_long = prices.ewm(span=21, adjust=False).mean()
-
-    last_price = prices.iloc[-1]
-    momentum = (ema_short.iloc[-1] - ema_long.iloc[-1]) / last_price
-    daily_drift = momentum * last_price * 0.1  # damped
-
-    predictions = []
-    current = last_price
+    ema_short = prices.ewm(span=9,  adjust=False).mean()
+    ema_long  = prices.ewm(span=21, adjust=False).mean()
+    last_price = float(prices.iloc[-1])
+    momentum   = (float(ema_short.iloc[-1]) - float(ema_long.iloc[-1])) / last_price
+    daily_drift = momentum * last_price * 0.1
+    predictions, current = [], last_price
     for i in range(horizon_days):
-        decay = np.exp(-i * 0.05)  # momentum decays over time
-        current = current + daily_drift * decay
+        current += daily_drift * np.exp(-i * 0.05)
         predictions.append(current)
-
     signal = "BULLISH" if momentum > 0 else "BEARISH"
-    confidence = min(0.75, abs(momentum) * 10)
-    return np.array(predictions), confidence, signal
+    return np.array(predictions), signal
 
 
 def predict_holt_winters(prices, horizon_days):
-    """Holt-Winters exponential smoothing for trend+seasonality capture."""
+    """Holt-Winters exponential smoothing."""
     prices = prices.dropna()
     try:
-        model = ExponentialSmoothing(
-            prices.values,
-            trend='add',
-            seasonal=None,
+        result = ExponentialSmoothing(
+            prices.values, trend='add', seasonal=None,
             initialization_method='estimated'
-        )
-        result = model.fit(optimized=True)
-        forecast = result.forecast(horizon_days)
-
-        # Confidence based on in-sample MSE
-        in_sample = result.fittedvalues
-        mse = np.mean((prices.values - in_sample) ** 2)
-        rmse_pct = np.sqrt(mse) / prices.mean()
-        confidence = max(0.2, 1 - rmse_pct * 5)
-
-        return np.array(forecast), confidence
+        ).fit(optimized=True)
+        return np.array(result.forecast(horizon_days))
     except Exception:
-        return None, 0
+        return None
 
 
 def ensemble_predict(prices, horizon_days):
-    """Weighted ensemble of all 4 models."""
+    """
+    Run all 4 models, backtest their directional accuracy,
+    use those real accuracies as weights, and return rich metadata.
+    """
+    # ── Backtest each model (out-of-sample directional accuracy) ─────────────
+    bt_acc = compute_backtest_accuracy(prices, horizon_days)
+
     results = {}
 
     # 1. Linear Regression
-    lr_pred, lr_conf = predict_linear_regression(prices, horizon_days)
-    results['linear_regression'] = {'predictions': lr_pred.tolist(), 'confidence': float(lr_conf), 'label': 'Linear Regression'}
+    lr_pred = predict_linear_regression(prices, horizon_days)
+    results['linear_regression'] = {
+        'predictions': lr_pred.tolist(),
+        'confidence': bt_acc['linear_regression'],
+        'label': 'Linear Regression',
+    }
 
     # 2. ARIMA
-    arima_pred, arima_conf, arima_ci = predict_arima(prices, horizon_days)
+    arima_pred, ci_lower, ci_upper = predict_arima(prices, horizon_days)
     if arima_pred is not None:
-        # conf_int may be DataFrame or ndarray depending on statsmodels version
-        if arima_ci is not None:
-            if isinstance(arima_ci, np.ndarray):
-                ci_lower = arima_ci[:, 0].tolist()
-                ci_upper = arima_ci[:, 1].tolist()
-            else:
-                ci_lower = arima_ci.iloc[:, 0].tolist()
-                ci_upper = arima_ci.iloc[:, 1].tolist()
-        else:
-            ci_lower, ci_upper = [], []
         results['arima'] = {
             'predictions': arima_pred.tolist(),
-            'confidence': float(arima_conf),
+            'confidence': bt_acc['arima'],
             'label': 'ARIMA',
             'conf_int_lower': ci_lower,
             'conf_int_upper': ci_upper,
         }
 
     # 3. EMA Crossover
-    ema_pred, ema_conf, ema_signal = predict_ema_crossover(prices, horizon_days)
-    results['ema_crossover'] = {'predictions': ema_pred.tolist(), 'confidence': float(ema_conf), 'label': 'EMA Crossover', 'signal': ema_signal}
+    ema_pred, ema_signal = predict_ema_crossover(prices, horizon_days)
+    results['ema_crossover'] = {
+        'predictions': ema_pred.tolist(),
+        'confidence': bt_acc['ema_crossover'],
+        'label': 'EMA Crossover',
+        'signal': ema_signal,
+    }
 
     # 4. Holt-Winters
-    hw_pred, hw_conf = predict_holt_winters(prices, horizon_days)
+    hw_pred = predict_holt_winters(prices, horizon_days)
     if hw_pred is not None:
-        results['holt_winters'] = {'predictions': hw_pred.tolist(), 'confidence': float(hw_conf), 'label': 'Holt-Winters'}
-
-    # Weighted ensemble
-    valid_models = [(v['predictions'], v['confidence']) for v in results.values() if v.get('predictions')]
-    if valid_models:
-        weights = np.array([c for _, c in valid_models])
-        total_w = weights.sum()
-        if total_w > 0:
-            weights = weights / total_w
-        else:
-            weights = np.ones(len(valid_models)) / len(valid_models)
-
-        preds_matrix = np.array([p for p, _ in valid_models])
-        ensemble = np.average(preds_matrix, axis=0, weights=weights)
-        results['ensemble'] = {
-            'predictions': ensemble.tolist(),
-            'confidence': float(np.mean([c for _, c in valid_models])),
-            'label': 'Ensemble (Weighted)'
+        results['holt_winters'] = {
+            'predictions': hw_pred.tolist(),
+            'confidence': bt_acc['holt_winters'],
+            'label': 'Holt-Winters',
         }
 
-    return results
+    # ── Weighted ensemble (weights = backtest accuracy) ───────────────────────
+    valid = [(v['predictions'], v['confidence']) for v in results.values() if v.get('predictions')]
+    if valid:
+        weights = np.array([c for _, c in valid])
+        weights = weights / weights.sum() if weights.sum() > 0 else np.ones(len(valid)) / len(valid)
+        preds_matrix = np.array([p for p, _ in valid])
+        ensemble_preds = np.average(preds_matrix, axis=0, weights=weights)
+
+        # Model agreement on direction (vs current price)
+        current_price = float(prices.dropna().iloc[-1])
+        directions = [p[-1] >= current_price for p, _ in valid]
+        agree_count = max(sum(directions), len(directions) - sum(directions))
+        agreement   = agree_count / len(directions)  # 0.5–1.0
+        consensus   = 'UP' if sum(directions) >= len(directions) / 2 else 'DOWN'
+
+        # Prediction range across all models (last-step forecasts)
+        all_final = [p[-1] for p, _ in valid]
+        pred_range = {
+            'low':  round(float(min(all_final)), 2),
+            'high': round(float(max(all_final)), 2),
+            'spread_pct': round((max(all_final) - min(all_final)) / current_price * 100, 2),
+        }
+
+        # Ensemble confidence = mean backtest accuracy, boosted slightly when models agree
+        base_conf = float(np.mean([c for _, c in valid]))
+        agree_boost = (agreement - 0.5) * 0.10   # up to +5 pp when unanimous
+        ensemble_conf = round(min(0.80, base_conf + agree_boost), 4)
+
+        results['ensemble'] = {
+            'predictions': ensemble_preds.tolist(),
+            'confidence': ensemble_conf,
+            'label': 'Ensemble (Weighted)',
+            'agreement': round(agreement, 3),
+            'consensus': consensus,
+            'pred_range': pred_range,
+            'backtest_windows': 15,
+        }
+
+    return results, bt_acc
 
 
 def compute_stats(df, ticker_info):
@@ -665,7 +756,7 @@ def predict():
 
         # Run predictions on closing prices
         close = df['Close']
-        predictions = ensemble_predict(close, horizon_days)
+        predictions, bt_acc = ensemble_predict(close, horizon_days)
 
         # Build forecast dates (trading days only)
         last_date = df.index[-1]
@@ -717,6 +808,7 @@ def predict():
             'horizon_days': horizon_days,
             'forecast_dates': forecast_dates,
             'predictions': predictions,
+            'backtest': bt_acc,
             'stats': stats,
             'historical': historical,
             'generated_at': datetime.now().isoformat()

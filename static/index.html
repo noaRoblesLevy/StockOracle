@@ -301,7 +301,7 @@ function selectSymbol(symbol) {
 
 async function loadPrediction(symbol, horizon) {
   const main = document.getElementById('mainContent');
-  main.innerHTML = `<div class="loading"><div class="spinner"></div><div style="color:var(--text2)">Analyzing ${symbol}...</div></div>`;
+  main.innerHTML = `<div class="loading"><div class="spinner"></div><div style="color:var(--text2);text-align:center">Analyzing ${symbol}...<br><span style="font-size:0.78rem;opacity:0.7">Running 4 models + walk-forward backtesting</span></div></div>`;
   try {
     const res = await fetch(`/api/predict?symbol=${symbol}&horizon=${horizon}`);
     const data = await res.json();
@@ -325,7 +325,7 @@ function showError(msg) {
 
 // ─── Render Dashboard ─────────────────────────────────────────────────────────
 function renderDashboard(data) {
-  const { symbol, name, horizon, stats, predictions, historical, forecast_dates } = data;
+  const { symbol, name, horizon, stats, predictions, historical, forecast_dates, backtest } = data;
   const last = historical.close[historical.close.length - 1];
 
   const main = document.getElementById('mainContent');
@@ -352,8 +352,23 @@ function renderDashboard(data) {
 
     <!-- PREDICTION CARDS -->
     <div class="card" style="margin-bottom:16px">
-      <div class="card-title">Model Predictions — ${horizonLabel(horizon)}</div>
+      <div class="card-header">
+        <span class="card-title">Model Predictions — ${horizonLabel(horizon)}</span>
+        <span style="font-size:0.72rem;color:var(--text2)">Confidence = walk-forward backtest directional accuracy (baseline: 50% = coin flip)</span>
+      </div>
       <div class="pred-grid" id="predCards"></div>
+    </div>
+
+    <!-- BACKTEST + AGREEMENT PANEL -->
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-title">Backtested Directional Accuracy (15 windows)</div>
+        <div id="btPanel"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Prediction Range & Model Consensus</div>
+        <div id="consensusPanel"></div>
+      </div>
     </div>
 
     <!-- CHARTS ROW 1: Main Price Chart -->
@@ -435,12 +450,14 @@ function renderDashboard(data) {
 
   renderSignals(stats);
   renderPredCards(predictions, last, forecast_dates);
+  renderBacktestPanel(backtest, predictions);
+  renderConsensusPanel(predictions, last, stats);
   renderPriceChart(historical, forecast_dates, predictions, 'price');
   renderForecastChart(historical, forecast_dates, predictions, 'price');
   renderReturnsChart(historical, 'daily');
   renderRSIChart(historical);
   renderMACDChart(historical);
-  renderModelTable(predictions, last);
+  renderModelTable(predictions, last, backtest);
   renderStatGrid(stats);
   renderFundGrid(stats);
 }
@@ -488,17 +505,33 @@ function renderPredCards(predictions, currentPrice, forecast_dates) {
   for (const key of order) {
     const m = predictions[key];
     if (!m) continue;
-    const target = m.predictions[m.predictions.length - 1];
-    const chg = ((target - currentPrice) / currentPrice) * 100;
-    const conf = Math.round((m.confidence || 0) * 100);
-    const confColor = conf > 60 ? '#3fb950' : conf > 35 ? '#e3b341' : '#f85149';
+    const target  = m.predictions[m.predictions.length - 1];
+    const chg     = ((target - currentPrice) / currentPrice) * 100;
+    const conf    = Math.round((m.confidence || 0) * 100);
+    const edge    = conf - 50;
+    const edgeStr = edge >= 0 ? `+${edge}pp edge` : `${edge}pp`;
+    // Color thresholds are now honest: >=58% = good, >=53% = ok, <53% = weak
+    const confColor = conf >= 58 ? '#3fb950' : conf >= 53 ? '#e3b341' : '#8b949e';
+    const dirArrow  = chg >= 0 ? '▲' : '▼';
+    const dirLabel  = chg >= 0 ? 'LONG' : 'SHORT';
+    // Extra ensemble fields
+    const agrHtml = key === 'ensemble' && m.agreement != null
+      ? `<div style="font-size:0.72rem;color:var(--text2);margin-top:4px">Agreement: ${Math.round(m.agreement*100)}%</div>`
+      : '';
     html += `
       <div class="pred-card ${key === 'ensemble' ? 'ensemble' : ''}">
         <div class="pred-label">${m.label}${key === 'ensemble' ? ' <span class="model-badge badge-ensemble">BEST</span>' : ''}</div>
-        <div class="pred-price ${chg >= 0 ? 'up' : 'down'}">$${fmt(target)}</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div class="pred-price ${chg >= 0 ? 'up' : 'down'}">$${fmt(target)}</div>
+          <div style="font-size:1rem;font-weight:700;color:${chg>=0?'var(--up)':'var(--down)'}">${dirArrow} ${dirLabel}</div>
+        </div>
         <div class="pred-change ${chg >= 0 ? 'up' : 'down'}">${chg >= 0 ? '+' : ''}${fmt(chg)}%</div>
-        <div class="pred-conf">Confidence: ${conf}%</div>
-        <div class="conf-bar"><div class="conf-fill" style="width:${conf}%;background:${confColor}"></div></div>
+        <div class="pred-conf" style="margin-top:6px">Backtest accuracy: <strong style="color:${confColor}">${conf}%</strong> <span style="color:var(--text2);font-size:0.7rem">(${edgeStr})</span></div>
+        <div class="conf-bar" style="position:relative">
+          <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.15)"></div>
+          <div class="conf-fill" style="width:${conf}%;background:${confColor}"></div>
+        </div>
+        ${agrHtml}
       </div>`;
   }
   el.innerHTML = html;
@@ -667,24 +700,113 @@ function renderMACDChart(historical) {
   ], chartLayout(true), {responsive: true, displayModeBar: false});
 }
 
+// ─── Backtest accuracy panel ──────────────────────────────────────────────────
+function renderBacktestPanel(backtest, predictions) {
+  const modelMeta = {
+    linear_regression: {label: 'Linear Regression', color: '#3fb950'},
+    arima:             {label: 'ARIMA',              color: '#58a6ff'},
+    ema_crossover:     {label: 'EMA Crossover',      color: '#e3b341'},
+    holt_winters:      {label: 'Holt-Winters',       color: '#f97316'},
+  };
+  const rows = Object.entries(backtest).map(([key, acc]) => {
+    const pct  = Math.round(acc * 100);
+    const edge  = pct - 50;
+    const edgeStr = edge >= 0 ? `+${edge}pp` : `${edge}pp`;
+    const color = acc >= 0.58 ? '#3fb950' : acc >= 0.53 ? '#e3b341' : '#8b949e';
+    const meta  = modelMeta[key] || {label: key, color: '#8b949e'};
+    return `
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:0.82rem;font-weight:600">${meta.label}</span>
+          <span style="font-size:0.82rem;color:${color};font-weight:700">${pct}% <span style="font-size:0.7rem;color:var(--text2)">(${edgeStr} vs random)</span></span>
+        </div>
+        <div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;position:relative">
+          <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.2)"></div>
+          <div style="width:${pct}%;height:100%;background:${color};border-radius:3px;transition:width 0.6s"></div>
+        </div>
+      </div>`;
+  });
+  const note = `<div style="font-size:0.7rem;color:var(--text2);margin-top:12px;line-height:1.5;border-top:1px solid var(--border);padding-top:10px">
+    Measured over 15 out-of-sample walk-forward windows. 50% = coin flip.
+    Academic research finds 52–58% is typical for quant models on liquid equities.
+    Above 60% is considered strong edge.
+  </div>`;
+  document.getElementById('btPanel').innerHTML = rows.join('') + note;
+}
+
+// ─── Consensus panel ──────────────────────────────────────────────────────────
+function renderConsensusPanel(predictions, currentPrice, stats) {
+  const ens = predictions.ensemble;
+  if (!ens) { document.getElementById('consensusPanel').innerHTML = 'N/A'; return; }
+
+  const { agreement, consensus, pred_range } = ens;
+  const agreePct = Math.round(agreement * 100);
+  const csColor  = consensus === 'UP' ? 'var(--up)' : 'var(--down)';
+  const csArrow  = consensus === 'UP' ? '▲' : '▼';
+
+  // Count individual model directions
+  const modelKeys = ['linear_regression', 'arima', 'ema_crossover', 'holt_winters'];
+  const dirs = modelKeys.map(k => {
+    if (!predictions[k]) return null;
+    const target = predictions[k].predictions[predictions[k].predictions.length - 1];
+    return target >= currentPrice ? 'UP' : 'DOWN';
+  }).filter(Boolean);
+  const upCount   = dirs.filter(d => d === 'UP').length;
+  const downCount = dirs.filter(d => d === 'DOWN').length;
+
+  const rangeChgLow  = ((pred_range.low  - currentPrice) / currentPrice * 100).toFixed(2);
+  const rangeChgHigh = ((pred_range.high - currentPrice) / currentPrice * 100).toFixed(2);
+
+  document.getElementById('consensusPanel').innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+      <div style="text-align:center">
+        <div style="font-size:2.5rem;font-weight:800;color:${csColor}">${csArrow} ${consensus}</div>
+        <div style="font-size:0.75rem;color:var(--text2)">Model consensus</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:0.8rem;color:var(--text2);margin-bottom:4px">Agreement: <strong style="color:var(--text)">${agreePct}%</strong> of models agree</div>
+        <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden">
+          <div style="width:${agreePct}%;height:100%;background:${agreePct>=75?'var(--up)':agreePct>=60?'var(--warn)':'var(--text2)'};border-radius:4px"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <span style="color:var(--up);font-size:0.8rem;font-weight:600">▲ UP: ${upCount}</span>
+          <span style="color:var(--down);font-size:0.8rem;font-weight:600">▼ DOWN: ${downCount}</span>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border-radius:8px;padding:12px">
+      <div style="font-size:0.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px">Prediction Range (across all models)</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:0.85rem"><span style="color:var(--text2)">Low</span> <strong>$${fmt(pred_range.low)}</strong> <span style="color:${rangeChgLow>=0?'var(--up)':'var(--down)'};">${rangeChgLow>=0?'+':''}${rangeChgLow}%</span></span>
+        <span style="font-size:0.85rem"><span style="color:var(--text2)">High</span> <strong>$${fmt(pred_range.high)}</strong> <span style="color:${rangeChgHigh>=0?'var(--up)':'var(--down)'};">${rangeChgHigh>=0?'+':''}${rangeChgHigh}%</span></span>
+      </div>
+      <div style="font-size:0.75rem;color:var(--text2)">Spread: <strong style="color:var(--text)">${pred_range.spread_pct}%</strong> — ${pred_range.spread_pct < 2 ? 'High model agreement on magnitude' : pred_range.spread_pct < 5 ? 'Moderate uncertainty' : 'High uncertainty — models diverge significantly'}</div>
+    </div>`;
+}
+
 // ─── Model Table ──────────────────────────────────────────────────────────────
-function renderModelTable(predictions, currentPrice) {
+function renderModelTable(predictions, currentPrice, backtest) {
+  const bt = backtest || {};
+  const btKey = {linear_regression:'linear_regression', arima:'arima', ema_crossover:'ema_crossover', holt_winters:'holt_winters', ensemble: null};
   const rows = Object.entries(predictions).map(([key, m]) => {
     const target = m.predictions[m.predictions.length - 1];
-    const chg = ((target - currentPrice) / currentPrice) * 100;
+    const chg  = ((target - currentPrice) / currentPrice) * 100;
     const conf = Math.round((m.confidence || 0) * 100);
+    const dir  = target >= currentPrice ? '<span class="up">▲ UP</span>' : '<span class="down">▼ DOWN</span>';
+    const btVal = btKey[key] && bt[btKey[key]] ? `${Math.round(bt[btKey[key]]*100)}%` : (key === 'ensemble' ? `${conf}%` : '—');
     return `<tr>
       <td class="model-name">${m.label}${key === 'ensemble' ? '<span class="model-badge badge-ensemble">BEST</span>' : ''}</td>
       <td>$${fmt(target)}</td>
       <td class="${chg >= 0 ? 'up' : 'down'}">${chg >= 0 ? '+' : ''}${fmt(chg)}%</td>
-      <td><div style="display:flex;align-items:center;gap:8px">
-        <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
-          <div style="width:${conf}%;height:100%;background:${conf>60?'var(--up)':conf>35?'var(--warn)':'var(--down)'};border-radius:3px"></div>
-        </div>${conf}%</div></td>
+      <td>${dir}</td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div style="flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+          <div style="width:${conf}%;height:100%;background:${conf>=58?'var(--up)':conf>=53?'var(--warn)':'var(--text2)'};border-radius:3px"></div>
+        </div><span style="font-size:0.8rem">${btVal}</span></div></td>
     </tr>`;
   });
   document.getElementById('modelTable').innerHTML =
-    `<tr><th>Model</th><th>Target Price</th><th>Change</th><th>Confidence</th></tr>${rows.join('')}`;
+    `<tr><th>Model</th><th>Target</th><th>Change</th><th>Direction</th><th>Backtest Acc.</th></tr>${rows.join('')}`;
 }
 
 // ─── Stat Grid ────────────────────────────────────────────────────────────────
