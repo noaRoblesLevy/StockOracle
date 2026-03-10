@@ -1225,18 +1225,30 @@ function renderPortfolio(d) {
   const invPct    = (d.positions_value / d.total_value * 100).toFixed(0);
   const daysSince = d.created ? Math.round((Date.now() - new Date(d.created)) / 86400000) : '?';
 
+  const realPnl   = d.realized_pnl   ?? 0;
+  const unreal    = d.unrealized_pnl ?? 0;
+  const realColor = realPnl  >= 0 ? 'var(--up)' : 'var(--down)';
+  const unrColor  = unreal   >= 0 ? 'var(--up)' : 'var(--down)';
+  const realSign  = realPnl  >= 0 ? '+' : '';
+  const unrSign   = unreal   >= 0 ? '+' : '';
+
   // ── Summary cards ────────────────────────────────────────────────────────
   const summaryHTML = `
   <div class="pf-summary">
     <div class="pf-card">
       <div class="pf-card-label">Total Value</div>
       <div class="pf-card-val">$${fmtK(d.total_value)}</div>
-      <div class="pf-card-sub">${d.positions.length} position${d.positions.length!==1?'s':''} + cash</div>
+      <div class="pf-card-sub" style="color:${pnlColor}">${pnlSign}$${fmtK(Math.abs(d.total_pnl))} (${pnlSign}${d.total_pnl_pct.toFixed(2)}%)</div>
     </div>
     <div class="pf-card">
-      <div class="pf-card-label">Total P&amp;L</div>
-      <div class="pf-card-val" style="color:${pnlColor}">${pnlSign}$${fmtK(Math.abs(d.total_pnl))}</div>
-      <div class="pf-card-sub" style="color:${pnlColor}">${pnlSign}${d.total_pnl_pct.toFixed(2)}% since start</div>
+      <div class="pf-card-label">Realized P&amp;L</div>
+      <div class="pf-card-val" style="color:${realColor}">${realSign}$${fmtK(Math.abs(realPnl))}</div>
+      <div class="pf-card-sub" style="color:${realColor}">Locked-in from closed trades</div>
+    </div>
+    <div class="pf-card">
+      <div class="pf-card-label">Unrealized P&amp;L</div>
+      <div class="pf-card-val" style="color:${unrColor}">${unrSign}$${fmtK(Math.abs(unreal))}</div>
+      <div class="pf-card-sub" style="color:${unrColor}">Open positions (mark-to-market)</div>
     </div>
     <div class="pf-card">
       <div class="pf-card-label">Cash Available</div>
@@ -1246,12 +1258,7 @@ function renderPortfolio(d) {
     <div class="pf-card">
       <div class="pf-card-label">Starting Balance</div>
       <div class="pf-card-val">$${fmtK(d.initial_balance)}</div>
-      <div class="pf-card-sub">Started ${d.created || '—'}</div>
-    </div>
-    <div class="pf-card">
-      <div class="pf-card-label">Days Running</div>
-      <div class="pf-card-val">${daysSince}</div>
-      <div class="pf-card-sub">${d.daily_values ? d.daily_values.length : 0} snapshots</div>
+      <div class="pf-card-sub">Started ${d.created || '—'} · ${daysSince}d running</div>
     </div>
     <div class="pf-card">
       <div class="pf-card-label">Trades Made</div>

@@ -1667,23 +1667,30 @@ def get_portfolio():
             'signal_stale':     signal_stale,
         })
 
-    total_val    = portfolio_value(p, price_map)
+    total_val     = portfolio_value(p, price_map)
     positions_val = total_val - p['cash']
-    total_pnl    = total_val - p['initial_balance']
+    total_pnl     = total_val - p['initial_balance']
     total_pnl_pct = total_pnl / p['initial_balance'] * 100
 
+    # Realized P&L: sum of locked-in gains/losses from closed SELL trades
+    realized_pnl = sum(t.get('pnl') or 0 for t in p['trades'] if t.get('action') == 'SELL')
+    # Unrealized P&L: paper gain/loss on currently open positions
+    unrealized_pnl = sum(pos['pnl'] for pos in positions_list)
+
     return jsonify({
-        'initial_balance': p['initial_balance'],
-        'cash':            round(p['cash'], 2),
-        'positions_value': round(positions_val, 2),
-        'total_value':     round(total_val, 2),
-        'total_pnl':       round(total_pnl, 2),
-        'total_pnl_pct':   round(total_pnl_pct, 2),
-        'positions':       positions_list,
-        'trades':          list(reversed(p['trades']))[:50],   # last 50, newest first
-        'daily_values':    p['daily_values'],
-        'last_updated':    p.get('last_updated'),
-        'created':         p.get('created'),
+        'initial_balance':  p['initial_balance'],
+        'cash':             round(p['cash'], 2),
+        'positions_value':  round(positions_val, 2),
+        'total_value':      round(total_val, 2),
+        'total_pnl':        round(total_pnl, 2),
+        'total_pnl_pct':    round(total_pnl_pct, 2),
+        'realized_pnl':     round(realized_pnl, 2),
+        'unrealized_pnl':   round(unrealized_pnl, 2),
+        'positions':        positions_list,
+        'trades':           list(reversed(p['trades']))[:50],   # last 50, newest first
+        'daily_values':     p['daily_values'],
+        'last_updated':     p.get('last_updated'),
+        'created':          p.get('created'),
     })
 
 
