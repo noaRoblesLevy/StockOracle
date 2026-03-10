@@ -1226,8 +1226,19 @@ async function triggerRebalance() {
     const res = await fetch('/api/portfolio/rebalance', {method:'POST',
       headers:{'Content-Type':'application/json'}, body: JSON.stringify({horizon:'week'})});
     const d = await res.json();
-    btn.textContent = d.summary || 'Done';
-    setTimeout(() => loadPortfolio(), 800);
+    if (d.ok) {
+      btn.textContent = d.summary || 'Done';
+      setTimeout(() => loadPortfolio(), 800);
+    } else {
+      // Cooldown active — show the wait message, re-enable after 3s
+      btn.textContent = d.summary;
+      btn.style.color = 'var(--down)';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = '▶ Run Rebalance Now';
+        btn.style.color = '';
+      }, 3000);
+    }
   } catch(e) {
     btn.textContent = 'Error – retry';
     btn.disabled = false;

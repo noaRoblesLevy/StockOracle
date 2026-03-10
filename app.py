@@ -1651,15 +1651,27 @@ def get_portfolio():
     })
 
 
+_last_manual_rebalance: float = 0.0   # epoch seconds
+_MANUAL_REBALANCE_COOLDOWN = 3600     # 1 hour between manual runs
+
 @app.route('/api/portfolio/rebalance', methods=['POST'])
 def trigger_rebalance():
-    """Manually trigger a rebalance (ignores today-already-ran guard)."""
+    """Manually trigger a rebalance. Enforces a 1-hour cooldown to prevent
+    the button being clicked multiple times and churning through the same
+    stocks repeatedly in one day."""
+    global _last_manual_rebalance
+    elapsed = time.time() - _last_manual_rebalance
+    if elapsed < _MANUAL_REBALANCE_COOLDOWN:
+        wait = int(_MANUAL_REBALANCE_COOLDOWN - elapsed)
+        return jsonify({'ok': False,
+                        'summary': f'Cooldown active — wait {wait//60}m {wait%60}s before rebalancing again.'})
+
     horizon = request.json.get('horizon', 'week') if request.is_json else 'week'
     p = load_portfolio()
-    # Allow re-run by clearing last_updated
-    p['last_updated'] = None
+    p['last_updated'] = None   # bypass the "already ran today" guard
     p, summary = rebalance(p, horizon)
     save_portfolio(p)
+    _last_manual_rebalance = time.time()
     return jsonify({'ok': True, 'summary': summary})
 
 
