@@ -1579,6 +1579,13 @@ function renderPortfolio(d) {
     document.getElementById('pfSectorPie').innerHTML =
       `<div class="pf-empty" style="padding-top:70px">No positions</div>`;
   }
+
+  // ── Re-apply backtest result if one was previously run ────────────────────
+  // renderPortfolio() is called on every 30-second silent refresh, which
+  // rebuilds the DOM and wipes #pfBacktestResult. Restore it immediately.
+  if (window._pfBacktestData) {
+    window._pfRenderBacktestResult(window._pfBacktestData);
+  }
 }
 
 function fmtK(n) {
@@ -1627,7 +1634,69 @@ window._pfLoadMoreTrades = function() {
   if (container) container.innerHTML = window._pfRenderTrades();
 };
 
-// ── Backtest runner ───────────────────────────────────────────────────────────
+// ── Backtest renderer (separated so it survives portfolio refresh) ────────────
+window._pfBacktestData = null;   // persists across silent refreshes
+
+window._pfRenderBacktestResult = function(d) {
+  const res = document.getElementById('pfBacktestResult');
+  if (!res) return;
+  const retColor  = d.total_return_pct >= 0 ? 'var(--up)' : 'var(--down)';
+  const retSign   = d.total_return_pct >= 0 ? '+' : '';
+  const spyColor  = d.spy_return_pct  >= 0 ? 'var(--up)' : 'var(--down)';
+  const spySign   = d.spy_return_pct  >= 0 ? '+' : '';
+  const edge      = d.total_return_pct - (d.spy_return_pct || 0);
+  const edgeColor = edge >= 0 ? 'var(--up)' : 'var(--down)';
+  res.innerHTML = `
+    <div class="bt-stat-grid">
+      <div class="bt-stat"><div class="bt-stat-label">Strategy Return</div>
+        <div class="bt-stat-val" style="color:${retColor}">${retSign}${d.total_return_pct.toFixed(1)}%</div></div>
+      <div class="bt-stat"><div class="bt-stat-label">SPY Return (same period)</div>
+        <div class="bt-stat-val" style="color:${spyColor}">${spySign}${(d.spy_return_pct||0).toFixed(1)}%</div></div>
+      <div class="bt-stat"><div class="bt-stat-label">Alpha vs SPY</div>
+        <div class="bt-stat-val" style="color:${edgeColor}">${edge>=0?'+':''}${edge.toFixed(1)}%</div></div>
+      <div class="bt-stat"><div class="bt-stat-label">Max Drawdown</div>
+        <div class="bt-stat-val" style="color:var(--down)">-${d.max_drawdown_pct.toFixed(1)}%</div></div>
+      <div class="bt-stat"><div class="bt-stat-label">Win Rate</div>
+        <div class="bt-stat-val">${d.win_rate.toFixed(0)}%</div></div>
+      <div class="bt-stat"><div class="bt-stat-label">Total Trades</div>
+        <div class="bt-stat-val">${d.total_trades}</div></div>
+      <div class="bt-stat"><div class="bt-stat-label">Final Value</div>
+        <div class="bt-stat-val">$${(d.final_value/1000).toFixed(1)}k</div></div>
+      <div class="bt-stat"><div class="bt-stat-label">Rebalance Steps</div>
+        <div class="bt-stat-val">${d.steps} (monthly)</div></div>
+    </div>
+    <div id="pfBtChart" style="height:200px;margin-top:8px"></div>
+    <div style="font-size:0.68rem;color:var(--text2);margin-top:8px">
+      Walk-forward simulation on historical data. Past results do not guarantee future returns.
+      Monthly rebalancing, same strategy rules as live portfolio.
+    </div>`;
+  const btDates  = d.equity_curve.map(e => e.date);
+  const btVals   = d.equity_curve.map(e => e.value);
+  const spyDates = (d.spy_equity || []).map(e => e.date);
+  const spyVals  = (d.spy_equity || []).map(e => e.value);
+  const traces   = [{
+    x: btDates, y: btVals, type: 'scatter', mode: 'lines',
+    name: 'Strategy', line: {color: '#58a6ff', width: 2},
+    hovertemplate: '%{x}<br>Strategy: <b>$%{y:,.0f}</b><extra></extra>',
+  }];
+  if (spyDates.length) traces.push({
+    x: spyDates, y: spyVals, type: 'scatter', mode: 'lines',
+    name: 'SPY', line: {color: 'rgba(139,148,158,0.6)', width: 1.5, dash: 'dot'},
+    hovertemplate: '%{x}<br>SPY: <b>$%{y:,.0f}</b><extra></extra>',
+  });
+  Plotly.newPlot('pfBtChart', traces, {
+    paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+    margin: {t: 10, b: 35, l: 65, r: 10},
+    xaxis: {color: '#8b949e', gridcolor: 'rgba(48,54,61,0.5)', tickfont: {size: 9}},
+    yaxis: {color: '#8b949e', gridcolor: 'rgba(48,54,61,0.5)', tickfont: {size: 9},
+            tickprefix: '$', tickformat: ',.0f'},
+    legend: {x: 0.01, y: 0.99, bgcolor: 'transparent', font: {color: '#8b949e', size: 10}},
+    showlegend: spyDates.length > 0,
+  }, {responsive: true, displayModeBar: false});
+  const btn = document.getElementById('btRunBtn');
+  if (btn) { btn.textContent = '✓ Done — Run Again'; btn.disabled = false; }
+};
+
 window._pfRunBacktest = async function() {
   const btn = document.getElementById('btRunBtn');
   const res  = document.getElementById('pfBacktestResult');
@@ -1637,82 +1706,8 @@ window._pfRunBacktest = async function() {
     const r = await fetch('/api/backtest');
     const d = await r.json();
     if (d.error) throw new Error(d.error);
-
-    const retColor  = d.total_return_pct >= 0 ? 'var(--up)' : 'var(--down)';
-    const retSign   = d.total_return_pct >= 0 ? '+' : '';
-    const spyColor  = d.spy_return_pct  >= 0 ? 'var(--up)' : 'var(--down)';
-    const spySign   = d.spy_return_pct  >= 0 ? '+' : '';
-    const edge      = d.total_return_pct - (d.spy_return_pct || 0);
-    const edgeColor = edge >= 0 ? 'var(--up)' : 'var(--down)';
-
-    res.innerHTML = `
-      <div class="bt-stat-grid">
-        <div class="bt-stat">
-          <div class="bt-stat-label">Strategy Return</div>
-          <div class="bt-stat-val" style="color:${retColor}">${retSign}${d.total_return_pct.toFixed(1)}%</div>
-        </div>
-        <div class="bt-stat">
-          <div class="bt-stat-label">SPY Return (same period)</div>
-          <div class="bt-stat-val" style="color:${spyColor}">${spySign}${(d.spy_return_pct||0).toFixed(1)}%</div>
-        </div>
-        <div class="bt-stat">
-          <div class="bt-stat-label">Alpha vs SPY</div>
-          <div class="bt-stat-val" style="color:${edgeColor}">${edge>=0?'+':''}${edge.toFixed(1)}%</div>
-        </div>
-        <div class="bt-stat">
-          <div class="bt-stat-label">Max Drawdown</div>
-          <div class="bt-stat-val" style="color:var(--down)">-${d.max_drawdown_pct.toFixed(1)}%</div>
-        </div>
-        <div class="bt-stat">
-          <div class="bt-stat-label">Win Rate</div>
-          <div class="bt-stat-val">${d.win_rate.toFixed(0)}%</div>
-        </div>
-        <div class="bt-stat">
-          <div class="bt-stat-label">Total Trades</div>
-          <div class="bt-stat-val">${d.total_trades}</div>
-        </div>
-        <div class="bt-stat">
-          <div class="bt-stat-label">Final Value</div>
-          <div class="bt-stat-val">$${(d.final_value/1000).toFixed(1)}k</div>
-        </div>
-        <div class="bt-stat">
-          <div class="bt-stat-label">Rebalance Steps</div>
-          <div class="bt-stat-val">${d.steps} (monthly)</div>
-        </div>
-      </div>
-      <div id="pfBtChart" style="height:200px;margin-top:8px"></div>
-      <div style="font-size:0.68rem;color:var(--text2);margin-top:8px">
-        Walk-forward simulation on historical data. Past results do not guarantee future returns.
-        Monthly rebalancing, same strategy rules as live portfolio.
-      </div>`;
-
-    // Backtest equity chart
-    const btDates  = d.equity_curve.map(e => e.date);
-    const btVals   = d.equity_curve.map(e => e.value);
-    const spyDates = (d.spy_equity || []).map(e => e.date);
-    const spyVals  = (d.spy_equity || []).map(e => e.value);
-    const traces   = [{
-      x: btDates, y: btVals, type: 'scatter', mode: 'lines',
-      name: 'Strategy', line: {color: '#58a6ff', width: 2},
-      hovertemplate: '%{x}<br>Strategy: <b>$%{y:,.0f}</b><extra></extra>',
-    }];
-    if (spyDates.length) traces.push({
-      x: spyDates, y: spyVals, type: 'scatter', mode: 'lines',
-      name: 'SPY', line: {color: 'rgba(139,148,158,0.6)', width: 1.5, dash: 'dot'},
-      hovertemplate: '%{x}<br>SPY: <b>$%{y:,.0f}</b><extra></extra>',
-    });
-    Plotly.newPlot('pfBtChart', traces, {
-      paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-      margin: {t: 10, b: 35, l: 65, r: 10},
-      xaxis: {color: '#8b949e', gridcolor: 'rgba(48,54,61,0.5)', tickfont: {size: 9}},
-      yaxis: {color: '#8b949e', gridcolor: 'rgba(48,54,61,0.5)', tickfont: {size: 9},
-              tickprefix: '$', tickformat: ',.0f'},
-      legend: {x: 0.01, y: 0.99, bgcolor: 'transparent', font: {color: '#8b949e', size: 10}},
-      showlegend: spyDates.length > 0,
-    }, {responsive: true, displayModeBar: false});
-
-    btn.textContent = '✓ Done — Run Again';
-    btn.disabled = false;
+    window._pfBacktestData = d;          // persist across silent refreshes
+    window._pfRenderBacktestResult(d);
   } catch(e) {
     res.innerHTML = `<div class="error-box" style="margin:10px 0">Backtest failed: ${e.message}</div>`;
     btn.textContent = '▶ Run Backtest';
