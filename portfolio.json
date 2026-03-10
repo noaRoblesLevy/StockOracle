@@ -1,16 +1,216 @@
 {
   "initial_balance": 50000.0,
-  "cash": 50000.0,
-  "positions": {},
-  "trades": [],
+  "cash": 12051.079996337889,
+  "positions": {
+    "BAC": {
+      "shares": 200,
+      "entry_price": 49.81,
+      "entry_date": "2026-03-06",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 2.84
+    },
+    "XOM": {
+      "shares": 66,
+      "entry_price": 150.44,
+      "entry_date": "2026-03-10",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 4.3
+    },
+    "KLAC": {
+      "shares": 4,
+      "entry_price": 1429.1,
+      "entry_date": "2026-03-10",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 9.68
+    },
+    "MDB": {
+      "shares": 10,
+      "entry_price": 271.74,
+      "entry_date": "2026-03-10",
+      "entry_conf": 0.725,
+      "entry_pred_pct": 6.33
+    },
+    "CVX": {
+      "shares": 52,
+      "entry_price": 189.44,
+      "entry_date": "2026-03-10",
+      "entry_conf": 0.75,
+      "entry_pred_pct": 2.41
+    }
+  },
+  "trades": [
+    {
+      "date": "2026-03-06",
+      "ticker": "SMH",
+      "action": "BUY",
+      "shares": 25,
+      "price": 395.35,
+      "value": 9883.75,
+      "pnl": null,
+      "pred_pct": 7.55,
+      "confidence": 0.575,
+      "reason": "Top pick #1, conf=57%, pred=+7.5%"
+    },
+    {
+      "date": "2026-03-06",
+      "ticker": "LLY",
+      "action": "BUY",
+      "shares": 10,
+      "price": 983.26,
+      "value": 9832.6,
+      "pnl": null,
+      "pred_pct": 4.53,
+      "confidence": 0.575,
+      "reason": "Top pick #2, conf=57%, pred=+4.5%"
+    },
+    {
+      "date": "2026-03-06",
+      "ticker": "XOM",
+      "action": "BUY",
+      "shares": 66,
+      "price": 150.76,
+      "value": 9950.16,
+      "pnl": null,
+      "pred_pct": 3.78,
+      "confidence": 0.575,
+      "reason": "Top pick #3, conf=57%, pred=+3.8%"
+    },
+    {
+      "date": "2026-03-06",
+      "ticker": "GLD",
+      "action": "BUY",
+      "shares": 21,
+      "price": 466.13,
+      "value": 9788.73,
+      "pnl": null,
+      "pred_pct": 3.75,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+3.8%"
+    },
+    {
+      "date": "2026-03-06",
+      "ticker": "BAC",
+      "action": "BUY",
+      "shares": 200,
+      "price": 49.81,
+      "value": 9962.0,
+      "pnl": null,
+      "pred_pct": 2.84,
+      "confidence": 0.6,
+      "reason": "Top pick #5, conf=60%, pred=+2.8%"
+    },
+    {
+      "date": "2026-03-10",
+      "ticker": "SMH",
+      "action": "SELL",
+      "shares": 25,
+      "price": 394.37,
+      "value": 9859.25,
+      "pnl": -24.5,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-10",
+      "ticker": "LLY",
+      "action": "SELL",
+      "shares": 10,
+      "price": 1008.39,
+      "value": 10083.9,
+      "pnl": 251.3,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-10",
+      "ticker": "XOM",
+      "action": "SELL",
+      "shares": 66,
+      "price": 150.76,
+      "value": 9950.16,
+      "pnl": 0.0,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-10",
+      "ticker": "GLD",
+      "action": "SELL",
+      "shares": 21,
+      "price": 466.13,
+      "value": 9788.73,
+      "pnl": 0.0,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-10",
+      "ticker": "KLAC",
+      "action": "BUY",
+      "shares": 4,
+      "price": 1429.1,
+      "value": 5716.4,
+      "pnl": null,
+      "pred_pct": 9.68,
+      "confidence": 0.575,
+      "reason": "Top pick #1, conf=57%, pred=+9.7%, alloc=14%"
+    },
+    {
+      "date": "2026-03-10",
+      "ticker": "MDB",
+      "action": "BUY",
+      "shares": 10,
+      "price": 271.74,
+      "value": 2717.4,
+      "pnl": null,
+      "pred_pct": 6.33,
+      "confidence": 0.725,
+      "reason": "Top pick #2, conf=72%, pred=+6.3%, alloc=6%"
+    },
+    {
+      "date": "2026-03-10",
+      "ticker": "XOM",
+      "action": "BUY",
+      "shares": 66,
+      "price": 150.44,
+      "value": 9929.04,
+      "pnl": null,
+      "pred_pct": 4.3,
+      "confidence": 0.575,
+      "reason": "Top pick #3, conf=57%, pred=+4.3%"
+    },
+    {
+      "date": "2026-03-10",
+      "ticker": "CVX",
+      "action": "BUY",
+      "shares": 52,
+      "price": 189.44,
+      "value": 9850.88,
+      "pnl": null,
+      "pred_pct": 2.41,
+      "confidence": 0.75,
+      "reason": "Top pick #5, conf=75%, pred=+2.4%, alloc=36%"
+    }
+  ],
   "daily_values": [
     {
       "date": "2026-03-06",
       "value": 50000.0,
       "cash": 50000.0,
-      "positions_value": 0.0
+      "positions_value": 0.0,
+      "spy_close": null
+    },
+    {
+      "date": "2026-03-06",
+      "value": 50000.0,
+      "cash": 582.76,
+      "positions_value": 49417.24,
+      "spy_close": null
+    },
+    {
+      "date": "2026-03-10",
+      "value": 49844.8,
+      "cash": 12051.08,
+      "positions_value": 37793.72,
+      "spy_close": 678.27
     }
   ],
-  "last_updated": null,
+  "last_updated": "2026-03-10",
   "created": "2026-03-06"
 }
