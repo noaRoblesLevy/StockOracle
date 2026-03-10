@@ -1525,18 +1525,27 @@ def get_portfolio():
     p = _fetch_portfolio_from_github() or load_portfolio()
 
     # Fetch 3-month history: open positions + SPY (for benchmark).
-    # Uses a 2-minute TTL cache so repeated tab refreshes don't hammer yfinance.
     price_map  = {}
     closes_map = {}   # sym → full close series for _fast_screen
     syms_to_fetch = list(p['positions'].keys())
     if 'SPY' not in syms_to_fetch:
         syms_to_fetch.append('SPY')
+
+    def _extract_closes(raw, sym):
+        """Handle both (ticker, field) and (field, ticker) MultiIndex orderings."""
+        if not isinstance(raw.columns, pd.MultiIndex):
+            return raw.get('Close', pd.Series()).dropna()
+        lvl0 = raw.columns.get_level_values(0)
+        if sym in lvl0:
+            return raw[sym]['Close'].dropna()
+        return raw['Close'][sym].dropna()
+
+    # Batch download first (fast path)
     try:
         raw = _cached_yf_download(syms_to_fetch, '3mo')
         for sym in syms_to_fetch:
             try:
-                closes = (raw[sym]['Close'] if isinstance(raw.columns, pd.MultiIndex)
-                          else raw['Close']).dropna()
+                closes = _extract_closes(raw, sym)
                 if not closes.empty:
                     price_map[sym]  = round(float(closes.iloc[-1]), 2)
                     closes_map[sym] = closes
@@ -1544,6 +1553,22 @@ def get_portfolio():
                 pass
     except Exception:
         pass
+
+    # Individual fallback for any ticker that got empty data in the batch
+    # (yfinance sometimes silently returns NaN rows for specific tickers)
+    missing = [s for s in syms_to_fetch if s not in price_map]
+    for sym in missing:
+        try:
+            raw_s  = yf.download(sym, period='3mo', interval='1d',
+                                 auto_adjust=True, progress=False)
+            closes = raw_s.get('Close', pd.Series()).dropna()
+            if isinstance(closes, pd.DataFrame):
+                closes = closes.iloc[:, 0]
+            if not closes.empty:
+                price_map[sym]  = round(float(closes.iloc[-1]), 2)
+                closes_map[sym] = closes
+        except Exception:
+            pass
 
     # Build enriched positions list with live signal check
     positions_list = []
