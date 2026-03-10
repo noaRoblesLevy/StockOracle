@@ -7,13 +7,23 @@ from sklearn.preprocessing import MinMaxScaler
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import warnings
+import logging
 import os
 import json
 import time
 import urllib.request
 from datetime import datetime, timedelta
-from portfolio import load_portfolio, rebalance, save_portfolio, portfolio_value, RANK_TICKERS
+from portfolio import (load_portfolio, rebalance, save_portfolio, portfolio_value,
+                       RANK_TICKERS, SECTOR_MAP, _sector_limited_picks,
+                       _yf_download_with_retry)
 from model import _shrink, _lr_predict_fast, _ema_predict_fast, _fast_screen, _rsi
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s [%(name)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
+log = logging.getLogger(__name__)
 
 # Optional: set GITHUB_REPO=owner/repo so /api/portfolio always reads the
 # latest portfolio.json committed by GitHub Actions (no git pull needed).
@@ -1600,10 +1610,14 @@ def get_portfolio():
         # or confidence has dropped below our entry threshold
         signal_stale = (cur_pred_pct is not None and cur_pred_pct < 0)
 
+        peak_price  = pos.get('peak_price', pos['entry_price'])
+        trail_loss  = round((peak_price - current) / peak_price * 100, 2) if peak_price > 0 else 0
         positions_list.append({
             'symbol':           sym,
+            'sector':           SECTOR_MAP.get(sym, 'Other'),
             'shares':           pos['shares'],
             'entry_price':      pos['entry_price'],
+            'peak_price':       round(peak_price, 2),
             'entry_date':       pos['entry_date'],
             'entry_conf':       pos['entry_conf'],
             'entry_pred_pct':   pos['entry_pred_pct'],
@@ -1612,6 +1626,7 @@ def get_portfolio():
             'current_value':    round(value, 2),
             'pnl':              round(pnl, 2),
             'pnl_pct':          round(pnl_pct, 2),
+            'trail_loss_pct':   trail_loss,
             'current_pred_pct': round(cur_pred_pct, 2) if cur_pred_pct is not None else None,
             'current_conf':     round(cur_conf, 4)     if cur_conf     is not None else None,
             'signal_stale':     signal_stale,
@@ -1673,6 +1688,209 @@ def trigger_rebalance():
     save_portfolio(p)
     _last_manual_rebalance = time.time()
     return jsonify({'ok': True, 'summary': summary})
+
+
+@app.route('/api/backtest')
+def run_backtest():
+    """Walk-forward portfolio backtest over the past year.
+
+    Steps through ~12 monthly rebalance points, running _fast_screen on
+    historical data up to each date, simulating trades, and returning an
+    equity curve alongside key statistics.
+    """
+    from portfolio import MAX_POSITIONS, MAX_POSITION_PCT, MIN_CONF, MIN_PRED_PCT, STOP_LOSS_PCT
+
+    try:
+        log.info('Starting backtest download')
+        all_syms = list(dict.fromkeys(RANK_TICKERS + ['SPY']))
+        raw = _yf_download_with_retry(
+            all_syms, period='1y', interval='1d',
+            auto_adjust=True, progress=False, group_by='ticker',
+        )
+    except Exception as exc:
+        return jsonify({'error': f'Download failed: {exc}'}), 500
+
+    # Build per-symbol close series
+    closes_all = {}
+    for sym in all_syms:
+        try:
+            c = (raw[sym]['Close'] if isinstance(raw.columns, pd.MultiIndex)
+                 else raw['Close']).dropna()
+            if not c.empty:
+                closes_all[sym] = c
+        except Exception:
+            continue
+
+    if 'SPY' not in closes_all:
+        return jsonify({'error': 'SPY data unavailable for benchmark'}), 500
+
+    all_dates = closes_all['SPY'].index.tolist()
+    WARMUP    = 40    # minimum trading days before making first prediction
+    STEP      = 21    # monthly rebalancing
+    if len(all_dates) < WARMUP + STEP:
+        return jsonify({'error': 'Insufficient history'}), 400
+
+    cash      = 50_000.0
+    positions = {}   # sym → {shares, entry_price, entry_pred_pct, peak_price}
+    equity    = []   # [{date, value}]
+    trades    = []
+    price_map = {}   # updated each step
+
+    for idx in range(WARMUP, len(all_dates), STEP):
+        date     = all_dates[idx]
+        date_str = str(date.date()) if hasattr(date, 'date') else str(date)[:10]
+
+        # Prices and history slices up to (and including) this date
+        closes_at = {}
+        price_map = {}
+        for sym in RANK_TICKERS:
+            if sym not in closes_all:
+                continue
+            hist = closes_all[sym].iloc[:idx + 1]
+            if len(hist) < 30:
+                continue
+            closes_at[sym]  = hist
+            price_map[sym]  = float(hist.iloc[-1])
+
+        # Current portfolio value
+        pos_val   = sum(p['shares'] * price_map.get(s, p['entry_price'])
+                        for s, p in positions.items())
+        total_val = cash + pos_val
+
+        # Score tickers
+        candidates = []
+        for sym, hist in closes_at.items():
+            try:
+                pred_pct, conf = _fast_screen(hist, 5)   # weekly horizon
+                if pred_pct is None:
+                    continue
+                score = pred_pct * conf if (pred_pct > MIN_PRED_PCT and conf > MIN_CONF) else -999
+                candidates.append({'symbol': sym, 'pred_pct': pred_pct,
+                                   'conf': conf, 'price': price_map[sym], 'score': score})
+            except Exception:
+                continue
+
+        candidates.sort(key=lambda x: x['score'], reverse=True)
+        top_picks = _sector_limited_picks(candidates, MAX_POSITIONS, 2)
+        top_syms  = {c['symbol'] for c in top_picks}
+
+        # Update peaks and check trailing stop-loss
+        for sym in list(positions.keys()):
+            price = price_map.get(sym, positions[sym]['entry_price'])
+            peak  = positions[sym].get('peak_price', positions[sym]['entry_price'])
+            if price > peak:
+                positions[sym]['peak_price'] = price
+            loss = (peak - price) / peak if peak > 0 else 0
+            if loss >= STOP_LOSS_PCT:
+                pnl   = positions[sym]['shares'] * (price - positions[sym]['entry_price'])
+                cash += positions[sym]['shares'] * price
+                trades.append({'date': date_str, 'ticker': sym, 'action': 'SELL',
+                               'pnl': round(pnl, 2), 'reason': 'Trailing stop'})
+                del positions[sym]
+                top_syms.discard(sym)
+
+        # Take-profit
+        for sym in list(positions.keys()):
+            price    = price_map.get(sym, positions[sym]['entry_price'])
+            gain_pct = (price - positions[sym]['entry_price']) / positions[sym]['entry_price'] * 100
+            target   = positions[sym].get('entry_pred_pct', 0)
+            if target >= 1.0 and gain_pct >= target:
+                pnl   = positions[sym]['shares'] * (price - positions[sym]['entry_price'])
+                cash += positions[sym]['shares'] * price
+                trades.append({'date': date_str, 'ticker': sym, 'action': 'SELL',
+                               'pnl': round(pnl, 2), 'reason': 'Take-profit'})
+                del positions[sym]
+                top_syms.discard(sym)
+
+        # Signal sells
+        for sym in list(positions.keys()):
+            if sym not in top_syms:
+                price = price_map.get(sym, positions[sym]['entry_price'])
+                pnl   = positions[sym]['shares'] * (price - positions[sym]['entry_price'])
+                cash += positions[sym]['shares'] * price
+                trades.append({'date': date_str, 'ticker': sym, 'action': 'SELL',
+                               'pnl': round(pnl, 2), 'reason': 'Signal'})
+                del positions[sym]
+
+        # Buys
+        total_val = cash + sum(p['shares'] * price_map.get(s, p['entry_price'])
+                               for s, p in positions.items())
+        for cand in top_picks:
+            sym = cand['symbol']
+            if sym in positions or len(positions) >= MAX_POSITIONS or cash < 50:
+                continue
+            alloc  = min(total_val / max(len(top_picks), 1),
+                         total_val * MAX_POSITION_PCT, cash)
+            shares = int(alloc / cand['price'])
+            if shares < 1:
+                continue
+            cost   = shares * cand['price']
+            cash  -= cost
+            positions[sym] = {'shares': shares, 'entry_price': cand['price'],
+                              'entry_pred_pct': cand['pred_pct'],
+                              'peak_price': cand['price']}
+            trades.append({'date': date_str, 'ticker': sym, 'action': 'BUY',
+                           'price': round(cand['price'], 2)})
+
+        total_val = cash + sum(p['shares'] * price_map.get(s, p['entry_price'])
+                               for s, p in positions.items())
+        equity.append({'date': date_str, 'value': round(total_val, 2)})
+
+    # Final liquidation
+    last_date = equity[-1]['date'] if equity else ''
+    for sym, pos in positions.items():
+        price  = price_map.get(sym, pos['entry_price'])
+        cash  += pos['shares'] * price
+    positions = {}
+    final_val = cash
+
+    # SPY benchmark over same period
+    spy_start_idx = WARMUP
+    spy_vals      = closes_all['SPY']
+    spy_start     = float(spy_vals.iloc[spy_start_idx])
+    spy_end       = float(spy_vals.iloc[-1])
+    spy_return    = (spy_end - spy_start) / spy_start * 100
+
+    # SPY equity curve (same dates as our equity)
+    spy_equity = []
+    for e in equity:
+        dt = e['date']
+        try:
+            spy_price = float(closes_all['SPY'].loc[dt]) if dt in closes_all['SPY'].index else None
+        except Exception:
+            spy_price = None
+        if spy_price:
+            spy_equity.append({'date': dt, 'value': round(50_000 * spy_price / spy_start, 2)})
+
+    # Max drawdown
+    peak_val, max_dd = 50_000.0, 0.0
+    for e in equity:
+        v = e['value']
+        if v > peak_val:
+            peak_val = v
+        dd = (peak_val - v) / peak_val
+        max_dd = max(max_dd, dd)
+
+    total_return = (final_val - 50_000) / 50_000 * 100
+    sell_trades  = [t for t in trades if t['action'] == 'SELL']
+    wins         = sum(1 for t in sell_trades if t.get('pnl', 0) > 0)
+    win_rate     = wins / len(sell_trades) * 100 if sell_trades else 0
+
+    log.info('Backtest complete: %.1f%% return, %.1f%% max DD, %d trades',
+             total_return, max_dd * 100, len(trades))
+
+    return jsonify({
+        'equity_curve':      equity,
+        'spy_equity':        spy_equity,
+        'total_return_pct':  round(total_return, 2),
+        'spy_return_pct':    round(spy_return, 2),
+        'max_drawdown_pct':  round(max_dd * 100, 2),
+        'total_trades':      len(trades),
+        'win_rate':          round(win_rate, 1),
+        'initial_value':     50_000,
+        'final_value':       round(final_val, 2),
+        'steps':             len(equity),
+    })
 
 
 if __name__ == '__main__':

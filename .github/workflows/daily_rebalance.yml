@@ -48,3 +48,29 @@ jobs:
             echo "Check the job logs above for the error." >> $GITHUB_STEP_SUMMARY
             echo "::error title=Rebalance Failed::daily_rebalance.py failed — check logs"
           fi
+
+      - name: Send webhook alert on stop-loss or failure
+        if: always()
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ -z "$ALERT_WEBHOOK_URL" ]; then
+            echo "ALERT_WEBHOOK_URL not set — skipping webhook notification"
+            exit 0
+          fi
+          DATE=$(date -u '+%Y-%m-%d')
+          if [ "$JOB_STATUS" != "success" ]; then
+            MSG="❌ StockOracle rebalance FAILED on $DATE. Check GitHub Actions logs."
+          else
+            # Check if today's rebalance log mentions trailing stop or circuit breaker
+            STOP=$(grep -i "trailing stop\|circuit breaker\|take-profit" rebalance.log 2>/dev/null | head -5 || true)
+            if [ -n "$STOP" ]; then
+              MSG="⚠️ StockOracle alert ($DATE): $STOP"
+            else
+              exit 0   # success with no notable events — no alert needed
+            fi
+          fi
+          curl -s -X POST "$ALERT_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\": \"$MSG\"}" || true

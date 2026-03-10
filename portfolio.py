@@ -7,8 +7,11 @@ Strategy
 - Hold up to MAX_POSITIONS stocks; each ≤ MAX_POSITION_PCT of total value
 - Sector cap: max MAX_PER_SECTOR non-ETF positions from the same sector
 - Only enter when pred_pct > MIN_PRED_PCT and confidence > MIN_CONF
-- Position sizing is inverse-volatility weighted (lower-vol names get more)
-- Stop-loss: sell any position that falls > STOP_LOSS_PCT from entry
+- Position sizing is inverse-volatility weighted + correlation-adjusted
+- Trailing stop-loss: sell any position that falls > STOP_LOSS_PCT from its peak
+- Take-profit: sell when actual gain reaches the predicted gain at entry
+- Portfolio circuit breaker: liquidate all positions if value drops > MAX_DRAWDOWN_PCT from ATH
+- Earnings avoidance: skip buying within N_EARNINGS_DAYS of a scheduled earnings date
 - On signal sell: remove positions that dropped out of the top picks
 - Record every trade and a daily equity snapshot (inc. SPY close for benchmark)
 
@@ -16,7 +19,9 @@ Run daily after market close (Mon–Fri), skips weekends and US holidays.
 """
 
 import json
+import logging
 import os
+import time as _time
 import warnings
 from datetime import datetime
 
@@ -28,6 +33,8 @@ from model import _fast_screen, _shrink
 
 warnings.filterwarnings('ignore')
 
+log = logging.getLogger(__name__)
+
 # ─── Constants ────────────────────────────────────────────────────────────────
 
 PORTFOLIO_FILE   = os.path.join(os.path.dirname(__file__), 'portfolio.json')
@@ -36,8 +43,10 @@ MAX_POSITIONS    = 5
 MAX_POSITION_PCT = 0.20    # hard cap: no single position > 20 % of portfolio
 MIN_CONF         = 0.54    # Bayesian-shrunk confidence threshold
 MIN_PRED_PCT     = 0.3     # minimum predicted % gain to enter
-STOP_LOSS_PCT    = 0.08    # sell if position falls > 8 % below entry
+STOP_LOSS_PCT    = 0.08    # sell if position falls > 8 % below its peak (trailing)
 MAX_PER_SECTOR   = 2       # max non-ETF positions from the same sector
+MAX_DRAWDOWN_PCT = 0.15    # circuit breaker: liquidate all if portfolio down 15 % from ATH
+N_EARNINGS_DAYS  = 3       # skip buying if earnings scheduled within this many calendar days
 
 # ── NYSE market holidays (observed dates) ─────────────────────────────────────
 _HOLIDAYS = {
@@ -112,6 +121,45 @@ RANK_TICKERS = [
 
 # ─── Internal helpers ─────────────────────────────────────────────────────────
 
+def _yf_download_with_retry(tickers, attempts: int = 3, **kwargs):
+    """yf.download with exponential backoff — handles transient rate-limit errors."""
+    last_exc = None
+    for i in range(attempts):
+        try:
+            result = yf.download(tickers, **kwargs)
+            if not result.empty:
+                return result
+        except Exception as exc:
+            last_exc = exc
+            log.warning('yf.download attempt %d/%d failed: %s', i + 1, attempts, exc)
+        if i < attempts - 1:
+            _time.sleep(2 ** i)   # 1 s, 2 s, …
+    # Last attempt (or raise)
+    if last_exc is not None:
+        raise last_exc
+    return yf.download(tickers, **kwargs)
+
+
+def _next_earnings_date(sym: str) -> str | None:
+    """Return the next scheduled earnings date (YYYY-MM-DD) or None if unknown."""
+    try:
+        cal = yf.Ticker(sym).calendar
+        if cal is None:
+            return None
+        # yfinance >= 0.2: calendar is a dict with 'Earnings Date' list
+        if isinstance(cal, dict):
+            dates = cal.get('Earnings Date', [])
+            if dates:
+                return str(pd.Timestamp(dates[0]).date())
+        # yfinance older: calendar is a DataFrame with 'Earnings Date' in the index
+        if isinstance(cal, pd.DataFrame) and 'Earnings Date' in cal.index:
+            val = cal.loc['Earnings Date'].iloc[0]
+            return str(pd.Timestamp(val).date())
+    except Exception:
+        pass
+    return None
+
+
 def _vol_weights(picks: list, closes_map: dict) -> dict:
     """Inverse-volatility weights: lower-volatility names get a larger share."""
     vols = {}
@@ -126,6 +174,45 @@ def _vol_weights(picks: list, closes_map: dict) -> dict:
     inv   = {sym: 1.0 / v for sym, v in vols.items()}
     total = sum(inv.values()) or 1.0
     return {sym: v / total for sym, v in inv.items()}
+
+
+def _corr_adjusted_weights(picks: list, closes_map: dict,
+                           base_weights: dict) -> dict:
+    """Reduce allocation for picks that are highly correlated with higher-ranked ones.
+
+    For each pick, we compute its average absolute correlation with all picks
+    ranked above it.  If that average exceeds 0.70 the weight is tapered down
+    proportionally.  The floor prevents any pick from being reduced to zero.
+    """
+    syms = [c['symbol'] for c in picks]
+    if len(syms) < 2:
+        return base_weights
+
+    rets = pd.DataFrame({
+        sym: closes_map[sym].pct_change().dropna().tail(60)
+        for sym in syms if sym in closes_map
+    }).dropna(axis=1, how='all')
+
+    if rets.shape[1] < 2:
+        return base_weights
+
+    corr = rets.corr()
+    adjusted = {}
+    for i, sym in enumerate(syms):
+        w = base_weights.get(sym, 1.0 / len(syms))
+        higher_ranked = syms[:i]
+        for other in higher_ranked:
+            try:
+                r = abs(float(corr.loc[sym, other]))
+            except (KeyError, TypeError):
+                r = 0.0
+            if r > 0.70:
+                # Linear taper: r=0.70 → no reduction, r=1.0 → 40 % reduction
+                w *= 1.0 - (r - 0.70) * 1.33
+        adjusted[sym] = max(w, 0.05)   # floor at 5 %
+
+    total = sum(adjusted.values()) or 1.0
+    return {sym: v / total for sym, v in adjusted.items()}
 
 
 def _sector_limited_picks(candidates: list, max_positions: int,
@@ -212,25 +299,33 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
     if portfolio.get('last_updated') == today:
         return portfolio, f'Already rebalanced today ({today}).'
 
-    # ── Batch download 3-month history ────────────────────────────────────────
+    # ── Batch download 3-month history (with retry) ───────────────────────────
     try:
-        raw = yf.download(
+        raw = _yf_download_with_retry(
             RANK_TICKERS, period='3mo', interval='1d',
             auto_adjust=True, progress=False, group_by='ticker',
         )
     except Exception as exc:
+        log.error('Download failed: %s', exc)
         return portfolio, f'Download failed: {exc}'
 
-    # ── Build closes_map and price_map ────────────────────────────────────────
-    closes_map = {}
-    price_map  = {}
+    # ── Build closes_map, volumes_map, and price_map ──────────────────────────
+    closes_map  = {}
+    volumes_map = {}
+    price_map   = {}
     for sym in RANK_TICKERS:
         try:
-            closes = (raw[sym]['Close'] if isinstance(raw.columns, pd.MultiIndex)
-                      else raw['Close']).dropna()
-            if not closes.empty:
-                closes_map[sym] = closes
-                price_map[sym]  = float(closes.iloc[-1])
+            if isinstance(raw.columns, pd.MultiIndex):
+                c = raw[sym]['Close'].dropna()
+                v = raw[sym].get('Volume', pd.Series()).dropna()
+            else:
+                c = raw['Close'].dropna()
+                v = raw.get('Volume', pd.Series()).dropna()
+            if not c.empty:
+                closes_map[sym]  = c
+                price_map[sym]   = float(c.iloc[-1])
+                if not v.empty:
+                    volumes_map[sym] = v
         except Exception:
             continue
 
@@ -238,7 +333,8 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
     candidates = []
     for sym, closes in closes_map.items():
         try:
-            pred_pct, conf = _fast_screen(closes, horizon_days)
+            pred_pct, conf = _fast_screen(closes, horizon_days,
+                                          volumes=volumes_map.get(sym))
             if pred_pct is None:
                 continue
             score = pred_pct * conf if (pred_pct > MIN_PRED_PCT and conf > MIN_CONF) else -999
@@ -257,29 +353,87 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
     top_syms  = {c['symbol'] for c in top_picks}
     bearish   = {c['symbol'] for c in candidates if c['pred_pct'] <= 0}
 
-    # ── Stop-loss sells ───────────────────────────────────────────────────────
+    # ── Update peak price for all open positions ───────────────────────────────
+    for sym, pos in portfolio['positions'].items():
+        price = price_map.get(sym, pos['entry_price'])
+        current_peak = pos.get('peak_price', pos['entry_price'])
+        if price > current_peak:
+            pos['peak_price'] = round(price, 2)
+
+    # ── Portfolio circuit breaker: liquidate if down > MAX_DRAWDOWN_PCT from ATH
+    current_total = portfolio_value(portfolio, price_map)
+    prev_ath = portfolio.get('all_time_high', portfolio['initial_balance'])
+    ath = max(current_total, prev_ath)
+    portfolio['all_time_high'] = round(ath, 2)
+
+    if current_total < ath * (1 - MAX_DRAWDOWN_PCT) and portfolio['positions']:
+        log.warning('Circuit breaker triggered: portfolio at $%.0f vs ATH $%.0f', current_total, ath)
+        for sym in list(portfolio['positions'].keys()):
+            pos      = portfolio['positions'][sym]
+            price    = price_map.get(sym, pos['entry_price'])
+            proceeds = pos['shares'] * price
+            pnl      = proceeds - pos['shares'] * pos['entry_price']
+            portfolio['cash'] += proceeds
+            portfolio['trades'].append({
+                'date':   today, 'ticker': sym, 'action': 'SELL',
+                'shares': pos['shares'], 'price':  round(price, 2),
+                'value':  round(proceeds, 2), 'pnl':    round(pnl, 2),
+                'reason': f'Circuit breaker: portfolio down {(ath-current_total)/ath:.1%} from ATH',
+            })
+            del portfolio['positions'][sym]
+        portfolio['last_updated'] = today
+        total_val = portfolio_value(portfolio, price_map)
+        msg = (f'{today}: CIRCUIT BREAKER — portfolio down '
+               f'{(ath-current_total)/ath:.1%} from ATH ${ath:,.0f}. '
+               f'Liquidated all positions. Cash=${portfolio["cash"]:,.0f}')
+        log.warning(msg)
+        return portfolio, msg
+
+    # ── Trailing stop-loss sells ───────────────────────────────────────────────
     stop_sells = 0
     for sym in list(portfolio['positions'].keys()):
         pos      = portfolio['positions'][sym]
         price    = price_map.get(sym, pos['entry_price'])
-        loss_pct = (pos['entry_price'] - price) / pos['entry_price']
+        peak     = pos.get('peak_price', pos['entry_price'])
+        loss_pct = (peak - price) / peak if peak > 0 else 0
         if loss_pct >= STOP_LOSS_PCT:
             proceeds = pos['shares'] * price
             pnl      = proceeds - pos['shares'] * pos['entry_price']
             portfolio['cash'] += proceeds
             portfolio['trades'].append({
-                'date':   today,
-                'ticker': sym,
-                'action': 'SELL',
-                'shares': pos['shares'],
-                'price':  round(price, 2),
-                'value':  round(proceeds, 2),
-                'pnl':    round(pnl, 2),
-                'reason': f'Stop-loss: -{loss_pct:.1%} from entry',
+                'date':   today, 'ticker': sym, 'action': 'SELL',
+                'shares': pos['shares'], 'price':  round(price, 2),
+                'value':  round(proceeds, 2), 'pnl':    round(pnl, 2),
+                'reason': f'Trailing stop: -{loss_pct:.1%} from ${peak:.2f} peak',
             })
+            log.info('Trailing stop on %s: price $%.2f, peak $%.2f, loss %.1f%%',
+                     sym, price, peak, loss_pct * 100)
             del portfolio['positions'][sym]
-            top_syms.discard(sym)   # don't re-buy the same day
+            top_syms.discard(sym)
             stop_sells += 1
+
+    # ── Take-profit sells ─────────────────────────────────────────────────────
+    take_profit_sells = 0
+    for sym in list(portfolio['positions'].keys()):
+        pos      = portfolio['positions'][sym]
+        price    = price_map.get(sym, pos['entry_price'])
+        gain_pct = (price - pos['entry_price']) / pos['entry_price'] * 100
+        target   = pos.get('entry_pred_pct', 0)
+        # Sell only when target is meaningful (≥ 1 %) and has been reached
+        if target >= 1.0 and gain_pct >= target:
+            proceeds = pos['shares'] * price
+            pnl      = proceeds - pos['shares'] * pos['entry_price']
+            portfolio['cash'] += proceeds
+            portfolio['trades'].append({
+                'date':   today, 'ticker': sym, 'action': 'SELL',
+                'shares': pos['shares'], 'price':  round(price, 2),
+                'value':  round(proceeds, 2), 'pnl':    round(pnl, 2),
+                'reason': f'Take-profit: +{gain_pct:.1f}% reached target +{target:.1f}%',
+            })
+            log.info('Take-profit on %s: +%.1f%% vs target +%.1f%%', sym, gain_pct, target)
+            del portfolio['positions'][sym]
+            top_syms.discard(sym)
+            take_profit_sells += 1
 
     # ── Signal sells (dropped from top picks or turned bearish) ───────────────
     signal_sells = 0
@@ -291,24 +445,21 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
             pnl      = proceeds - pos['shares'] * pos['entry_price']
             portfolio['cash'] += proceeds
             portfolio['trades'].append({
-                'date':   today,
-                'ticker': sym,
-                'action': 'SELL',
-                'shares': pos['shares'],
-                'price':  round(price, 2),
-                'value':  round(proceeds, 2),
-                'pnl':    round(pnl, 2),
+                'date':   today, 'ticker': sym, 'action': 'SELL',
+                'shares': pos['shares'], 'price':  round(price, 2),
+                'value':  round(proceeds, 2), 'pnl':    round(pnl, 2),
                 'reason': 'Signal bearish' if sym in bearish else 'Dropped from top picks',
             })
             del portfolio['positions'][sym]
             signal_sells += 1
 
-    sells = stop_sells + signal_sells
+    sells = stop_sells + take_profit_sells + signal_sells
 
-    # ── Buy: top picks not already held (inverse-volatility sizing) ──────────
-    total_val = portfolio_value(portfolio, price_map)
-    weights   = _vol_weights(top_picks, closes_map)
-    buys      = 0
+    # ── Buy: top picks not already held ───────────────────────────────────────
+    total_val   = portfolio_value(portfolio, price_map)
+    base_w      = _vol_weights(top_picks, closes_map)
+    weights     = _corr_adjusted_weights(top_picks, closes_map, base_w)
+    buys        = 0
 
     for cand in top_picks:
         sym = cand['symbol']
@@ -318,6 +469,15 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
             break
         if portfolio['cash'] < 50:
             break
+
+        # ── Earnings avoidance ────────────────────────────────────────────────
+        earnings_date = _next_earnings_date(sym)
+        if earnings_date:
+            days_to_earnings = (pd.Timestamp(earnings_date) - pd.Timestamp(today)).days
+            if 0 <= days_to_earnings <= N_EARNINGS_DAYS:
+                log.info('Skipping %s — earnings in %d day(s) on %s',
+                         sym, days_to_earnings, earnings_date)
+                continue
 
         weight = weights.get(sym, 1 / max(len(top_picks), 1))
         alloc  = min(total_val * weight, total_val * MAX_POSITION_PCT, portfolio['cash'])
@@ -330,6 +490,7 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
         portfolio['positions'][sym] = {
             'shares':         shares,
             'entry_price':    round(cand['price'], 2),
+            'peak_price':     round(cand['price'], 2),
             'entry_date':     today,
             'entry_conf':     round(cand['conf'], 4),
             'entry_pred_pct': round(cand['pred_pct'], 2),
@@ -348,6 +509,8 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
                            f'conf={cand["conf"]:.0%}, pred={cand["pred_pct"]:+.1f}%, '
                            f'alloc={weight:.0%}'),
         })
+        log.info('Bought %s: %d shares @ $%.2f (alloc %.0f%%)',
+                 sym, shares, cand['price'], weight * 100)
         buys += 1
 
     # ── Daily value snapshot (includes SPY close for benchmark overlay) ───────
@@ -365,8 +528,8 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
     portfolio['last_updated'] = today
 
     summary = (
-        f'{today}: stop-loss {stop_sells}, signal-sell {signal_sells}, '
-        f'bought {buys}, positions={len(portfolio["positions"])}, '
-        f'total=${total_val:,.0f}'
+        f'{today}: trailing-stop {stop_sells}, take-profit {take_profit_sells}, '
+        f'signal-sell {signal_sells}, bought {buys}, '
+        f'positions={len(portfolio["positions"])}, total=${total_val:,.0f}'
     )
     return portfolio, summary

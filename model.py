@@ -8,6 +8,8 @@ _lr_predict_fast(train_vals, h)     LR trend extrapolation (normalised X)
 _ema_predict_fast(train_ser, h)     EMA 9/21 momentum extrapolation
 _rsi(closes)                        14-period Wilder RSI
 _bb_pct_b(closes)                   Bollinger Band %B (0=lower, 0.5=mid, 1=upper)
+_macd(closes)                       MACD (12, 26, 9) — returns (macd_line, signal_line)
+_volume_ratio(volumes)              Recent volume vs. 20-day average
 _fast_screen(closes, horizon)       Returns (pred_pct, conf)
 """
 
@@ -65,7 +67,11 @@ def _rsi(closes: pd.Series, period: int = 14) -> float:
     delta = closes.diff().dropna()
     gain  = delta.clip(lower=0).ewm(com=period - 1, adjust=False).mean()
     loss  = (-delta.clip(upper=0)).ewm(com=period - 1, adjust=False).mean()
-    rs    = gain / loss.replace(0, np.nan).fillna(1e9)
+    # When both gain and loss are effectively zero (flat market), return neutral
+    if float(gain.iloc[-1]) < 1e-10 and float(loss.iloc[-1]) < 1e-10:
+        return 50.0
+    # Replace zero loss with tiny value so rs → ∞ (RSI → 100) when all gains
+    rs = gain / loss.replace(0, np.nan).fillna(1e-9)
     return float((100 - 100 / (1 + rs)).iloc[-1])
 
 
@@ -87,9 +93,39 @@ def _bb_pct_b(closes: pd.Series, period: int = 20) -> float:
     return float(np.clip((last - (mid - 2 * std)) / (4 * std), 0.0, 1.0))
 
 
+def _macd(closes: pd.Series) -> tuple[float, float]:
+    """MACD (12, 26, 9) — returns (macd_line, signal_line).
+
+    Positive histogram (macd > signal) = bullish momentum.
+    Requires at least 35 data points; returns (0, 0) when insufficient.
+    """
+    if len(closes) < 35:
+        return 0.0, 0.0
+    ema12     = closes.ewm(span=12, adjust=False).mean()
+    ema26     = closes.ewm(span=26, adjust=False).mean()
+    macd_line = ema12 - ema26
+    signal    = macd_line.ewm(span=9, adjust=False).mean()
+    return float(macd_line.iloc[-1]), float(signal.iloc[-1])
+
+
+def _volume_ratio(volumes: pd.Series, period: int = 20) -> float:
+    """Recent volume vs. rolling average.
+
+    > 1.0 = above-average volume (signal conviction)
+    < 1.0 = below-average volume (low conviction)
+    Returns 1.0 when data is unavailable.
+    """
+    if volumes is None or len(volumes) < period + 1:
+        return 1.0
+    avg = float(volumes.rolling(period).mean().iloc[-1])
+    if avg == 0:
+        return 1.0
+    return float(volumes.iloc[-1]) / avg
+
+
 # ─── Composite screen ─────────────────────────────────────────────────────────
 
-def _fast_screen(closes: pd.Series, horizon: int):
+def _fast_screen(closes: pd.Series, horizon: int, volumes: pd.Series = None):
     """Return (pred_pct, conf) or (None, None) when there is insufficient data.
 
     Signal pipeline
@@ -98,7 +134,9 @@ def _fast_screen(closes: pd.Series, horizon: int):
     2. EMA 9/21 momentum       (40 % weight when both models agree)
     3. RSI mean-reversion overlay  — amplifies oversold, dampens overbought
     4. Bollinger Band %B overlay   — dampens when price is at an extreme band
-    5. 12-window mini-backtest → Bayesian-shrunk directional confidence
+    5. MACD momentum overlay       — amplifies bullish/bearish crossover
+    6. Volume confirmation         — dampens low-conviction low-volume moves
+    7. 12-window mini-backtest → Bayesian-shrunk directional confidence
     """
     closes = closes.dropna()
     if len(closes) < 30:
@@ -130,6 +168,18 @@ def _fast_screen(closes: pd.Series, horizon: int):
     bb_b = _bb_pct_b(closes)
     if   pred_pct > 0 and bb_b > 0.85:  pred_pct *= 0.85  # overbought, dampen bull
     elif pred_pct < 0 and bb_b < 0.15:  pred_pct *= 0.85  # oversold,   dampen bear
+
+    # ── MACD momentum overlay ──────────────────────────────────────────────────
+    macd_line, macd_signal = _macd(closes)
+    if macd_line > macd_signal:    pred_pct *= 1.10   # bullish crossover — amplify
+    elif macd_line < macd_signal:  pred_pct *= 0.90   # bearish crossover — dampen
+
+    # ── Volume confirmation overlay ────────────────────────────────────────────
+    # Low volume moves have less conviction; don't dampen already-weak predictions
+    if volumes is not None and abs(pred_pct) > 0.1:
+        vol_ratio = _volume_ratio(volumes)
+        if vol_ratio < 0.7:
+            pred_pct *= 0.85   # unusually quiet — reduce conviction
 
     # ── 12-window mini-backtest with Bayesian shrinkage ───────────────────────
     n_win, train_w = 12, 40
