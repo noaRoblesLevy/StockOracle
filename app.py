@@ -1524,9 +1524,8 @@ def get_portfolio():
     scheduled GitHub Actions job are visible without a git pull."""
     p = _fetch_portfolio_from_github() or load_portfolio()
 
-    # Fetch 3-month history: open positions + SPY (for benchmark).
-    price_map  = {}
-    closes_map = {}   # sym → full close series for _fast_screen
+    # ── Step 1: 3-month daily history for signal detection (_fast_screen) ────
+    closes_map = {}   # sym → full close series, used only for _fast_screen
     syms_to_fetch = list(p['positions'].keys())
     if 'SPY' not in syms_to_fetch:
         syms_to_fetch.append('SPY')
@@ -1540,14 +1539,12 @@ def get_portfolio():
             return raw[sym]['Close'].dropna()
         return raw['Close'][sym].dropna()
 
-    # Batch download first (fast path)
     try:
         raw = _cached_yf_download(syms_to_fetch, '3mo')
         for sym in syms_to_fetch:
             try:
                 closes = _extract_closes(raw, sym)
                 if not closes.empty:
-                    price_map[sym]  = round(float(closes.iloc[-1]), 2)
                     closes_map[sym] = closes
             except Exception:
                 pass
@@ -1555,9 +1552,7 @@ def get_portfolio():
         pass
 
     # Individual fallback for any ticker that got empty data in the batch
-    # (yfinance sometimes silently returns NaN rows for specific tickers)
-    missing = [s for s in syms_to_fetch if s not in price_map]
-    for sym in missing:
+    for sym in [s for s in syms_to_fetch if s not in closes_map]:
         try:
             raw_s  = yf.download(sym, period='3mo', interval='1d',
                                  auto_adjust=True, progress=False)
@@ -1565,10 +1560,24 @@ def get_portfolio():
             if isinstance(closes, pd.DataFrame):
                 closes = closes.iloc[:, 0]
             if not closes.empty:
-                price_map[sym]  = round(float(closes.iloc[-1]), 2)
                 closes_map[sym] = closes
         except Exception:
             pass
+
+    # ── Step 2: Live mark-to-market prices via fast_info.last_price ──────────
+    # Daily close data equals the entry price on the day of entry, making P&L
+    # look like $0 for new positions. fast_info gives a real-time/delayed tick.
+    price_map = {}
+    for sym in syms_to_fetch:
+        try:
+            live = float(yf.Ticker(sym).fast_info.last_price)
+            if live > 0:
+                price_map[sym] = round(live, 2)
+        except Exception:
+            pass
+        # Fall back to last daily close when fast_info is unavailable
+        if sym not in price_map and sym in closes_map:
+            price_map[sym] = round(float(closes_map[sym].iloc[-1]), 2)
 
     # Build enriched positions list with live signal check
     positions_list = []
