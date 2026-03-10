@@ -1377,29 +1377,44 @@ function renderPortfolio(d) {
 
   // ── Render equity curve with Plotly ───────────────────────────────────────
   if (d.daily_values && d.daily_values.length > 1) {
-    const dates   = d.daily_values.map(v => v.date);
-    const vals    = d.daily_values.map(v => v.value);
-    const pcts    = vals.map(v => ((v - d.initial_balance) / d.initial_balance * 100).toFixed(2));
-    const lineCol = vals[vals.length-1] >= d.initial_balance ? '#3fb950' : '#f85149';
-    Plotly.newPlot('pfEquityChart', [{
-      x: dates, y: vals, type: 'scatter', mode: 'lines',
-      line: {color: lineCol, width: 2},
-      fill: 'tozeroy', fillcolor: lineCol.replace(')', ',0.1)').replace('rgb', 'rgba'),
-      hovertemplate: '%{x}<br>$%{y:,.0f}<extra></extra>',
-    }, {
-      x: [dates[0], dates[dates.length-1]],
-      y: [d.initial_balance, d.initial_balance],
-      type: 'scatter', mode: 'lines',
-      line: {color: 'rgba(255,255,255,0.2)', width: 1, dash: 'dot'},
-      hoverinfo: 'none', showlegend: false,
-    }], {
+    const dates    = d.daily_values.map(v => v.date);
+    const vals     = d.daily_values.map(v => v.value);
+    const isUp     = vals[vals.length - 1] >= d.initial_balance;
+    const lineCol  = isUp ? '#3fb950' : '#f85149';
+    const fillCol  = isUp ? 'rgba(63,185,80,0.12)' : 'rgba(248,81,73,0.12)';
+    const baseline = d.initial_balance;
+
+    // Baseline trace must come FIRST so the equity line can use fill:'tonexty'
+    // which fills the band between the two traces — not all the way to y=0.
+    Plotly.newPlot('pfEquityChart', [
+      {
+        x: [dates[0], dates[dates.length - 1]],
+        y: [baseline, baseline],
+        type: 'scatter', mode: 'lines',
+        line: {color: 'rgba(255,255,255,0.18)', width: 1, dash: 'dot'},
+        hoverinfo: 'none', showlegend: false,
+      },
+      {
+        x: dates, y: vals, type: 'scatter', mode: 'lines',
+        line: {color: lineCol, width: 2},
+        fill: 'tonexty', fillcolor: fillCol,
+        hovertemplate: '%{x}<br><b>$%{y:,.0f}</b><extra></extra>',
+        showlegend: false,
+      },
+    ], {
       paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
-      margin: {t:10, b:40, l:65, r:10},
-      xaxis: {color:'#8b949e', gridcolor:'rgba(48,54,61,0.6)', tickfont:{size:10}},
-      yaxis: {color:'#8b949e', gridcolor:'rgba(48,54,61,0.6)', tickfont:{size:10},
-              tickprefix:'$', tickformat:',.0f'},
+      margin: {t: 10, b: 40, l: 70, r: 10},
+      xaxis: {color: '#8b949e', gridcolor: 'rgba(48,54,61,0.5)', tickfont: {size: 10}},
+      yaxis: {
+        color: '#8b949e', gridcolor: 'rgba(48,54,61,0.5)', tickfont: {size: 10},
+        tickprefix: '$', tickformat: ',.0f',
+        range: [
+          Math.min(...vals, baseline) * 0.998,
+          Math.max(...vals, baseline) * 1.002,
+        ],
+      },
       showlegend: false,
-    }, {responsive:true, displayModeBar:false});
+    }, {responsive: true, displayModeBar: false});
   } else {
     document.getElementById('pfEquityChart').innerHTML =
       `<div class="pf-empty">Equity curve will appear after the first rebalance day.</div>`;
