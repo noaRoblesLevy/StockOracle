@@ -24,6 +24,7 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S',
 )
 log = logging.getLogger(__name__)
+_start_time = time.time()
 
 # Optional: set GITHUB_REPO=owner/repo so /api/portfolio always reads the
 # latest portfolio.json committed by GitHub Actions (no git pull needed).
@@ -1537,8 +1538,9 @@ def get_portfolio():
     # ── Step 1: 3-month daily history for signal detection (_fast_screen) ────
     closes_map = {}   # sym → full close series, used only for _fast_screen
     syms_to_fetch = list(p['positions'].keys())
-    if 'SPY' not in syms_to_fetch:
-        syms_to_fetch.append('SPY')
+    for bench in ('SPY', 'QQQ'):
+        if bench not in syms_to_fetch:
+            syms_to_fetch.append(bench)
 
     def _extract_closes(raw, sym):
         """Handle both (ticker, field) and (field, ticker) MultiIndex orderings."""
@@ -1642,11 +1644,16 @@ def get_portfolio():
     # Unrealized P&L: paper gain/loss on currently open positions
     unrealized_pnl = sum(pos['pnl'] for pos in positions_list)
 
-    # SPY history for benchmark overlay: {date_str: close}
-    spy_history = {}
-    if 'SPY' in closes_map:
-        for ts, val in closes_map['SPY'].items():
-            spy_history[str(pd.Timestamp(ts).date())] = round(float(val), 2)
+    def _build_history(sym: str) -> dict:
+        """Convert a closes series to {date_str: close} dict."""
+        result = {}
+        if sym in closes_map:
+            for ts, val in closes_map[sym].items():
+                result[str(pd.Timestamp(ts).date())] = round(float(val), 2)
+        return result
+
+    spy_history = _build_history('SPY')
+    qqq_history = _build_history('QQQ')
 
     return jsonify({
         'initial_balance':  p['initial_balance'],
@@ -1661,6 +1668,7 @@ def get_portfolio():
         'trades':           list(reversed(p['trades']))[:50],   # last 50, newest first
         'daily_values':     p['daily_values'],
         'spy_history':      spy_history,
+        'qqq_history':      qqq_history,
         'last_updated':     p.get('last_updated'),
         'created':          p.get('created'),
     })
@@ -1687,7 +1695,27 @@ def trigger_rebalance():
     p, summary = rebalance(p, horizon)
     save_portfolio(p)
     _last_manual_rebalance = time.time()
+    # Invalidate rankings cache — stale signals after a rebalance are misleading
+    _rankings_cache.clear()
+    log.info('Rankings cache cleared after manual rebalance')
     return jsonify({'ok': True, 'summary': summary})
+
+
+@app.route('/api/health')
+def health():
+    """Lightweight health-check endpoint for uptime monitoring."""
+    p = load_portfolio()
+    return jsonify({
+        'status':          'ok',
+        'last_rebalance':  p.get('last_updated'),
+        'open_positions':  len(p.get('positions', {})),
+        'uptime_seconds':  round(time.time() - _start_time),
+        'rankings_cached': bool(_rankings_cache),
+    })
+
+
+_last_backtest: float = 0.0
+_BACKTEST_COOLDOWN = 120   # 2 minutes between backtest runs
 
 
 @app.route('/api/backtest')
@@ -1698,6 +1726,13 @@ def run_backtest():
     historical data up to each date, simulating trades, and returning an
     equity curve alongside key statistics.
     """
+    global _last_backtest
+    elapsed = time.time() - _last_backtest
+    if elapsed < _BACKTEST_COOLDOWN:
+        wait = int(_BACKTEST_COOLDOWN - elapsed)
+        return jsonify({'error': f'Rate limited — wait {wait}s before running another backtest'}), 429
+    _last_backtest = time.time()
+
     from portfolio import MAX_POSITIONS, MAX_POSITION_PCT, MIN_CONF, MIN_PRED_PCT, STOP_LOSS_PCT
 
     try:

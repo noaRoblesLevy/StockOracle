@@ -29,7 +29,7 @@ import numpy as np
 import pandas as pd
 import yfinance as yf
 
-from model import _fast_screen, _shrink
+from model import _fast_screen, _shrink, _quick_direction
 
 warnings.filterwarnings('ignore')
 
@@ -337,13 +337,32 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
                                           volumes=volumes_map.get(sym))
             if pred_pct is None:
                 continue
-            score = pred_pct * conf if (pred_pct > MIN_PRED_PCT and conf > MIN_CONF) else -999
+
+            # ── Multi-horizon consensus: require 2 of 3 horizons to agree ─────
+            # _quick_direction is ~50× faster than _fast_screen (no backtest)
+            day_dir   = _quick_direction(closes, 1)
+            month_dir = _quick_direction(closes, 21)
+            week_dir  = 1 if pred_pct > 0 else (-1 if pred_pct < 0 else 0)
+            bullish_count = sum(d > 0 for d in (day_dir, week_dir, month_dir))
+            bearish_count = sum(d < 0 for d in (day_dir, week_dir, month_dir))
+            # Need at least 2 of 3 horizons to agree for a valid signal
+            if pred_pct > 0 and bullish_count < 2:
+                score = -999   # conflicting horizons — skip
+            elif pred_pct > MIN_PRED_PCT and conf > MIN_CONF:
+                # Sharpe-ratio-adjusted score: reward high pred/vol ratio
+                ret = closes.pct_change().dropna().tail(20)
+                vol = max(float(ret.std()), 0.005)
+                score = (pred_pct / vol) * conf
+            else:
+                score = -999
+
             candidates.append({
-                'symbol':   sym,
-                'pred_pct': pred_pct,
-                'conf':     conf,
-                'price':    price_map[sym],
-                'score':    score,
+                'symbol':      sym,
+                'pred_pct':    pred_pct,
+                'conf':        conf,
+                'price':       price_map[sym],
+                'score':       score,
+                'horizons':    f'{day_dir:+d}/{week_dir:+d}/{month_dir:+d}',
             })
         except Exception:
             continue
@@ -513,6 +532,35 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
                  sym, shares, cand['price'], weight * 100)
         buys += 1
 
+    # ── Position trimming: sell excess shares when position > MAX_POSITION_PCT ──
+    # Winners can drift above the cap; trim back to the limit without fully exiting.
+    trim_sells = 0
+    total_val  = portfolio_value(portfolio, price_map)
+    for sym in list(portfolio['positions'].keys()):
+        pos          = portfolio['positions'][sym]
+        price        = price_map.get(sym, pos['entry_price'])
+        current_val  = pos['shares'] * price
+        cap_val      = total_val * MAX_POSITION_PCT
+        # 5 % tolerance band avoids micro-trimming on tiny drifts
+        if current_val > cap_val * 1.05:
+            shares_to_sell = int((current_val - cap_val) / price)
+            if shares_to_sell >= 1:
+                proceeds = shares_to_sell * price
+                pnl      = shares_to_sell * (price - pos['entry_price'])
+                portfolio['cash'] += proceeds
+                portfolio['positions'][sym]['shares'] -= shares_to_sell
+                portfolio['trades'].append({
+                    'date':   today, 'ticker': sym, 'action': 'SELL',
+                    'shares': shares_to_sell, 'price':  round(price, 2),
+                    'value':  round(proceeds, 2), 'pnl':    round(pnl, 2),
+                    'reason': (f'Trim: {current_val/total_val:.0%} → cap '
+                               f'{MAX_POSITION_PCT:.0%}'),
+                })
+                log.info('Trimmed %s by %d shares (%.0f%% → %.0f%% of portfolio)',
+                         sym, shares_to_sell,
+                         current_val / total_val * 100, MAX_POSITION_PCT * 100)
+                trim_sells += 1
+
     # ── Daily value snapshot (includes SPY close for benchmark overlay) ───────
     total_val     = portfolio_value(portfolio, price_map)
     positions_val = total_val - portfolio['cash']
@@ -529,7 +577,7 @@ def rebalance(portfolio: dict, horizon: str = 'week') -> tuple[dict, str]:
 
     summary = (
         f'{today}: trailing-stop {stop_sells}, take-profit {take_profit_sells}, '
-        f'signal-sell {signal_sells}, bought {buys}, '
+        f'signal-sell {signal_sells}, trim {trim_sells}, bought {buys}, '
         f'positions={len(portfolio["positions"])}, total=${total_val:,.0f}'
     )
     return portfolio, summary

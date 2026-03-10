@@ -246,7 +246,7 @@
   .portfolio-nav-btn:hover, .portfolio-nav-btn.active { background: #e3b341; color: #000; border-color: #e3b341; }
 
   /* ─── PORTFOLIO VIEW ─── */
-  .pf-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .pf-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
   .pf-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
   .pf-card-label { font-size: 0.7rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
   .pf-card-val { font-size: 1.4rem; font-weight: 800; }
@@ -289,10 +289,10 @@
     .header { flex-wrap: wrap; }
     .tabs { order: 3; width: 100%; }
     .rank-name { max-width: 120px; }
-    .pf-summary { grid-template-columns: 1fr 1fr; }
+    .pf-summary { grid-template-columns: 1fr 1fr 1fr; }
   }
   @media (max-width: 600px) {
-    .pf-summary { grid-template-columns: 1fr; }
+    .pf-summary { grid-template-columns: 1fr 1fr; }
     .pf-actions { flex-direction: column; align-items: flex-start; }
     .pf-pos-table-wrap, .pf-trade-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .pf-pos-table, .pf-trade-table { min-width: 640px; }
@@ -300,6 +300,13 @@
     .header-btns { flex-wrap: wrap; gap: 6px; }
   }
   .pf-pos-table-wrap, .pf-trade-table-wrap { width: 100%; }
+  /* ─── EQUITY + PIE LAYOUT ─── */
+  .pf-equity-wrap { display: grid; grid-template-columns: 1fr 230px; gap: 12px; }
+  @media (max-width: 700px) {
+    .pf-equity-wrap { grid-template-columns: 1fr; }
+    .pf-pie-card { display: none; }   /* hide pie on very small screens, shown in attribution */
+  }
+
   /* ─── BACKTEST ─── */
   .bt-run-btn {
     padding: 8px 20px; border-radius: 8px; border: 1px solid var(--warn);
@@ -1281,6 +1288,26 @@ function renderPortfolio(d) {
   const realSign  = realPnl  >= 0 ? '+' : '';
   const unrSign   = unreal   >= 0 ? '+' : '';
 
+  // ── Sharpe ratio from daily_values ───────────────────────────────────────
+  let sharpeStr = 'N/A';
+  if (d.daily_values && d.daily_values.length >= 3) {
+    const rets = [];
+    for (let i = 1; i < d.daily_values.length; i++) {
+      const prev = d.daily_values[i - 1].value;
+      const curr = d.daily_values[i].value;
+      if (prev > 0) rets.push((curr - prev) / prev);
+    }
+    if (rets.length >= 2) {
+      const mean = rets.reduce((a, b) => a + b, 0) / rets.length;
+      const variance = rets.reduce((a, b) => a + (b - mean) ** 2, 0) / rets.length;
+      const std = Math.sqrt(variance);
+      sharpeStr = std > 0 ? (mean / std * Math.sqrt(252)).toFixed(2) : 'N/A';
+    }
+  }
+  const sharpeColor = sharpeStr !== 'N/A' && parseFloat(sharpeStr) >= 1
+    ? 'var(--up)' : sharpeStr !== 'N/A' && parseFloat(sharpeStr) < 0
+    ? 'var(--down)' : 'var(--text)';
+
   // ── Summary cards ────────────────────────────────────────────────────────
   const summaryHTML = `
   <div class="pf-summary">
@@ -1298,6 +1325,11 @@ function renderPortfolio(d) {
       <div class="pf-card-label">Unrealized P&amp;L</div>
       <div class="pf-card-val" style="color:${unrColor}">${unrSign}$${fmtK(Math.abs(unreal))}</div>
       <div class="pf-card-sub" style="color:${unrColor}">Open positions (mark-to-market)</div>
+    </div>
+    <div class="pf-card">
+      <div class="pf-card-label">Sharpe Ratio</div>
+      <div class="pf-card-val" style="color:${sharpeColor}">${sharpeStr}</div>
+      <div class="pf-card-sub">Annualised · &gt;1 = good · &gt;2 = excellent</div>
     </div>
     <div class="pf-card">
       <div class="pf-card-label">Cash Available</div>
@@ -1320,6 +1352,7 @@ function renderPortfolio(d) {
   const actionsHTML = `
   <div class="pf-actions">
     <button class="pf-rebalance-btn" id="rebalanceBtn" onclick="triggerRebalance()">&#9654; Run Rebalance Now</button>
+    <button class="pf-rebalance-btn" style="border-color:var(--text2);color:var(--text2)" onclick="window._pfExportCSV()">&#8595; Export CSV</button>
     <span class="pf-meta">
       Prices refresh every 30 s &nbsp;·&nbsp; <span id="pfAgo">just updated</span>
       &nbsp;·&nbsp; Auto-rebalances daily ~4:15 PM ET via GitHub Actions
@@ -1335,14 +1368,14 @@ function renderPortfolio(d) {
     el.textContent = sec < 5 ? 'just updated' : `updated ${sec}s ago`;
   }, 1000);
 
-  // ── Equity curve + sector pie (side by side) ─────────────────────────────
+  // ── Equity curve + sector pie (side by side, stacks on mobile) ──────────
   const equityHTML = `
-  <div style="display:grid;grid-template-columns:1fr 230px;gap:12px;margin-bottom:16px">
+  <div class="pf-equity-wrap" style="margin-bottom:16px">
     <div class="card">
       <div class="card-title">Equity Curve</div>
       <div id="pfEquityChart" style="height:220px"></div>
     </div>
-    <div class="card">
+    <div class="card pf-pie-card">
       <div class="card-title">Sector Allocation</div>
       <div id="pfSectorPie" style="height:220px"></div>
     </div>
@@ -1460,24 +1493,28 @@ function renderPortfolio(d) {
     const fillCol  = isUp ? 'rgba(63,185,80,0.12)' : 'rgba(248,81,73,0.12)';
     const baseline = d.initial_balance;
 
-    // SPY benchmark: spy_history has ~60 trading days of data from the backend.
-    // Draw a continuous line from portfolio start date using all available dates.
-    const spyHist   = d.spy_history || {};
-    const spyTraces = [];
+    // Benchmark overlays: SPY and QQQ, from portfolio start date onward
+    const spyHist        = d.spy_history || {};
+    const qqqHist        = d.qqq_history || {};
+    const benchTraces    = [];
     const portfolioStart = d.created || dates[0];
-    // All spy_history dates on or after the portfolio start, sorted ascending
-    const spyDates = Object.keys(spyHist).sort().filter(dt => dt >= portfolioStart);
-    if (spyDates.length >= 2) {
-      const spy0    = spyHist[spyDates[0]];
-      const spyVals = spyDates.map(dt => d.initial_balance * (spyHist[dt] / spy0));
-      spyTraces.push({
-        x: spyDates, y: spyVals, type: 'scatter', mode: 'lines',
-        name: 'SPY benchmark',
-        line: {color: 'rgba(139,148,158,0.55)', width: 1.5, dash: 'dot'},
-        hovertemplate: '%{x}<br>SPY equiv: <b>$%{y:,.0f}</b><extra></extra>',
+
+    function makeBenchTrace(hist, name, color) {
+      const bDates = Object.keys(hist).sort().filter(dt => dt >= portfolioStart);
+      if (bDates.length < 2) return null;
+      const b0   = hist[bDates[0]];
+      const bVals = bDates.map(dt => d.initial_balance * (hist[dt] / b0));
+      return {
+        x: bDates, y: bVals, type: 'scatter', mode: 'lines', name,
+        line: {color, width: 1.5, dash: 'dot'},
+        hovertemplate: `%{x}<br>${name}: <b>$%{y:,.0f}</b><extra></extra>`,
         showlegend: true,
-      });
+      };
     }
+    const spyTrace = makeBenchTrace(spyHist, 'SPY', 'rgba(139,148,158,0.6)');
+    const qqqTrace = makeBenchTrace(qqqHist, 'QQQ', 'rgba(88,166,255,0.5)');
+    if (spyTrace) benchTraces.push(spyTrace);
+    if (qqqTrace) benchTraces.push(qqqTrace);
 
     // Trade annotations: buy (green ▲) and sell (red ▼) markers on the chart
     const allTrades = d.trades || [];
@@ -1507,7 +1544,7 @@ function renderPortfolio(d) {
     }
 
     // Baseline trace first so fill:'tonexty' draws a band, not a solid block.
-    const allVals = [...vals, baseline, ...spyTraces.flatMap(t => t.y)];
+    const allVals = [...vals, baseline, ...benchTraces.flatMap(t => t.y)];
     Plotly.newPlot('pfEquityChart', [
       {
         x: [dates[0], dates[dates.length - 1]],
@@ -1522,9 +1559,9 @@ function renderPortfolio(d) {
         line: {color: lineCol, width: 2},
         fill: 'tonexty', fillcolor: fillCol,
         hovertemplate: '%{x}<br>Portfolio: <b>$%{y:,.0f}</b><extra></extra>',
-        showlegend: spyTraces.length > 0 || annotTraces.length > 0,
+        showlegend: benchTraces.length > 0 || annotTraces.length > 0,
       },
-      ...spyTraces,
+      ...benchTraces,
       ...annotTraces,
     ], {
       paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
@@ -1542,7 +1579,7 @@ function renderPortfolio(d) {
         x: 0.01, y: 0.99, bgcolor: 'transparent',
         font: {color: '#8b949e', size: 10},
       },
-      showlegend: spyTraces.length > 0,
+      showlegend: benchTraces.length > 0 || annotTraces.length > 0,
     }, {responsive: true, displayModeBar: false});
   } else {
     document.getElementById('pfEquityChart').innerHTML =
@@ -1632,6 +1669,27 @@ window._pfLoadMoreTrades = function() {
   window._pfTradeLimit += 20;
   const container = document.getElementById('pfTradesContainer');
   if (container) container.innerHTML = window._pfRenderTrades();
+};
+
+// ── CSV export ────────────────────────────────────────────────────────────────
+window._pfExportCSV = function() {
+  const trades = window._pfAllTrades || [];
+  if (!trades.length) { alert('No trades to export.'); return; }
+  const header = ['Date','Ticker','Action','Shares','Price','Value','PnL','Reason'];
+  const rows = trades.map(t => [
+    t.date, t.ticker, t.action, t.shares,
+    t.price != null ? t.price : '',
+    t.value != null ? t.value : '',
+    t.pnl  != null ? t.pnl  : '',
+    (t.reason || '').replace(/,/g, ';'),
+  ]);
+  const csv  = [header, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'stockoracle_trades.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
 };
 
 // ── Backtest renderer (separated so it survives portfolio refresh) ────────────

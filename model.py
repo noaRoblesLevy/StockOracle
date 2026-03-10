@@ -10,6 +10,8 @@ _rsi(closes)                        14-period Wilder RSI
 _bb_pct_b(closes)                   Bollinger Band %B (0=lower, 0.5=mid, 1=upper)
 _macd(closes)                       MACD (12, 26, 9) — returns (macd_line, signal_line)
 _volume_ratio(volumes)              Recent volume vs. 20-day average
+_quick_direction(closes, horizon)   Fast directional check for multi-horizon consensus
+_52w_high_factor(closes)            Momentum amplifier near 52-week high
 _fast_screen(closes, horizon)       Returns (pred_pct, conf)
 """
 
@@ -123,6 +125,46 @@ def _volume_ratio(volumes: pd.Series, period: int = 20) -> float:
     return float(volumes.iloc[-1]) / avg
 
 
+def _quick_direction(closes: pd.Series, horizon: int) -> int:
+    """Fast directional check — no backtest, no overlays.
+
+    Used for multi-horizon consensus: calling _fast_screen three times would
+    triple compute time due to the 12-window mini-backtest.  This is ~50× faster
+    and only cares about direction (bullish/neutral/bearish).
+
+    Returns: +1 (both LR and EMA agree bullish), -1 (both bearish), 0 (split).
+    """
+    if len(closes) < 30:
+        return 0
+    last     = float(closes.iloc[-1])
+    lr_up    = _lr_predict_fast(closes.values, horizon) >= last
+    ema_up   = _ema_predict_fast(closes, horizon) >= last
+    if lr_up and ema_up:   return  1
+    if not lr_up and not ema_up: return -1
+    return 0   # models disagree — treat as neutral
+
+
+def _52w_high_factor(closes: pd.Series) -> float:
+    """Momentum amplifier based on 52-week high proximity.
+
+    Stocks trading within 5 % of their 52-week high tend to break out
+    (price-momentum anomaly).  Stocks more than 30 % below the high are
+    in a structural downtrend and receive a mild damper.
+
+    Returns a multiplier to apply to pred_pct.
+    """
+    if len(closes) < 20:
+        return 1.0
+    high_52w = float(closes.tail(252).max())
+    last     = float(closes.iloc[-1])
+    if high_52w == 0:
+        return 1.0
+    pct_from_high = (high_52w - last) / high_52w
+    if pct_from_high <= 0.05:   return 1.10   # near high → momentum breakout
+    if pct_from_high >= 0.30:   return 0.92   # deep downtrend → dampen
+    return 1.0
+
+
 # ─── Composite screen ─────────────────────────────────────────────────────────
 
 def _fast_screen(closes: pd.Series, horizon: int, volumes: pd.Series = None):
@@ -173,6 +215,9 @@ def _fast_screen(closes: pd.Series, horizon: int, volumes: pd.Series = None):
     macd_line, macd_signal = _macd(closes)
     if macd_line > macd_signal:    pred_pct *= 1.10   # bullish crossover — amplify
     elif macd_line < macd_signal:  pred_pct *= 0.90   # bearish crossover — dampen
+
+    # ── 52-week high momentum overlay ──────────────────────────────────────────
+    pred_pct *= _52w_high_factor(closes)
 
     # ── Volume confirmation overlay ────────────────────────────────────────────
     # Low volume moves have less conviction; don't dampen already-weak predictions
