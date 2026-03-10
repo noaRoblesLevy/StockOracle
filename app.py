@@ -12,7 +12,8 @@ import json
 import time
 import urllib.request
 from datetime import datetime, timedelta
-from portfolio import load_portfolio, rebalance, save_portfolio, portfolio_value
+from portfolio import load_portfolio, rebalance, save_portfolio, portfolio_value, RANK_TICKERS
+from model import _shrink, _lr_predict_fast, _ema_predict_fast, _fast_screen, _rsi
 
 # Optional: set GITHUB_REPO=owner/repo so /api/portfolio always reads the
 # latest portfolio.json committed by GitHub Actions (no git pull needed).
@@ -975,50 +976,6 @@ def compute_technical_indicators(df):
     return df
 
 
-def _shrink(correct: int, total: int, alpha: float = 8.0) -> float:
-    """
-    Bayesian shrinkage toward 50% (the random baseline).
-
-    Formula: (correct + α) / (total + 2α)
-
-    With small samples the estimate is pulled strongly toward 0.5.
-    As total grows, the shrinkage effect diminishes.
-
-    α = 8 examples:
-      9/10  raw → 65%   (was 90%)
-      5/10  raw → 50%   (stays at random)
-     13/15  raw → 68%   (was 87%)
-     10/15  raw → 58%
-     20/20  raw → 77%   (cap near 80%)
-    """
-    if total == 0:
-        return 0.5
-    return round((correct + alpha) / (total + 2 * alpha), 4)
-
-
-def _lr_predict_fast(train_vals, horizon_days):
-    """Minimal LR predict used by backtester."""
-    n = len(train_vals)
-    X = np.arange(n, dtype=float).reshape(-1, 1)
-    mn, mx = X.min(), X.max()
-    Xs = (X - mn) / (mx - mn + 1e-9)
-    lr = LinearRegression().fit(Xs, train_vals)
-    fX = (np.arange(n, n + horizon_days, dtype=float).reshape(-1, 1) - mn) / (mx - mn + 1e-9)
-    return float(lr.predict(fX)[-1])
-
-
-def _ema_predict_fast(train_ser, horizon_days):
-    """Minimal EMA momentum predict used by backtester."""
-    es = float(train_ser.ewm(span=9,  adjust=False).mean().iloc[-1])
-    el = float(train_ser.ewm(span=21, adjust=False).mean().iloc[-1])
-    base = float(train_ser.iloc[-1])
-    momentum = (es - el) / base
-    current = base
-    for i in range(horizon_days):
-        current += momentum * base * 0.1 * np.exp(-i * 0.05)
-    return current
-
-
 def compute_backtest_accuracy(prices, horizon_days, n_windows=20, train_window=80):
     """
     Walk-forward backtesting over n_windows periods.
@@ -1335,65 +1292,27 @@ def compute_stats(df, ticker_info):
 
 
 # ─── Rankings infrastructure ──────────────────────────────────────────────────
+# RANK_TICKERS is imported from portfolio.py (single source of truth)
 
-# 30 high-interest tickers screened on the home page
-RANK_TICKERS = [
-    'AAPL', 'MSFT', 'NVDA', 'META', 'GOOGL', 'AMZN', 'TSLA', 'AVGO',
-    'AMD',  'PLTR', 'APP',  'CRWD', 'NET',   'DDOG', 'PANW', 'CRM',
-    'NFLX', 'COIN', 'SMCI', 'ARM',
-    'SPY',  'QQQ',  'SMH',  'ARKK',
-    'JPM',  'GS',   'BAC',  'LLY',  'XOM',   'GLD',
-]
-
-_rankings_cache: dict = {}   # key = horizon_days → {data, ts}
+_rankings_cache: dict = {}   # key = horizon_key → {data, ts}
 RANK_CACHE_TTL = 900         # 15 minutes
 
+# Simple TTL cache for yfinance downloads in the portfolio endpoint
+_PF_DOWNLOAD_CACHE: dict = {}
+_PF_DOWNLOAD_TTL = 120       # 2 minutes
 
-def _fast_screen(closes: pd.Series, horizon: int):
-    """
-    Quickly predict direction + magnitude for a single ticker using
-    LR trend extrapolation and EMA momentum — no ARIMA, very fast.
-    Returns (pred_pct, signal_conf) where conf is a Bayesian-shrunk 12-window mini-backtest.
-    """
-    closes = closes.dropna()
-    if len(closes) < 30:
-        return None, None
 
-    last = float(closes.iloc[-1])
-
-    # ── LR predicted % change ────────────────────────────────────────────────
-    lr_pred = _lr_predict_fast(closes.values, horizon)
-    lr_pct  = (lr_pred - last) / last * 100
-
-    # ── EMA momentum ─────────────────────────────────────────────────────────
-    ema_pred = _ema_predict_fast(closes, horizon)
-    ema_pct  = (ema_pred - last) / last * 100
-
-    # Weighted average (LR trend carries more weight)
-    agree   = (lr_pct > 0) == (ema_pct > 0)
-    pred_pct = lr_pct * 0.6 + ema_pct * 0.4 if agree else lr_pct
-
-    # ── 12-window mini-backtest (LR + EMA) with Bayesian shrinkage ──────────
-    n_win, train_w = 12, 40
-    needed = train_w + n_win + horizon
-    correct = total = 0
-    if len(closes) >= needed:
-        for i in range(n_win):
-            end    = len(closes) - n_win - horizon + i
-            tr     = closes.iloc[end - train_w:end]
-            actual_up = float(closes.iloc[end + horizon - 1]) >= float(tr.iloc[-1])
-            base   = float(tr.iloc[-1])
-            for pred_fn in (_lr_predict_fast, _ema_predict_fast):
-                try:
-                    arg = tr.values if pred_fn is _lr_predict_fast else tr
-                    p   = pred_fn(arg, horizon)
-                    correct += int((p >= base) == actual_up)
-                    total   += 1
-                except Exception:
-                    pass
-    conf = _shrink(correct, total)
-
-    return round(pred_pct, 2), conf
+def _cached_yf_download(syms: list, period: str):
+    """Return a cached yf.download result, refreshing after _PF_DOWNLOAD_TTL seconds."""
+    key = (tuple(sorted(syms)), period)
+    if key in _PF_DOWNLOAD_CACHE:
+        ts, data = _PF_DOWNLOAD_CACHE[key]
+        if time.time() - ts < _PF_DOWNLOAD_TTL:
+            return data
+    data = yf.download(syms, period=period, interval='1d',
+                       auto_adjust=True, progress=False, group_by='ticker')
+    _PF_DOWNLOAD_CACHE[key] = (time.time(), data)
+    return data
 
 
 # ─── API Routes ───────────────────────────────────────────────────────────────
@@ -1457,12 +1376,8 @@ def get_rankings():
 
                 last_price = float(closes.iloc[-1])
 
-                # RSI for context
-                delta = closes.diff()
-                gain  = delta.clip(lower=0).rolling(14).mean()
-                loss  = (-delta.clip(upper=0)).rolling(14).mean()
-                rs    = gain.iloc[-1] / loss.iloc[-1] if float(loss.iloc[-1]) != 0 else 0
-                rsi   = round(100 - (100 / (1 + rs)), 1)
+                # RSI for context (shared Wilder implementation from model.py)
+                rsi = round(_rsi(closes), 1)
 
                 # 5-day % change (momentum context)
                 mom_5d = round(((last_price / float(closes.iloc[-5])) - 1) * 100, 2) if len(closes) >= 5 else None
@@ -1610,13 +1525,13 @@ def get_portfolio():
     p = _fetch_portfolio_from_github() or load_portfolio()
 
     # Fetch 3-month history for open positions (needed for current-signal screen)
+    # Uses a 2-minute TTL cache so repeated tab refreshes don't hammer yfinance.
     price_map  = {}
     closes_map = {}   # sym → full close series for _fast_screen
     if p['positions']:
         syms = list(p['positions'].keys())
         try:
-            raw = yf.download(syms, period='3mo', interval='1d',
-                              auto_adjust=True, progress=False, group_by='ticker')
+            raw = _cached_yf_download(syms, '3mo')
             for sym in syms:
                 try:
                     closes = (raw[sym]['Close'] if isinstance(raw.columns, pd.MultiIndex)

@@ -37,3 +37,14 @@ jobs:
           git add portfolio.json
           git diff --cached --quiet || git commit -m "chore: daily portfolio rebalance $(date -u '+%Y-%m-%d')"
           git push
+
+      - name: Report result to job summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "## ✅ Rebalance succeeded on $(date -u '+%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ❌ Rebalance FAILED on $(date -u '+%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+            echo "Check the job logs above for the error." >> $GITHUB_STEP_SUMMARY
+            echo "::error title=Rebalance Failed::daily_rebalance.py failed — check logs"
+          fi

@@ -291,6 +291,22 @@
     .rank-name { max-width: 120px; }
     .pf-summary { grid-template-columns: 1fr 1fr; }
   }
+  @media (max-width: 600px) {
+    .pf-summary { grid-template-columns: 1fr; }
+    .pf-actions { flex-direction: column; align-items: flex-start; }
+    .pf-pos-table-wrap, .pf-trade-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .pf-pos-table, .pf-trade-table { min-width: 640px; }
+    .pf-card-val { font-size: 1.2rem; }
+    .header-btns { flex-wrap: wrap; gap: 6px; }
+  }
+  .pf-pos-table-wrap, .pf-trade-table-wrap { width: 100%; }
+  .pf-load-more {
+    display: block; width: 100%; margin-top: 10px; padding: 9px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text2); border-radius: 8px; font-size: 0.8rem;
+    cursor: pointer; transition: border-color 0.2s, color 0.2s;
+  }
+  .pf-load-more:hover { border-color: var(--accent); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -1329,24 +1345,27 @@ function renderPortfolio(d) {
         <td style="font-size:0.78rem">${liveStr}</td>
       </tr>`;
     }).join('');
-    posHTML = `<table class="pf-pos-table">
+    posHTML = `<div class="pf-pos-table-wrap"><table class="pf-pos-table">
       <thead><tr>
         <th>Ticker</th><th>Shares</th><th>Entry $</th><th>Current $</th>
         <th>Cost</th><th>P&L</th><th>P&L %</th><th>Bought · Entry signal</th><th>Live signal</th>
       </tr></thead>
       <tbody>${rows}</tbody>
-    </table>`;
+    </table></div>`;
   }
 
-  // ── Trades ────────────────────────────────────────────────────────────────
-  let tradeHTML = '';
-  if (!d.trades || d.trades.length === 0) {
-    tradeHTML = `<div class="pf-empty">No trades yet.</div>`;
-  } else {
-    const rows = d.trades.slice(0, 30).map(t => {
-      const cls  = t.action === 'BUY' ? 'trade-buy' : 'trade-sell';
+  // ── Trades (paginated) ────────────────────────────────────────────────────
+  window._pfAllTrades  = d.trades || [];
+  window._pfTradeLimit = 20;
+
+  function renderTrades() {
+    const all = window._pfAllTrades;
+    if (!all.length) return `<div class="pf-empty">No trades yet.</div>`;
+    const visible = all.slice(0, window._pfTradeLimit);
+    const rows = visible.map(t => {
+      const cls      = t.action === 'BUY' ? 'trade-buy' : 'trade-sell';
       const actColor = t.action === 'BUY' ? 'var(--up)' : 'var(--down)';
-      const pnlStr = t.pnl != null
+      const pnlStr   = t.pnl != null
         ? `<span style="color:${t.pnl>=0?'var(--up)':'var(--down)'};">${t.pnl>=0?'+':''}$${fmtK(Math.abs(t.pnl))}</span>`
         : '—';
       return `<tr class="${cls}">
@@ -1360,14 +1379,24 @@ function renderPortfolio(d) {
         <td style="font-size:0.7rem;color:var(--text2)">${t.reason || ''}</td>
       </tr>`;
     }).join('');
-    tradeHTML = `<table class="pf-trade-table">
+    const more = all.length > window._pfTradeLimit
+      ? `<button class="pf-load-more" onclick="loadMoreTrades()">Load more (${all.length - window._pfTradeLimit} remaining)</button>`
+      : '';
+    return `<div class="pf-trade-table-wrap"><table class="pf-trade-table">
       <thead><tr>
         <th>Date</th><th>Ticker</th><th>Action</th><th>Shares</th>
         <th>Price</th><th>Value</th><th>P&L</th><th>Reason</th>
       </tr></thead>
       <tbody>${rows}</tbody>
-    </table>`;
+    </table></div>${more}`;
   }
+
+  function loadMoreTrades() {
+    window._pfTradeLimit += 20;
+    document.getElementById('pfTradesContainer').innerHTML = renderTrades();
+  }
+
+  let tradeHTML = renderTrades();
 
   document.getElementById('portfolioContent').innerHTML = `
     ${summaryHTML}
@@ -1378,8 +1407,8 @@ function renderPortfolio(d) {
       ${posHTML}
     </div>
     <div class="card">
-      <div class="card-title">Trade History <span style="font-size:0.7rem;color:var(--text2);font-weight:400">(last 30)</span></div>
-      ${tradeHTML}
+      <div class="card-title">Trade History <span style="font-size:0.7rem;color:var(--text2);font-weight:400">(${window._pfAllTrades.length > 50 ? '50+ shown' : window._pfAllTrades.length + ' total'})</span></div>
+      <div id="pfTradesContainer">${tradeHTML}</div>
     </div>`;
 
   // ── Render equity curve with Plotly ───────────────────────────────────────
@@ -1391,8 +1420,25 @@ function renderPortfolio(d) {
     const fillCol  = isUp ? 'rgba(63,185,80,0.12)' : 'rgba(248,81,73,0.12)';
     const baseline = d.initial_balance;
 
-    // Baseline trace must come FIRST so the equity line can use fill:'tonexty'
-    // which fills the band between the two traces — not all the way to y=0.
+    // SPY benchmark: convert to hypothetical $50k investment starting from
+    // the first daily_values entry that has a spy_close recorded.
+    const spyEntries = d.daily_values.filter(v => v.spy_close != null);
+    const spyTraces  = [];
+    if (spyEntries.length >= 2) {
+      const spy0    = spyEntries[0].spy_close;
+      const spyDates = spyEntries.map(v => v.date);
+      const spyVals  = spyEntries.map(v => d.initial_balance * (v.spy_close / spy0));
+      spyTraces.push({
+        x: spyDates, y: spyVals, type: 'scatter', mode: 'lines',
+        name: 'SPY benchmark',
+        line: {color: 'rgba(139,148,158,0.6)', width: 1.5, dash: 'dot'},
+        hovertemplate: '%{x}<br>SPY equiv: <b>$%{y:,.0f}</b><extra></extra>',
+        showlegend: true,
+      });
+    }
+
+    // Baseline trace first so fill:'tonexty' draws a band, not a solid block.
+    const allVals = [...vals, baseline, ...spyTraces.flatMap(t => t.y)];
     Plotly.newPlot('pfEquityChart', [
       {
         x: [dates[0], dates[dates.length - 1]],
@@ -1403,11 +1449,13 @@ function renderPortfolio(d) {
       },
       {
         x: dates, y: vals, type: 'scatter', mode: 'lines',
+        name: 'Portfolio',
         line: {color: lineCol, width: 2},
         fill: 'tonexty', fillcolor: fillCol,
-        hovertemplate: '%{x}<br><b>$%{y:,.0f}</b><extra></extra>',
-        showlegend: false,
+        hovertemplate: '%{x}<br>Portfolio: <b>$%{y:,.0f}</b><extra></extra>',
+        showlegend: spyTraces.length > 0,
       },
+      ...spyTraces,
     ], {
       paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
       margin: {t: 10, b: 40, l: 70, r: 10},
@@ -1416,11 +1464,15 @@ function renderPortfolio(d) {
         color: '#8b949e', gridcolor: 'rgba(48,54,61,0.5)', tickfont: {size: 10},
         tickprefix: '$', tickformat: ',.0f',
         range: [
-          Math.min(...vals, baseline) * 0.998,
-          Math.max(...vals, baseline) * 1.002,
+          Math.min(...allVals) * 0.998,
+          Math.max(...allVals) * 1.002,
         ],
       },
-      showlegend: false,
+      legend: {
+        x: 0.01, y: 0.99, bgcolor: 'transparent',
+        font: {color: '#8b949e', size: 10},
+      },
+      showlegend: spyTraces.length > 0,
     }, {responsive: true, displayModeBar: false});
   } else {
     document.getElementById('pfEquityChart').innerHTML =
