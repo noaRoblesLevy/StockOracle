@@ -1357,46 +1357,7 @@ function renderPortfolio(d) {
   // ── Trades (paginated) ────────────────────────────────────────────────────
   window._pfAllTrades  = d.trades || [];
   window._pfTradeLimit = 20;
-
-  function renderTrades() {
-    const all = window._pfAllTrades;
-    if (!all.length) return `<div class="pf-empty">No trades yet.</div>`;
-    const visible = all.slice(0, window._pfTradeLimit);
-    const rows = visible.map(t => {
-      const cls      = t.action === 'BUY' ? 'trade-buy' : 'trade-sell';
-      const actColor = t.action === 'BUY' ? 'var(--up)' : 'var(--down)';
-      const pnlStr   = t.pnl != null
-        ? `<span style="color:${t.pnl>=0?'var(--up)':'var(--down)'};">${t.pnl>=0?'+':''}$${fmtK(Math.abs(t.pnl))}</span>`
-        : '—';
-      return `<tr class="${cls}">
-        <td>${t.date}</td>
-        <td><span class="pf-sym">${t.ticker}</span></td>
-        <td style="font-weight:700;color:${actColor}">${t.action}</td>
-        <td>${t.shares}</td>
-        <td>$${fmt(t.price)}</td>
-        <td>$${fmtK(t.value)}</td>
-        <td>${pnlStr}</td>
-        <td style="font-size:0.7rem;color:var(--text2)">${t.reason || ''}</td>
-      </tr>`;
-    }).join('');
-    const more = all.length > window._pfTradeLimit
-      ? `<button class="pf-load-more" onclick="loadMoreTrades()">Load more (${all.length - window._pfTradeLimit} remaining)</button>`
-      : '';
-    return `<div class="pf-trade-table-wrap"><table class="pf-trade-table">
-      <thead><tr>
-        <th>Date</th><th>Ticker</th><th>Action</th><th>Shares</th>
-        <th>Price</th><th>Value</th><th>P&L</th><th>Reason</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>${more}`;
-  }
-
-  function loadMoreTrades() {
-    window._pfTradeLimit += 20;
-    document.getElementById('pfTradesContainer').innerHTML = renderTrades();
-  }
-
-  let tradeHTML = renderTrades();
+  let tradeHTML = window._pfRenderTrades();
 
   document.getElementById('portfolioContent').innerHTML = `
     ${summaryHTML}
@@ -1420,18 +1381,25 @@ function renderPortfolio(d) {
     const fillCol  = isUp ? 'rgba(63,185,80,0.12)' : 'rgba(248,81,73,0.12)';
     const baseline = d.initial_balance;
 
-    // SPY benchmark: convert to hypothetical $50k investment starting from
-    // the first daily_values entry that has a spy_close recorded.
-    const spyEntries = d.daily_values.filter(v => v.spy_close != null);
-    const spyTraces  = [];
-    if (spyEntries.length >= 2) {
-      const spy0    = spyEntries[0].spy_close;
-      const spyDates = spyEntries.map(v => v.date);
-      const spyVals  = spyEntries.map(v => d.initial_balance * (v.spy_close / spy0));
+    // SPY benchmark: use the spy_history lookup from the API (covers all history,
+    // not just entries that were recorded after the feature was added).
+    const spyHist   = d.spy_history || {};
+    const spyTraces = [];
+    // Pair each daily_value date with a SPY close from spy_history
+    const spyPairs  = d.daily_values
+      .map(v => ({ date: v.date, spy: spyHist[v.date] }))
+      .filter(v => v.spy != null);
+    // Deduplicate by date (keep last value per date, same as daily_values)
+    const spyMap = {};
+    spyPairs.forEach(v => { spyMap[v.date] = v.spy; });
+    const spyDates = [...new Set(d.daily_values.map(v => v.date))].filter(d => spyMap[d]);
+    if (spyDates.length >= 2) {
+      const spy0   = spyMap[spyDates[0]];
+      const spyVals = spyDates.map(date => d.initial_balance * (spyMap[date] / spy0));
       spyTraces.push({
         x: spyDates, y: spyVals, type: 'scatter', mode: 'lines',
         name: 'SPY benchmark',
-        line: {color: 'rgba(139,148,158,0.6)', width: 1.5, dash: 'dot'},
+        line: {color: 'rgba(139,148,158,0.55)', width: 1.5, dash: 'dot'},
         hovertemplate: '%{x}<br>SPY equiv: <b>$%{y:,.0f}</b><extra></extra>',
         showlegend: true,
       });
@@ -1484,6 +1452,47 @@ function fmtK(n) {
   if (Math.abs(n) >= 1000) return (n/1000).toFixed(1) + 'k';
   return n.toFixed(2);
 }
+
+// Global trade pagination helpers (must be global so onclick= can reach them)
+window._pfRenderTrades = function() {
+  const all = window._pfAllTrades || [];
+  if (!all.length) return `<div class="pf-empty">No trades yet.</div>`;
+  const visible = all.slice(0, window._pfTradeLimit);
+  const rows = visible.map(t => {
+    const cls      = t.action === 'BUY' ? 'trade-buy' : 'trade-sell';
+    const actColor = t.action === 'BUY' ? 'var(--up)' : 'var(--down)';
+    const pnlStr   = t.pnl != null
+      ? `<span style="color:${t.pnl>=0?'var(--up)':'var(--down)'};">${t.pnl>=0?'+':''}$${fmtK(Math.abs(t.pnl))}</span>`
+      : '—';
+    return `<tr class="${cls}">
+      <td>${t.date}</td>
+      <td><span class="pf-sym">${t.ticker}</span></td>
+      <td style="font-weight:700;color:${actColor}">${t.action}</td>
+      <td>${t.shares}</td>
+      <td>$${fmt(t.price)}</td>
+      <td>$${fmtK(t.value)}</td>
+      <td>${pnlStr}</td>
+      <td style="font-size:0.7rem;color:var(--text2)">${t.reason || ''}</td>
+    </tr>`;
+  }).join('');
+  const remaining = all.length - window._pfTradeLimit;
+  const more = remaining > 0
+    ? `<button class="pf-load-more" onclick="window._pfLoadMoreTrades()">Load more (${remaining} remaining)</button>`
+    : '';
+  return `<div class="pf-trade-table-wrap"><table class="pf-trade-table">
+    <thead><tr>
+      <th>Date</th><th>Ticker</th><th>Action</th><th>Shares</th>
+      <th>Price</th><th>Value</th><th>P&L</th><th>Reason</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>${more}`;
+};
+
+window._pfLoadMoreTrades = function() {
+  window._pfTradeLimit += 20;
+  const container = document.getElementById('pfTradesContainer');
+  if (container) container.innerHTML = window._pfRenderTrades();
+};
 </script>
 </body>
 </html>

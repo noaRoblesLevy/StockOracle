@@ -1524,25 +1524,26 @@ def get_portfolio():
     scheduled GitHub Actions job are visible without a git pull."""
     p = _fetch_portfolio_from_github() or load_portfolio()
 
-    # Fetch 3-month history for open positions (needed for current-signal screen)
+    # Fetch 3-month history: open positions + SPY (for benchmark).
     # Uses a 2-minute TTL cache so repeated tab refreshes don't hammer yfinance.
     price_map  = {}
     closes_map = {}   # sym → full close series for _fast_screen
-    if p['positions']:
-        syms = list(p['positions'].keys())
-        try:
-            raw = _cached_yf_download(syms, '3mo')
-            for sym in syms:
-                try:
-                    closes = (raw[sym]['Close'] if isinstance(raw.columns, pd.MultiIndex)
-                              else raw['Close']).dropna()
-                    if not closes.empty:
-                        price_map[sym]  = round(float(closes.iloc[-1]), 2)
-                        closes_map[sym] = closes
-                except Exception:
-                    pass
-        except Exception:
-            pass
+    syms_to_fetch = list(p['positions'].keys())
+    if 'SPY' not in syms_to_fetch:
+        syms_to_fetch.append('SPY')
+    try:
+        raw = _cached_yf_download(syms_to_fetch, '3mo')
+        for sym in syms_to_fetch:
+            try:
+                closes = (raw[sym]['Close'] if isinstance(raw.columns, pd.MultiIndex)
+                          else raw['Close']).dropna()
+                if not closes.empty:
+                    price_map[sym]  = round(float(closes.iloc[-1]), 2)
+                    closes_map[sym] = closes
+            except Exception:
+                pass
+    except Exception:
+        pass
 
     # Build enriched positions list with live signal check
     positions_list = []
@@ -1592,6 +1593,12 @@ def get_portfolio():
     # Unrealized P&L: paper gain/loss on currently open positions
     unrealized_pnl = sum(pos['pnl'] for pos in positions_list)
 
+    # SPY history for benchmark overlay: {date_str: close}
+    spy_history = {}
+    if 'SPY' in closes_map:
+        for ts, val in closes_map['SPY'].items():
+            spy_history[str(pd.Timestamp(ts).date())] = round(float(val), 2)
+
     return jsonify({
         'initial_balance':  p['initial_balance'],
         'cash':             round(p['cash'], 2),
@@ -1604,6 +1611,7 @@ def get_portfolio():
         'positions':        positions_list,
         'trades':           list(reversed(p['trades']))[:50],   # last 50, newest first
         'daily_values':     p['daily_values'],
+        'spy_history':      spy_history,
         'last_updated':     p.get('last_updated'),
         'created':          p.get('created'),
     })
