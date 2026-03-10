@@ -1392,21 +1392,16 @@ function renderPortfolio(d) {
     const fillCol  = isUp ? 'rgba(63,185,80,0.12)' : 'rgba(248,81,73,0.12)';
     const baseline = d.initial_balance;
 
-    // SPY benchmark: use the spy_history lookup from the API (covers all history,
-    // not just entries that were recorded after the feature was added).
+    // SPY benchmark: spy_history has ~60 trading days of data from the backend.
+    // Draw a continuous line from portfolio start date using all available dates.
     const spyHist   = d.spy_history || {};
     const spyTraces = [];
-    // Pair each daily_value date with a SPY close from spy_history
-    const spyPairs  = d.daily_values
-      .map(v => ({ date: v.date, spy: spyHist[v.date] }))
-      .filter(v => v.spy != null);
-    // Deduplicate by date (keep last value per date, same as daily_values)
-    const spyMap = {};
-    spyPairs.forEach(v => { spyMap[v.date] = v.spy; });
-    const spyDates = [...new Set(d.daily_values.map(v => v.date))].filter(d => spyMap[d]);
+    const portfolioStart = d.created || dates[0];
+    // All spy_history dates on or after the portfolio start, sorted ascending
+    const spyDates = Object.keys(spyHist).sort().filter(dt => dt >= portfolioStart);
     if (spyDates.length >= 2) {
-      const spy0   = spyMap[spyDates[0]];
-      const spyVals = spyDates.map(date => d.initial_balance * (spyMap[date] / spy0));
+      const spy0    = spyHist[spyDates[0]];
+      const spyVals = spyDates.map(dt => d.initial_balance * (spyHist[dt] / spy0));
       spyTraces.push({
         x: spyDates, y: spyVals, type: 'scatter', mode: 'lines',
         name: 'SPY benchmark',
