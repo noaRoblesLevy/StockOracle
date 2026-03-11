@@ -1,41 +1,46 @@
 {
   "initial_balance": 50000.0,
-  "cash": 12051.079996337889,
+  "cash": 4855.170290222166,
   "positions": {
-    "BAC": {
-      "shares": 200,
-      "entry_price": 49.81,
-      "entry_date": "2026-03-06",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 2.84
-    },
     "XOM": {
       "shares": 66,
       "entry_price": 150.44,
       "entry_date": "2026-03-10",
       "entry_conf": 0.575,
-      "entry_pred_pct": 4.3
-    },
-    "KLAC": {
-      "shares": 4,
-      "entry_price": 1429.1,
-      "entry_date": "2026-03-10",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 9.68
-    },
-    "MDB": {
-      "shares": 10,
-      "entry_price": 271.74,
-      "entry_date": "2026-03-10",
-      "entry_conf": 0.725,
-      "entry_pred_pct": 6.33
+      "entry_pred_pct": 4.3,
+      "peak_price": 151.58
     },
     "CVX": {
       "shares": 52,
       "entry_price": 189.44,
       "entry_date": "2026-03-10",
       "entry_conf": 0.75,
-      "entry_pred_pct": 2.41
+      "entry_pred_pct": 2.41,
+      "peak_price": 191.79
+    },
+    "XLE": {
+      "shares": 176,
+      "entry_price": 56.98,
+      "peak_price": 56.98,
+      "entry_date": "2026-03-11",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 1.87
+    },
+    "GLD": {
+      "shares": 21,
+      "entry_price": 476.24,
+      "peak_price": 476.24,
+      "entry_date": "2026-03-11",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 2.33
+    },
+    "SMCI": {
+      "shares": 171,
+      "entry_price": 31.79,
+      "peak_price": 31.79,
+      "entry_date": "2026-03-11",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.64
     }
   },
   "trades": [
@@ -186,6 +191,72 @@
       "pred_pct": 2.41,
       "confidence": 0.75,
       "reason": "Top pick #5, conf=75%, pred=+2.4%, alloc=36%"
+    },
+    {
+      "date": "2026-03-11",
+      "ticker": "BAC",
+      "action": "SELL",
+      "shares": 200,
+      "price": 48.52,
+      "value": 9704.0,
+      "pnl": -258.0,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-11",
+      "ticker": "KLAC",
+      "action": "SELL",
+      "shares": 4,
+      "price": 1465.0,
+      "value": 5860.0,
+      "pnl": 143.6,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-11",
+      "ticker": "MDB",
+      "action": "SELL",
+      "shares": 10,
+      "price": 270.57,
+      "value": 2705.7,
+      "pnl": -11.7,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-11",
+      "ticker": "XLE",
+      "action": "BUY",
+      "shares": 176,
+      "price": 56.98,
+      "value": 10028.48,
+      "pnl": null,
+      "pred_pct": 1.87,
+      "confidence": 0.65,
+      "reason": "Top pick #2, conf=65%, pred=+1.9%, alloc=24%"
+    },
+    {
+      "date": "2026-03-11",
+      "ticker": "GLD",
+      "action": "BUY",
+      "shares": 21,
+      "price": 476.24,
+      "value": 10001.04,
+      "pnl": null,
+      "pred_pct": 2.33,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+2.3%, alloc=21%"
+    },
+    {
+      "date": "2026-03-11",
+      "ticker": "SMCI",
+      "action": "BUY",
+      "shares": 171,
+      "price": 31.79,
+      "value": 5436.09,
+      "pnl": null,
+      "pred_pct": 0.64,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+0.6%, alloc=11%"
     }
   ],
   "daily_values": [
@@ -209,8 +280,16 @@
       "cash": 12051.08,
       "positions_value": 37793.72,
       "spy_close": 678.27
+    },
+    {
+      "date": "2026-03-11",
+      "value": 50298.14,
+      "cash": 4855.17,
+      "positions_value": 45442.97,
+      "spy_close": 676.33
     }
   ],
-  "last_updated": "2026-03-10",
-  "created": "2026-03-06"
+  "last_updated": "2026-03-11",
+  "created": "2026-03-06",
+  "all_time_high": 50298.14
 }
