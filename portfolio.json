@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 4855.170290222166,
+  "cash": 10336.040226211546,
   "positions": {
     "XOM": {
       "shares": 66,
@@ -8,20 +8,12 @@
       "entry_date": "2026-03-10",
       "entry_conf": 0.575,
       "entry_pred_pct": 4.3,
-      "peak_price": 151.58
-    },
-    "CVX": {
-      "shares": 52,
-      "entry_price": 189.44,
-      "entry_date": "2026-03-10",
-      "entry_conf": 0.75,
-      "entry_pred_pct": 2.41,
-      "peak_price": 191.79
+      "peak_price": 153.53
     },
     "XLE": {
       "shares": 176,
       "entry_price": 56.98,
-      "peak_price": 56.98,
+      "peak_price": 57.51,
       "entry_date": "2026-03-11",
       "entry_conf": 0.65,
       "entry_pred_pct": 1.87
@@ -34,13 +26,13 @@
       "entry_conf": 0.55,
       "entry_pred_pct": 2.33
     },
-    "SMCI": {
-      "shares": 171,
-      "entry_price": 31.79,
-      "peak_price": 31.79,
-      "entry_date": "2026-03-11",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 0.64
+    "CVX": {
+      "shares": 51,
+      "entry_price": 196.97,
+      "peak_price": 196.97,
+      "entry_date": "2026-03-12",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 0.87
     }
   },
   "trades": [
@@ -257,6 +249,38 @@
       "pred_pct": 0.64,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+0.6%, alloc=11%"
+    },
+    {
+      "date": "2026-03-12",
+      "ticker": "CVX",
+      "action": "SELL",
+      "shares": 52,
+      "price": 196.97,
+      "value": 10242.44,
+      "pnl": 391.56,
+      "reason": "Take-profit: +4.0% reached target +2.4%"
+    },
+    {
+      "date": "2026-03-12",
+      "ticker": "SMCI",
+      "action": "SELL",
+      "shares": 171,
+      "price": 30.9,
+      "value": 5283.9,
+      "pnl": -152.19,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-12",
+      "ticker": "CVX",
+      "action": "BUY",
+      "shares": 51,
+      "price": 196.97,
+      "value": 10045.47,
+      "pnl": null,
+      "pred_pct": 0.87,
+      "confidence": 0.65,
+      "reason": "Top pick #4, conf=65%, pred=+0.9%, alloc=22%"
     }
   ],
   "daily_values": [
@@ -287,9 +311,16 @@
       "cash": 4855.17,
       "positions_value": 45442.97,
       "spy_close": 676.33
+    },
+    {
+      "date": "2026-03-12",
+      "value": 50440.73,
+      "cash": 10336.04,
+      "positions_value": 40104.69,
+      "spy_close": 666.06
     }
   ],
-  "last_updated": "2026-03-11",
+  "last_updated": "2026-03-12",
   "created": "2026-03-06",
-  "all_time_high": 50298.14
+  "all_time_high": 50440.73
 }
