@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 10336.040226211546,
+  "cash": 2604.200138320921,
   "positions": {
     "XOM": {
       "shares": 66,
@@ -8,12 +8,12 @@
       "entry_date": "2026-03-10",
       "entry_conf": 0.575,
       "entry_pred_pct": 4.3,
-      "peak_price": 153.53
+      "peak_price": 156.12
     },
     "XLE": {
       "shares": 176,
       "entry_price": 56.98,
-      "peak_price": 57.51,
+      "peak_price": 57.7,
       "entry_date": "2026-03-11",
       "entry_conf": 0.65,
       "entry_pred_pct": 1.87
@@ -33,6 +33,14 @@
       "entry_date": "2026-03-12",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.87
+    },
+    "AVGO": {
+      "shares": 24,
+      "entry_price": 322.16,
+      "peak_price": 322.16,
+      "entry_date": "2026-03-13",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 0.55
     }
   },
   "trades": [
@@ -281,6 +289,18 @@
       "pred_pct": 0.87,
       "confidence": 0.65,
       "reason": "Top pick #4, conf=65%, pred=+0.9%, alloc=22%"
+    },
+    {
+      "date": "2026-03-13",
+      "ticker": "AVGO",
+      "action": "BUY",
+      "shares": 24,
+      "price": 322.16,
+      "value": 7731.84,
+      "pnl": null,
+      "pred_pct": 0.55,
+      "confidence": 0.625,
+      "reason": "Top pick #5, conf=62%, pred=+0.6%, alloc=16%"
     }
   ],
   "daily_values": [
@@ -318,9 +338,16 @@
       "cash": 10336.04,
       "positions_value": 40104.69,
       "spy_close": 666.06
+    },
+    {
+      "date": "2026-03-13",
+      "value": 50510.62,
+      "cash": 2604.2,
+      "positions_value": 47906.42,
+      "spy_close": 662.29
     }
   ],
-  "last_updated": "2026-03-12",
+  "last_updated": "2026-03-13",
   "created": "2026-03-06",
-  "all_time_high": 50440.73
+  "all_time_high": 50510.62
 }
