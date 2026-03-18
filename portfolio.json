@@ -5,7 +5,7 @@
     "CVX": {
       "shares": 51,
       "entry_price": 196.97,
-      "peak_price": 197.97,
+      "peak_price": 198.61,
       "entry_date": "2026-03-12",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.87
@@ -407,9 +407,16 @@
       "cash": 20502.79,
       "positions_value": 30441.05,
       "spy_close": 670.79
+    },
+    {
+      "date": "2026-03-18",
+      "value": 50884.48,
+      "cash": 20502.79,
+      "positions_value": 30381.69,
+      "spy_close": 661.43
     }
   ],
-  "last_updated": "2026-03-17",
+  "last_updated": "2026-03-18",
   "created": "2026-03-06",
   "all_time_high": 50943.84
 }
