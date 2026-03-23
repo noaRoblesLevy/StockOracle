@@ -5,26 +5,26 @@
     "CVX": {
       "shares": 51,
       "entry_price": 196.97,
-      "peak_price": 201.73,
+      "peak_price": 205.21,
       "entry_date": "2026-03-12",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.87
     },
-    "XOM": {
-      "shares": 64,
-      "entry_price": 157.23,
-      "peak_price": 159.67,
-      "entry_date": "2026-03-16",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 1.99
-    },
     "XLE": {
       "shares": 172,
       "entry_price": 59.36,
-      "peak_price": 59.36,
+      "peak_price": 59.63,
       "entry_date": "2026-03-19",
       "entry_conf": 0.7,
       "entry_pred_pct": 1.27
+    },
+    "XOM": {
+      "shares": 64,
+      "entry_price": 161.13,
+      "peak_price": 161.13,
+      "entry_date": "2026-03-23",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 2.07
     }
   },
   "trades": [
@@ -371,6 +371,28 @@
       "pred_pct": 1.27,
       "confidence": 0.7,
       "reason": "Top pick #2, conf=70%, pred=+1.3%, alloc=37%"
+    },
+    {
+      "date": "2026-03-23",
+      "ticker": "XOM",
+      "action": "SELL",
+      "shares": 64,
+      "price": 161.13,
+      "value": 10312.32,
+      "pnl": 249.6,
+      "reason": "Take-profit: +2.5% reached target +2.0%"
+    },
+    {
+      "date": "2026-03-23",
+      "ticker": "XOM",
+      "action": "BUY",
+      "shares": 64,
+      "price": 161.13,
+      "value": 10312.32,
+      "pnl": null,
+      "pred_pct": 2.07,
+      "confidence": 0.65,
+      "reason": "Top pick #1, conf=65%, pred=+2.1%, alloc=38%"
     }
   ],
   "daily_values": [
@@ -450,9 +472,16 @@
       "cash": 20621.51,
       "positions_value": 30708.43,
       "spy_close": 648.57
+    },
+    {
+      "date": "2026-03-23",
+      "value": 51655.9,
+      "cash": 20621.51,
+      "positions_value": 31034.39,
+      "spy_close": 655.38
     }
   ],
-  "last_updated": "2026-03-20",
+  "last_updated": "2026-03-23",
   "created": "2026-03-06",
-  "all_time_high": 51329.94
+  "all_time_high": 51655.9
 }
