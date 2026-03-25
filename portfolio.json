@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 15705.84031700134,
+  "cash": 20673.01026939392,
   "positions": {
     "CVX": {
       "shares": 51,
@@ -9,14 +9,6 @@
       "entry_date": "2026-03-12",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.87
-    },
-    "MU": {
-      "shares": 13,
-      "entry_price": 395.53,
-      "peak_price": 395.53,
-      "entry_date": "2026-03-24",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 8.23
     },
     "XLE": {
       "shares": 171,
@@ -457,6 +449,16 @@
       "pred_pct": 0.95,
       "confidence": 0.65,
       "reason": "Top pick #3, conf=65%, pred=+0.9%, alloc=24%"
+    },
+    {
+      "date": "2026-03-25",
+      "ticker": "MU",
+      "action": "SELL",
+      "shares": 13,
+      "price": 382.09,
+      "value": 4967.17,
+      "pnl": -174.72,
+      "reason": "Dropped from top picks"
     }
   ],
   "daily_values": [
@@ -550,9 +552,16 @@
       "cash": 15705.84,
       "positions_value": 36510.76,
       "spy_close": 653.18
+    },
+    {
+      "date": "2026-03-25",
+      "value": 51778.51,
+      "cash": 20673.01,
+      "positions_value": 31105.5,
+      "spy_close": 656.82
     }
   ],
-  "last_updated": "2026-03-24",
+  "last_updated": "2026-03-25",
   "created": "2026-03-06",
   "all_time_high": 52216.6
 }
