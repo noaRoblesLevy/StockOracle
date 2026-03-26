@@ -5,7 +5,7 @@
     "CVX": {
       "shares": 51,
       "entry_price": 196.97,
-      "peak_price": 206.79,
+      "peak_price": 207.79,
       "entry_date": "2026-03-12",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.87
@@ -13,7 +13,7 @@
     "XLE": {
       "shares": 171,
       "entry_price": 60.84,
-      "peak_price": 60.84,
+      "peak_price": 61.52,
       "entry_date": "2026-03-24",
       "entry_conf": 0.7,
       "entry_pred_pct": 0.82
@@ -21,7 +21,7 @@
     "XOM": {
       "shares": 63,
       "entry_price": 165.38,
-      "peak_price": 165.38,
+      "peak_price": 165.43,
       "entry_date": "2026-03-24",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.95
@@ -559,9 +559,16 @@
       "cash": 20673.01,
       "positions_value": 31105.5,
       "spy_close": 656.82
+    },
+    {
+      "date": "2026-03-26",
+      "value": 52212.31,
+      "cash": 20673.01,
+      "positions_value": 31539.3,
+      "spy_close": 645.09
     }
   ],
-  "last_updated": "2026-03-25",
+  "last_updated": "2026-03-26",
   "created": "2026-03-06",
   "all_time_high": 52216.6
 }
