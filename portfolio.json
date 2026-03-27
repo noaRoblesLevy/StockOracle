@@ -1,32 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 20673.01026939392,
-  "positions": {
-    "CVX": {
-      "shares": 51,
-      "entry_price": 196.97,
-      "peak_price": 207.79,
-      "entry_date": "2026-03-12",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 0.87
-    },
-    "XLE": {
-      "shares": 171,
-      "entry_price": 60.84,
-      "peak_price": 61.52,
-      "entry_date": "2026-03-24",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 0.82
-    },
-    "XOM": {
-      "shares": 63,
-      "entry_price": 165.38,
-      "peak_price": 165.43,
-      "entry_date": "2026-03-24",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 0.95
-    }
-  },
+  "cash": 52911.79053901672,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -459,6 +434,36 @@
       "value": 4967.17,
       "pnl": -174.72,
       "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-03-27",
+      "ticker": "CVX",
+      "action": "SELL",
+      "shares": 51,
+      "price": 211.15,
+      "value": 10768.65,
+      "pnl": 723.18,
+      "reason": "Signal bearish"
+    },
+    {
+      "date": "2026-03-27",
+      "ticker": "XLE",
+      "action": "SELL",
+      "shares": 171,
+      "price": 62.56,
+      "value": 10697.76,
+      "pnl": 294.12,
+      "reason": "Signal bearish"
+    },
+    {
+      "date": "2026-03-27",
+      "ticker": "XOM",
+      "action": "SELL",
+      "shares": 63,
+      "price": 170.99,
+      "value": 10772.37,
+      "pnl": 353.43,
+      "reason": "Signal bearish"
     }
   ],
   "daily_values": [
@@ -566,9 +571,16 @@
       "cash": 20673.01,
       "positions_value": 31539.3,
       "spy_close": 645.09
+    },
+    {
+      "date": "2026-03-27",
+      "value": 52911.79,
+      "cash": 52911.79,
+      "positions_value": 0.0,
+      "spy_close": 634.09
     }
   ],
-  "last_updated": "2026-03-26",
+  "last_updated": "2026-03-27",
   "created": "2026-03-06",
-  "all_time_high": 52216.6
+  "all_time_high": 52911.79
 }
