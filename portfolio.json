@@ -1,7 +1,24 @@
 {
   "initial_balance": 50000.0,
-  "cash": 52911.79053901672,
-  "positions": {},
+  "cash": 31843.09035896301,
+  "positions": {
+    "XLE": {
+      "shares": 170,
+      "entry_price": 61.96,
+      "peak_price": 61.96,
+      "entry_date": "2026-03-30",
+      "entry_conf": 0.8,
+      "entry_pred_pct": 0.96
+    },
+    "CVX": {
+      "shares": 50,
+      "entry_price": 210.71,
+      "peak_price": 210.71,
+      "entry_date": "2026-03-30",
+      "entry_conf": 0.8,
+      "entry_pred_pct": 0.46
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -464,6 +481,30 @@
       "value": 10772.37,
       "pnl": 353.43,
       "reason": "Signal bearish"
+    },
+    {
+      "date": "2026-03-30",
+      "ticker": "XLE",
+      "action": "BUY",
+      "shares": 170,
+      "price": 61.96,
+      "value": 10533.2,
+      "pnl": null,
+      "pred_pct": 0.96,
+      "confidence": 0.8,
+      "reason": "Top pick #1, conf=80%, pred=+1.0%, alloc=60%"
+    },
+    {
+      "date": "2026-03-30",
+      "ticker": "CVX",
+      "action": "BUY",
+      "shares": 50,
+      "price": 210.71,
+      "value": 10535.5,
+      "pnl": null,
+      "pred_pct": 0.46,
+      "confidence": 0.8,
+      "reason": "Top pick #2, conf=80%, pred=+0.5%, alloc=40%"
     }
   ],
   "daily_values": [
@@ -578,9 +619,16 @@
       "cash": 52911.79,
       "positions_value": 0.0,
       "spy_close": 634.09
+    },
+    {
+      "date": "2026-03-30",
+      "value": 52911.79,
+      "cash": 31843.09,
+      "positions_value": 21068.7,
+      "spy_close": 631.97
     }
   ],
-  "last_updated": "2026-03-27",
+  "last_updated": "2026-03-30",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
