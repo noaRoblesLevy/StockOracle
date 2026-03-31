@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 31843.09035896301,
+  "cash": 21324.17013191223,
   "positions": {
     "XLE": {
       "shares": 170,
@@ -17,6 +17,14 @@
       "entry_date": "2026-03-30",
       "entry_conf": 0.8,
       "entry_pred_pct": 0.46
+    },
+    "XOM": {
+      "shares": 62,
+      "entry_price": 169.66,
+      "peak_price": 169.66,
+      "entry_date": "2026-03-31",
+      "entry_conf": 0.8,
+      "entry_pred_pct": 1.04
     }
   },
   "trades": [
@@ -505,6 +513,18 @@
       "pred_pct": 0.46,
       "confidence": 0.8,
       "reason": "Top pick #2, conf=80%, pred=+0.5%, alloc=40%"
+    },
+    {
+      "date": "2026-03-31",
+      "ticker": "XOM",
+      "action": "BUY",
+      "shares": 62,
+      "price": 169.66,
+      "value": 10518.92,
+      "pnl": null,
+      "pred_pct": 1.04,
+      "confidence": 0.8,
+      "reason": "Top pick #3, conf=80%, pred=+1.0%, alloc=25%"
     }
   ],
   "daily_values": [
@@ -626,9 +646,16 @@
       "cash": 31843.09,
       "positions_value": 21068.7,
       "spy_close": 631.97
+    },
+    {
+      "date": "2026-03-31",
+      "value": 52602.29,
+      "cash": 21324.17,
+      "positions_value": 31278.12,
+      "spy_close": 650.34
     }
   ],
-  "last_updated": "2026-03-30",
+  "last_updated": "2026-03-31",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
