@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 21324.17013191223,
+  "cash": 20938.390133132933,
   "positions": {
     "XLE": {
       "shares": 170,
@@ -10,14 +10,6 @@
       "entry_conf": 0.8,
       "entry_pred_pct": 0.96
     },
-    "CVX": {
-      "shares": 50,
-      "entry_price": 210.71,
-      "peak_price": 210.71,
-      "entry_date": "2026-03-30",
-      "entry_conf": 0.8,
-      "entry_pred_pct": 0.46
-    },
     "XOM": {
       "shares": 62,
       "entry_price": 169.66,
@@ -25,6 +17,14 @@
       "entry_date": "2026-03-31",
       "entry_conf": 0.8,
       "entry_pred_pct": 1.04
+    },
+    "CVX": {
+      "shares": 52,
+      "entry_price": 192.89,
+      "peak_price": 192.89,
+      "entry_date": "2026-04-08",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 5.46
     }
   },
   "trades": [
@@ -525,6 +525,28 @@
       "pred_pct": 1.04,
       "confidence": 0.8,
       "reason": "Top pick #3, conf=80%, pred=+1.0%, alloc=25%"
+    },
+    {
+      "date": "2026-04-08",
+      "ticker": "CVX",
+      "action": "SELL",
+      "shares": 50,
+      "price": 192.89,
+      "value": 9644.5,
+      "pnl": -891.0,
+      "reason": "Trailing stop: -8.5% from $210.71 peak"
+    },
+    {
+      "date": "2026-04-08",
+      "ticker": "CVX",
+      "action": "BUY",
+      "shares": 52,
+      "price": 192.89,
+      "value": 10030.28,
+      "pnl": null,
+      "pred_pct": 5.46,
+      "confidence": 0.625,
+      "reason": "Top pick #2, conf=62%, pred=+5.5%, alloc=30%"
     }
   ],
   "daily_values": [
@@ -681,9 +703,16 @@
       "cash": 21324.17,
       "positions_value": 30466.62,
       "spy_close": 659.22
+    },
+    {
+      "date": "2026-04-08",
+      "value": 50522.81,
+      "cash": 20938.39,
+      "positions_value": 29584.42,
+      "spy_close": 676.01
     }
   ],
-  "last_updated": "2026-04-07",
+  "last_updated": "2026-04-08",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
