@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 20938.390133132933,
+  "cash": 12134.110012283323,
   "positions": {
     "XLE": {
       "shares": 170,
@@ -10,14 +10,6 @@
       "entry_conf": 0.8,
       "entry_pred_pct": 0.96
     },
-    "XOM": {
-      "shares": 62,
-      "entry_price": 169.66,
-      "peak_price": 169.66,
-      "entry_date": "2026-03-31",
-      "entry_conf": 0.8,
-      "entry_pred_pct": 1.04
-    },
     "CVX": {
       "shares": 52,
       "entry_price": 192.89,
@@ -25,6 +17,22 @@
       "entry_date": "2026-04-08",
       "entry_conf": 0.625,
       "entry_pred_pct": 5.46
+    },
+    "XOM": {
+      "shares": 64,
+      "entry_price": 155.04,
+      "peak_price": 155.04,
+      "entry_date": "2026-04-09",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 5.49
+    },
+    "NET": {
+      "shares": 44,
+      "entry_price": 193.05,
+      "peak_price": 193.05,
+      "entry_date": "2026-04-09",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 6.3
     }
   },
   "trades": [
@@ -547,6 +555,40 @@
       "pred_pct": 5.46,
       "confidence": 0.625,
       "reason": "Top pick #2, conf=62%, pred=+5.5%, alloc=30%"
+    },
+    {
+      "date": "2026-04-09",
+      "ticker": "XOM",
+      "action": "SELL",
+      "shares": 62,
+      "price": 155.04,
+      "value": 9612.48,
+      "pnl": -906.44,
+      "reason": "Trailing stop: -8.6% from $169.66 peak"
+    },
+    {
+      "date": "2026-04-09",
+      "ticker": "XOM",
+      "action": "BUY",
+      "shares": 64,
+      "price": 155.04,
+      "value": 9922.56,
+      "pnl": null,
+      "pred_pct": 5.49,
+      "confidence": 0.65,
+      "reason": "Top pick #2, conf=65%, pred=+5.5%, alloc=22%"
+    },
+    {
+      "date": "2026-04-09",
+      "ticker": "NET",
+      "action": "BUY",
+      "shares": 44,
+      "price": 193.05,
+      "value": 8494.2,
+      "pnl": null,
+      "pred_pct": 6.3,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+6.3%, alloc=17%"
     }
   ],
   "daily_values": [
@@ -710,9 +752,16 @@
       "cash": 20938.39,
       "positions_value": 29584.42,
       "spy_close": 676.01
+    },
+    {
+      "date": "2026-04-09",
+      "value": 50195.69,
+      "cash": 12134.11,
+      "positions_value": 38061.58,
+      "spy_close": 679.91
     }
   ],
-  "last_updated": "2026-04-08",
+  "last_updated": "2026-04-09",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
