@@ -1,7 +1,16 @@
 {
   "initial_balance": 50000.0,
-  "cash": 48726.709827651976,
-  "positions": {},
+  "cash": 38995.7100717926,
+  "positions": {
+    "NFLX": {
+      "shares": 100,
+      "entry_price": 97.31,
+      "peak_price": 97.31,
+      "entry_date": "2026-04-17",
+      "entry_conf": 0.8,
+      "entry_pred_pct": 5.31
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -596,6 +605,18 @@
       "value": 9760.64,
       "pnl": -161.92,
       "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-04-17",
+      "ticker": "NFLX",
+      "action": "BUY",
+      "shares": 100,
+      "price": 97.31,
+      "value": 9731.0,
+      "pnl": null,
+      "pred_pct": 5.31,
+      "confidence": 0.8,
+      "reason": "Top pick #1, conf=80%, pred=+5.3%, alloc=100%"
     }
   ],
   "daily_values": [
@@ -801,9 +822,16 @@
       "cash": 48726.71,
       "positions_value": 0.0,
       "spy_close": 701.66
+    },
+    {
+      "date": "2026-04-17",
+      "value": 48726.71,
+      "cash": 38995.71,
+      "positions_value": 9731.0,
+      "spy_close": 710.14
     }
   ],
-  "last_updated": "2026-04-16",
+  "last_updated": "2026-04-17",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
