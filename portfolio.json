@@ -5,7 +5,7 @@
     "PYPL": {
       "shares": 192,
       "entry_price": 50.14,
-      "peak_price": 50.14,
+      "peak_price": 50.44,
       "entry_date": "2026-04-30",
       "entry_conf": 0.6,
       "entry_pred_pct": 0.83
@@ -914,9 +914,16 @@
       "cash": 38650.83,
       "positions_value": 9626.88,
       "spy_close": 718.66
+    },
+    {
+      "date": "2026-05-01",
+      "value": 48335.31,
+      "cash": 38650.83,
+      "positions_value": 9684.48,
+      "spy_close": 720.65
     }
   ],
-  "last_updated": "2026-04-30",
+  "last_updated": "2026-05-01",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
