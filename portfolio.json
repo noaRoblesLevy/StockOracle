@@ -1,16 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 38650.83015846252,
-  "positions": {
-    "PYPL": {
-      "shares": 192,
-      "entry_price": 50.14,
-      "peak_price": 50.44,
-      "entry_date": "2026-04-30",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 0.83
-    }
-  },
+  "cash": 47576.91048072815,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -639,6 +630,16 @@
       "pred_pct": 0.83,
       "confidence": 0.6,
       "reason": "Top pick #1, conf=60%, pred=+0.8%, alloc=100%"
+    },
+    {
+      "date": "2026-05-05",
+      "ticker": "PYPL",
+      "action": "SELL",
+      "shares": 192,
+      "price": 46.49,
+      "value": 8926.08,
+      "pnl": -700.8,
+      "reason": "Dropped from top picks"
     }
   ],
   "daily_values": [
@@ -928,9 +929,16 @@
       "cash": 38650.83,
       "positions_value": 9674.88,
       "spy_close": 718.01
+    },
+    {
+      "date": "2026-05-05",
+      "value": 47576.91,
+      "cash": 47576.91,
+      "positions_value": 0.0,
+      "spy_close": 723.77
     }
   ],
-  "last_updated": "2026-05-04",
+  "last_updated": "2026-05-05",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
