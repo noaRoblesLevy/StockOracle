@@ -1,14 +1,30 @@
 {
   "initial_balance": 50000.0,
-  "cash": 38084.56022666931,
+  "cash": 22841.510891189573,
   "positions": {
-    "BAC": {
-      "shares": 185,
-      "entry_price": 51.31,
-      "peak_price": 51.31,
-      "entry_date": "2026-05-08",
+    "AMZN": {
+      "shares": 35,
+      "entry_price": 268.99,
+      "peak_price": 268.99,
+      "entry_date": "2026-05-11",
       "entry_conf": 0.55,
-      "entry_pred_pct": 0.83
+      "entry_pred_pct": 1.1
+    },
+    "ARM": {
+      "shares": 28,
+      "entry_price": 212.65,
+      "peak_price": 212.65,
+      "entry_date": "2026-05-11",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 2.04
+    },
+    "KLAC": {
+      "shares": 5,
+      "entry_price": 1845.19,
+      "peak_price": 1845.19,
+      "entry_date": "2026-05-11",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.97
     }
   },
   "trades": [
@@ -661,6 +677,52 @@
       "pred_pct": 0.83,
       "confidence": 0.55,
       "reason": "Top pick #1, conf=55%, pred=+0.8%, alloc=100%"
+    },
+    {
+      "date": "2026-05-11",
+      "ticker": "BAC",
+      "action": "SELL",
+      "shares": 185,
+      "price": 50.55,
+      "value": 9351.75,
+      "pnl": -140.6,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-11",
+      "ticker": "AMZN",
+      "action": "BUY",
+      "shares": 35,
+      "price": 268.99,
+      "value": 9414.65,
+      "pnl": null,
+      "pred_pct": 1.1,
+      "confidence": 0.55,
+      "reason": "Top pick #1, conf=55%, pred=+1.1%, alloc=60%"
+    },
+    {
+      "date": "2026-05-11",
+      "ticker": "ARM",
+      "action": "BUY",
+      "shares": 28,
+      "price": 212.65,
+      "value": 5954.2,
+      "pnl": null,
+      "pred_pct": 2.04,
+      "confidence": 0.6,
+      "reason": "Top pick #2, conf=60%, pred=+2.0%, alloc=13%"
+    },
+    {
+      "date": "2026-05-11",
+      "ticker": "KLAC",
+      "action": "BUY",
+      "shares": 5,
+      "price": 1845.19,
+      "value": 9225.95,
+      "pnl": null,
+      "pred_pct": 0.97,
+      "confidence": 0.55,
+      "reason": "Top pick #3, conf=55%, pred=+1.0%, alloc=27%"
     }
   ],
   "daily_values": [
@@ -978,9 +1040,16 @@
       "cash": 38084.56,
       "positions_value": 9492.35,
       "spy_close": 737.62
+    },
+    {
+      "date": "2026-05-11",
+      "value": 47436.31,
+      "cash": 22841.51,
+      "positions_value": 24594.8,
+      "spy_close": 739.3
     }
   ],
-  "last_updated": "2026-05-08",
+  "last_updated": "2026-05-11",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
