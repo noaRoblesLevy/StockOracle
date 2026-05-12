@@ -1,23 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 22841.510891189573,
+  "cash": 28742.371364822386,
   "positions": {
-    "AMZN": {
-      "shares": 35,
-      "entry_price": 268.99,
-      "peak_price": 268.99,
-      "entry_date": "2026-05-11",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 1.1
-    },
-    "ARM": {
-      "shares": 28,
-      "entry_price": 212.65,
-      "peak_price": 212.65,
-      "entry_date": "2026-05-11",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 2.04
-    },
     "KLAC": {
       "shares": 5,
       "entry_price": 1845.19,
@@ -25,6 +9,14 @@
       "entry_date": "2026-05-11",
       "entry_conf": 0.55,
       "entry_pred_pct": 0.97
+    },
+    "AVGO": {
+      "shares": 22,
+      "entry_price": 419.3,
+      "peak_price": 419.3,
+      "entry_date": "2026-05-12",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 1.74
     }
   },
   "trades": [
@@ -723,6 +715,38 @@
       "pred_pct": 0.97,
       "confidence": 0.55,
       "reason": "Top pick #3, conf=55%, pred=+1.0%, alloc=27%"
+    },
+    {
+      "date": "2026-05-12",
+      "ticker": "AMZN",
+      "action": "SELL",
+      "shares": 35,
+      "price": 265.82,
+      "value": 9303.7,
+      "pnl": -110.95,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-12",
+      "ticker": "ARM",
+      "action": "SELL",
+      "shares": 28,
+      "price": 207.92,
+      "value": 5821.76,
+      "pnl": -132.44,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-12",
+      "ticker": "AVGO",
+      "action": "BUY",
+      "shares": 22,
+      "price": 419.3,
+      "value": 9224.6,
+      "pnl": null,
+      "pred_pct": 1.74,
+      "confidence": 0.575,
+      "reason": "Top pick #1, conf=57%, pred=+1.7%, alloc=55%"
     }
   ],
   "daily_values": [
@@ -1047,9 +1071,16 @@
       "cash": 22841.51,
       "positions_value": 24594.8,
       "spy_close": 739.3
+    },
+    {
+      "date": "2026-05-12",
+      "value": 47023.72,
+      "cash": 28742.37,
+      "positions_value": 18281.35,
+      "spy_close": 738.18
     }
   ],
-  "last_updated": "2026-05-11",
+  "last_updated": "2026-05-12",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
