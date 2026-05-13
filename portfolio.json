@@ -5,7 +5,7 @@
     "KLAC": {
       "shares": 5,
       "entry_price": 1845.19,
-      "peak_price": 1845.19,
+      "peak_price": 1849.71,
       "entry_date": "2026-05-11",
       "entry_conf": 0.55,
       "entry_pred_pct": 0.97
@@ -1078,9 +1078,16 @@
       "cash": 28742.37,
       "positions_value": 18281.35,
       "spy_close": 738.18
+    },
+    {
+      "date": "2026-05-13",
+      "value": 47160.3,
+      "cash": 28742.37,
+      "positions_value": 18417.93,
+      "spy_close": 742.31
     }
   ],
-  "last_updated": "2026-05-12",
+  "last_updated": "2026-05-13",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
