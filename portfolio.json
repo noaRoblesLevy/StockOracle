@@ -1,22 +1,14 @@
 {
   "initial_balance": 50000.0,
-  "cash": 28742.371364822386,
+  "cash": 38417.75155281067,
   "positions": {
     "KLAC": {
       "shares": 5,
       "entry_price": 1845.19,
-      "peak_price": 1849.71,
+      "peak_price": 1892.94,
       "entry_date": "2026-05-11",
       "entry_conf": 0.55,
       "entry_pred_pct": 0.97
-    },
-    "AVGO": {
-      "shares": 22,
-      "entry_price": 419.3,
-      "peak_price": 419.3,
-      "entry_date": "2026-05-12",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 1.74
     }
   },
   "trades": [
@@ -747,6 +739,16 @@
       "pred_pct": 1.74,
       "confidence": 0.575,
       "reason": "Top pick #1, conf=57%, pred=+1.7%, alloc=55%"
+    },
+    {
+      "date": "2026-05-14",
+      "ticker": "AVGO",
+      "action": "SELL",
+      "shares": 22,
+      "price": 439.79,
+      "value": 9675.38,
+      "pnl": 450.78,
+      "reason": "Take-profit: +4.9% reached target +1.7%"
     }
   ],
   "daily_values": [
@@ -1085,9 +1087,16 @@
       "cash": 28742.37,
       "positions_value": 18417.93,
       "spy_close": 742.31
+    },
+    {
+      "date": "2026-05-14",
+      "value": 47882.45,
+      "cash": 38417.75,
+      "positions_value": 9464.7,
+      "spy_close": 748.17
     }
   ],
-  "last_updated": "2026-05-13",
+  "last_updated": "2026-05-14",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
