@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 38417.75155281067,
+  "cash": 11505.071270217893,
   "positions": {
     "KLAC": {
       "shares": 5,
@@ -9,6 +9,38 @@
       "entry_date": "2026-05-11",
       "entry_conf": 0.55,
       "entry_pred_pct": 0.97
+    },
+    "IWM": {
+      "shares": 34,
+      "entry_price": 277.6,
+      "peak_price": 277.6,
+      "entry_date": "2026-05-15",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 0.99
+    },
+    "ARKK": {
+      "shares": 126,
+      "entry_price": 74.9,
+      "peak_price": 74.9,
+      "entry_date": "2026-05-15",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 2.06
+    },
+    "ARM": {
+      "shares": 16,
+      "entry_price": 209.16,
+      "peak_price": 209.16,
+      "entry_date": "2026-05-15",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 5.34
+    },
+    "COIN": {
+      "shares": 24,
+      "entry_price": 195.43,
+      "peak_price": 195.43,
+      "entry_date": "2026-05-15",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 2.58
     }
   },
   "trades": [
@@ -749,6 +781,54 @@
       "value": 9675.38,
       "pnl": 450.78,
       "reason": "Take-profit: +4.9% reached target +1.7%"
+    },
+    {
+      "date": "2026-05-15",
+      "ticker": "IWM",
+      "action": "BUY",
+      "shares": 34,
+      "price": 277.6,
+      "value": 9438.4,
+      "pnl": null,
+      "pred_pct": 0.99,
+      "confidence": 0.65,
+      "reason": "Top pick #2, conf=65%, pred=+1.0%, alloc=46%"
+    },
+    {
+      "date": "2026-05-15",
+      "ticker": "ARKK",
+      "action": "BUY",
+      "shares": 126,
+      "price": 74.9,
+      "value": 9437.4,
+      "pnl": null,
+      "pred_pct": 2.06,
+      "confidence": 0.6,
+      "reason": "Top pick #3, conf=60%, pred=+2.1%, alloc=20%"
+    },
+    {
+      "date": "2026-05-15",
+      "ticker": "ARM",
+      "action": "BUY",
+      "shares": 16,
+      "price": 209.16,
+      "value": 3346.56,
+      "pnl": null,
+      "pred_pct": 5.34,
+      "confidence": 0.625,
+      "reason": "Top pick #4, conf=62%, pred=+5.3%, alloc=7%"
+    },
+    {
+      "date": "2026-05-15",
+      "ticker": "COIN",
+      "action": "BUY",
+      "shares": 24,
+      "price": 195.43,
+      "value": 4690.32,
+      "pnl": null,
+      "pred_pct": 2.58,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+2.6%, alloc=10%"
     }
   ],
   "daily_values": [
@@ -1094,9 +1174,16 @@
       "cash": 38417.75,
       "positions_value": 9464.7,
       "spy_close": 748.17
+    },
+    {
+      "date": "2026-05-15",
+      "value": 47439.35,
+      "cash": 11505.07,
+      "positions_value": 35934.28,
+      "spy_close": 739.17
     }
   ],
-  "last_updated": "2026-05-14",
+  "last_updated": "2026-05-15",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
