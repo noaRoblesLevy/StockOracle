@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 11505.071270217893,
+  "cash": 10150.1811945343,
   "positions": {
     "KLAC": {
       "shares": 5,
@@ -26,21 +26,21 @@
       "entry_conf": 0.6,
       "entry_pred_pct": 2.06
     },
-    "ARM": {
-      "shares": 16,
-      "entry_price": 209.16,
-      "peak_price": 209.16,
-      "entry_date": "2026-05-15",
-      "entry_conf": 0.625,
-      "entry_pred_pct": 5.34
+    "AMAT": {
+      "shares": 13,
+      "entry_price": 413.57,
+      "peak_price": 413.57,
+      "entry_date": "2026-05-18",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 2.38
     },
-    "COIN": {
-      "shares": 24,
-      "entry_price": 195.43,
-      "peak_price": 195.43,
-      "entry_date": "2026-05-15",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 2.58
+    "SOXX": {
+      "shares": 8,
+      "entry_price": 495.87,
+      "peak_price": 495.87,
+      "entry_date": "2026-05-18",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 2.19
     }
   },
   "trades": [
@@ -829,6 +829,50 @@
       "pred_pct": 2.58,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+2.6%, alloc=10%"
+    },
+    {
+      "date": "2026-05-18",
+      "ticker": "ARM",
+      "action": "SELL",
+      "shares": 16,
+      "price": 215.12,
+      "value": 3441.92,
+      "pnl": 95.36,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-18",
+      "ticker": "COIN",
+      "action": "SELL",
+      "shares": 24,
+      "price": 189.44,
+      "value": 4546.56,
+      "pnl": -143.76,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-18",
+      "ticker": "AMAT",
+      "action": "BUY",
+      "shares": 13,
+      "price": 413.57,
+      "value": 5376.41,
+      "pnl": null,
+      "pred_pct": 2.38,
+      "confidence": 0.65,
+      "reason": "Top pick #4, conf=65%, pred=+2.4%, alloc=12%"
+    },
+    {
+      "date": "2026-05-18",
+      "ticker": "SOXX",
+      "action": "BUY",
+      "shares": 8,
+      "price": 495.87,
+      "value": 3966.96,
+      "pnl": null,
+      "pred_pct": 2.19,
+      "confidence": 0.6,
+      "reason": "Top pick #5, conf=60%, pred=+2.2%, alloc=9%"
     }
   ],
   "daily_values": [
@@ -1181,9 +1225,16 @@
       "cash": 11505.07,
       "positions_value": 35934.28,
       "spy_close": 739.17
+    },
+    {
+      "date": "2026-05-18",
+      "value": 47047.04,
+      "cash": 10150.18,
+      "positions_value": 36896.86,
+      "spy_close": 738.65
     }
   ],
-  "last_updated": "2026-05-15",
+  "last_updated": "2026-05-18",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
