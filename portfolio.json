@@ -1,15 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 10150.1811945343,
+  "cash": 9780.371105422972,
   "positions": {
-    "KLAC": {
-      "shares": 5,
-      "entry_price": 1845.19,
-      "peak_price": 1892.94,
-      "entry_date": "2026-05-11",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 0.97
-    },
     "IWM": {
       "shares": 34,
       "entry_price": 277.6,
@@ -26,21 +18,29 @@
       "entry_conf": 0.6,
       "entry_pred_pct": 2.06
     },
-    "AMAT": {
-      "shares": 13,
-      "entry_price": 413.57,
-      "peak_price": 413.57,
-      "entry_date": "2026-05-18",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 2.38
-    },
-    "SOXX": {
-      "shares": 8,
-      "entry_price": 495.87,
-      "peak_price": 495.87,
-      "entry_date": "2026-05-18",
+    "KLAC": {
+      "shares": 3,
+      "entry_price": 1740.58,
+      "peak_price": 1740.58,
+      "entry_date": "2026-05-19",
       "entry_conf": 0.6,
-      "entry_pred_pct": 2.19
+      "entry_pred_pct": 5.27
+    },
+    "GS": {
+      "shares": 10,
+      "entry_price": 928.74,
+      "peak_price": 928.74,
+      "entry_date": "2026-05-19",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 1.7
+    },
+    "LRCX": {
+      "shares": 14,
+      "entry_price": 273.38,
+      "peak_price": 273.38,
+      "entry_date": "2026-05-19",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 3.43
     }
   },
   "trades": [
@@ -873,6 +873,72 @@
       "pred_pct": 2.19,
       "confidence": 0.6,
       "reason": "Top pick #5, conf=60%, pred=+2.2%, alloc=9%"
+    },
+    {
+      "date": "2026-05-19",
+      "ticker": "KLAC",
+      "action": "SELL",
+      "shares": 5,
+      "price": 1740.58,
+      "value": 8702.9,
+      "pnl": -523.05,
+      "reason": "Trailing stop: -8.0% from $1892.94 peak"
+    },
+    {
+      "date": "2026-05-19",
+      "ticker": "AMAT",
+      "action": "SELL",
+      "shares": 13,
+      "price": 406.91,
+      "value": 5289.83,
+      "pnl": -86.58,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-19",
+      "ticker": "SOXX",
+      "action": "SELL",
+      "shares": 8,
+      "price": 496.74,
+      "value": 3973.92,
+      "pnl": 6.96,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-19",
+      "ticker": "KLAC",
+      "action": "BUY",
+      "shares": 3,
+      "price": 1740.58,
+      "value": 5221.74,
+      "pnl": null,
+      "pred_pct": 5.27,
+      "confidence": 0.6,
+      "reason": "Top pick #2, conf=60%, pred=+5.3%, alloc=13%"
+    },
+    {
+      "date": "2026-05-19",
+      "ticker": "GS",
+      "action": "BUY",
+      "shares": 10,
+      "price": 928.74,
+      "value": 9287.4,
+      "pnl": null,
+      "pred_pct": 1.7,
+      "confidence": 0.65,
+      "reason": "Top pick #3, conf=65%, pred=+1.7%, alloc=26%"
+    },
+    {
+      "date": "2026-05-19",
+      "ticker": "LRCX",
+      "action": "BUY",
+      "shares": 14,
+      "price": 273.38,
+      "value": 3827.32,
+      "pnl": null,
+      "pred_pct": 3.43,
+      "confidence": 0.6,
+      "reason": "Top pick #5, conf=60%, pred=+3.4%, alloc=8%"
     }
   ],
   "daily_values": [
@@ -1232,9 +1298,16 @@
       "cash": 10150.18,
       "positions_value": 36896.86,
       "spy_close": 738.65
+    },
+    {
+      "date": "2026-05-19",
+      "value": 46702.67,
+      "cash": 9780.37,
+      "positions_value": 36922.3,
+      "spy_close": 733.73
     }
   ],
-  "last_updated": "2026-05-18",
+  "last_updated": "2026-05-19",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
