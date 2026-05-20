@@ -1,46 +1,46 @@
 {
   "initial_balance": 50000.0,
-  "cash": 9780.371105422972,
+  "cash": 11492.630947341917,
   "positions": {
     "IWM": {
       "shares": 34,
       "entry_price": 277.6,
-      "peak_price": 277.6,
+      "peak_price": 279.87,
       "entry_date": "2026-05-15",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.99
     },
-    "ARKK": {
-      "shares": 126,
-      "entry_price": 74.9,
-      "peak_price": 74.9,
-      "entry_date": "2026-05-15",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 2.06
-    },
     "KLAC": {
       "shares": 3,
       "entry_price": 1740.58,
-      "peak_price": 1740.58,
+      "peak_price": 1829.47,
       "entry_date": "2026-05-19",
       "entry_conf": 0.6,
       "entry_pred_pct": 5.27
     },
-    "GS": {
-      "shares": 10,
-      "entry_price": 928.74,
-      "peak_price": 928.74,
-      "entry_date": "2026-05-19",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 1.7
+    "UNH": {
+      "shares": 25,
+      "entry_price": 383.3,
+      "peak_price": 383.3,
+      "entry_date": "2026-05-20",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 2.82
     },
-    "LRCX": {
-      "shares": 14,
-      "entry_price": 273.38,
-      "peak_price": 273.38,
-      "entry_date": "2026-05-19",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 3.43
+    "GOOGL": {
+      "shares": 19,
+      "entry_price": 388.91,
+      "peak_price": 388.91,
+      "entry_date": "2026-05-20",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 1.72
+    },
+    "COIN": {
+      "shares": 25,
+      "entry_price": 191.29,
+      "peak_price": 191.29,
+      "entry_date": "2026-05-20",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 2.23
     }
   },
   "trades": [
@@ -939,6 +939,72 @@
       "pred_pct": 3.43,
       "confidence": 0.6,
       "reason": "Top pick #5, conf=60%, pred=+3.4%, alloc=8%"
+    },
+    {
+      "date": "2026-05-20",
+      "ticker": "GS",
+      "action": "SELL",
+      "shares": 10,
+      "price": 982.12,
+      "value": 9821.2,
+      "pnl": 533.8,
+      "reason": "Take-profit: +5.7% reached target +1.7%"
+    },
+    {
+      "date": "2026-05-20",
+      "ticker": "LRCX",
+      "action": "SELL",
+      "shares": 14,
+      "price": 292.09,
+      "value": 4089.26,
+      "pnl": 261.94,
+      "reason": "Take-profit: +6.8% reached target +3.4%"
+    },
+    {
+      "date": "2026-05-20",
+      "ticker": "ARKK",
+      "action": "SELL",
+      "shares": 126,
+      "price": 75.84,
+      "value": 9555.84,
+      "pnl": 118.44,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-20",
+      "ticker": "UNH",
+      "action": "BUY",
+      "shares": 25,
+      "price": 383.3,
+      "value": 9582.5,
+      "pnl": null,
+      "pred_pct": 2.82,
+      "confidence": 0.625,
+      "reason": "Top pick #1, conf=62%, pred=+2.8%, alloc=29%"
+    },
+    {
+      "date": "2026-05-20",
+      "ticker": "GOOGL",
+      "action": "BUY",
+      "shares": 19,
+      "price": 388.91,
+      "value": 7389.29,
+      "pnl": null,
+      "pred_pct": 1.72,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+1.7%, alloc=16%"
+    },
+    {
+      "date": "2026-05-20",
+      "ticker": "COIN",
+      "action": "BUY",
+      "shares": 25,
+      "price": 191.29,
+      "value": 4782.25,
+      "pnl": null,
+      "pred_pct": 2.23,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+2.2%, alloc=10%"
     }
   ],
   "daily_values": [
@@ -1305,9 +1371,16 @@
       "cash": 9780.37,
       "positions_value": 36922.3,
       "spy_close": 733.73
+    },
+    {
+      "date": "2026-05-20",
+      "value": 48250.66,
+      "cash": 11492.63,
+      "positions_value": 36758.03,
+      "spy_close": 741.25
     }
   ],
-  "last_updated": "2026-05-19",
+  "last_updated": "2026-05-20",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
