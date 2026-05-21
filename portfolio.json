@@ -1,22 +1,14 @@
 {
   "initial_balance": 50000.0,
-  "cash": 11492.630947341917,
+  "cash": 10249.400326004026,
   "positions": {
     "IWM": {
       "shares": 34,
       "entry_price": 277.6,
-      "peak_price": 279.87,
+      "peak_price": 282.49,
       "entry_date": "2026-05-15",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.99
-    },
-    "KLAC": {
-      "shares": 3,
-      "entry_price": 1740.58,
-      "peak_price": 1829.47,
-      "entry_date": "2026-05-19",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 5.27
     },
     "UNH": {
       "shares": 25,
@@ -26,21 +18,29 @@
       "entry_conf": 0.625,
       "entry_pred_pct": 2.82
     },
-    "GOOGL": {
-      "shares": 19,
-      "entry_price": 388.91,
-      "peak_price": 388.91,
-      "entry_date": "2026-05-20",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 1.72
+    "TXN": {
+      "shares": 31,
+      "entry_price": 298.39,
+      "peak_price": 298.39,
+      "entry_date": "2026-05-21",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 1.75
     },
-    "COIN": {
-      "shares": 25,
-      "entry_price": 191.29,
-      "peak_price": 191.29,
-      "entry_date": "2026-05-20",
+    "KLAC": {
+      "shares": 3,
+      "entry_price": 1842.18,
+      "peak_price": 1842.18,
+      "entry_date": "2026-05-21",
       "entry_conf": 0.55,
-      "entry_pred_pct": 2.23
+      "entry_pred_pct": 2.7
+    },
+    "SOXX": {
+      "shares": 8,
+      "entry_price": 524.71,
+      "peak_price": 524.71,
+      "entry_date": "2026-05-21",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.76
     }
   },
   "trades": [
@@ -1005,6 +1005,72 @@
       "pred_pct": 2.23,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+2.2%, alloc=10%"
+    },
+    {
+      "date": "2026-05-21",
+      "ticker": "KLAC",
+      "action": "SELL",
+      "shares": 3,
+      "price": 1842.18,
+      "value": 5526.54,
+      "pnl": 304.8,
+      "reason": "Take-profit: +5.8% reached target +5.3%"
+    },
+    {
+      "date": "2026-05-21",
+      "ticker": "GOOGL",
+      "action": "SELL",
+      "shares": 19,
+      "price": 387.66,
+      "value": 7365.54,
+      "pnl": -23.75,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-21",
+      "ticker": "COIN",
+      "action": "SELL",
+      "shares": 25,
+      "price": 193.56,
+      "value": 4839.0,
+      "pnl": 56.75,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-21",
+      "ticker": "TXN",
+      "action": "BUY",
+      "shares": 31,
+      "price": 298.39,
+      "value": 9250.09,
+      "pnl": null,
+      "pred_pct": 1.75,
+      "confidence": 0.6,
+      "reason": "Top pick #2, conf=60%, pred=+1.8%, alloc=20%"
+    },
+    {
+      "date": "2026-05-21",
+      "ticker": "KLAC",
+      "action": "BUY",
+      "shares": 3,
+      "price": 1842.18,
+      "value": 5526.54,
+      "pnl": null,
+      "pred_pct": 2.7,
+      "confidence": 0.55,
+      "reason": "Top pick #3, conf=55%, pred=+2.7%, alloc=12%"
+    },
+    {
+      "date": "2026-05-21",
+      "ticker": "SOXX",
+      "action": "BUY",
+      "shares": 8,
+      "price": 524.71,
+      "value": 4197.68,
+      "pnl": null,
+      "pred_pct": 0.76,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+0.8%, alloc=9%"
     }
   ],
   "daily_values": [
@@ -1378,9 +1444,16 @@
       "cash": 11492.63,
       "positions_value": 36758.03,
       "spy_close": 741.25
+    },
+    {
+      "date": "2026-05-21",
+      "value": 48390.37,
+      "cash": 10249.4,
+      "positions_value": 38140.97,
+      "spy_close": 742.72
     }
   ],
-  "last_updated": "2026-05-20",
+  "last_updated": "2026-05-21",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
