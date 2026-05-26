@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 24137.779949417112,
+  "cash": 20603.260021438597,
   "positions": {
     "UNH": {
       "shares": 25,
@@ -10,14 +10,6 @@
       "entry_conf": 0.625,
       "entry_pred_pct": 2.82
     },
-    "KLAC": {
-      "shares": 3,
-      "entry_price": 1842.18,
-      "peak_price": 1888.38,
-      "entry_date": "2026-05-21",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 2.7
-    },
     "NVDA": {
       "shares": 45,
       "entry_price": 215.33,
@@ -25,6 +17,14 @@
       "entry_date": "2026-05-22",
       "entry_conf": 0.65,
       "entry_pred_pct": 1.9
+    },
+    "MSFT": {
+      "shares": 23,
+      "entry_price": 416.03,
+      "peak_price": 416.03,
+      "entry_date": "2026-05-26",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.74
     }
   },
   "trades": [
@@ -1097,6 +1097,28 @@
       "pred_pct": 1.9,
       "confidence": 0.65,
       "reason": "Top pick #2, conf=65%, pred=+1.9%, alloc=27%"
+    },
+    {
+      "date": "2026-05-26",
+      "ticker": "KLAC",
+      "action": "SELL",
+      "shares": 3,
+      "price": 2011.39,
+      "value": 6034.17,
+      "pnl": 507.63,
+      "reason": "Take-profit: +9.2% reached target +2.7%"
+    },
+    {
+      "date": "2026-05-26",
+      "ticker": "MSFT",
+      "action": "BUY",
+      "shares": 23,
+      "price": 416.03,
+      "value": 9568.69,
+      "pnl": null,
+      "pred_pct": 0.74,
+      "confidence": 0.55,
+      "reason": "Top pick #3, conf=55%, pred=+0.7%, alloc=41%"
     }
   ],
   "daily_values": [
@@ -1484,9 +1506,16 @@
       "cash": 24137.78,
       "positions_value": 25066.74,
       "spy_close": 745.64
+    },
+    {
+      "date": "2026-05-26",
+      "value": 49262.15,
+      "cash": 20603.26,
+      "positions_value": 28658.89,
+      "spy_close": 750.59
     }
   ],
-  "last_updated": "2026-05-22",
+  "last_updated": "2026-05-26",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
