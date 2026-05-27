@@ -1,15 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 20603.260021438597,
+  "cash": 16643.1899835968,
   "positions": {
-    "UNH": {
-      "shares": 25,
-      "entry_price": 383.3,
-      "peak_price": 388.47,
-      "entry_date": "2026-05-20",
-      "entry_conf": 0.625,
-      "entry_pred_pct": 2.82
-    },
     "NVDA": {
       "shares": 45,
       "entry_price": 215.33,
@@ -18,13 +10,29 @@
       "entry_conf": 0.65,
       "entry_pred_pct": 1.9
     },
-    "MSFT": {
-      "shares": 23,
-      "entry_price": 416.03,
-      "peak_price": 416.03,
-      "entry_date": "2026-05-26",
+    "SPY": {
+      "shares": 13,
+      "entry_price": 750.46,
+      "peak_price": 750.46,
+      "entry_date": "2026-05-27",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 0.46
+    },
+    "TXN": {
+      "shares": 25,
+      "entry_price": 317.45,
+      "peak_price": 317.45,
+      "entry_date": "2026-05-27",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 1.43
+    },
+    "SMH": {
+      "shares": 9,
+      "entry_price": 595.5,
+      "peak_price": 595.5,
+      "entry_date": "2026-05-27",
       "entry_conf": 0.55,
-      "entry_pred_pct": 0.74
+      "entry_pred_pct": 0.7
     }
   },
   "trades": [
@@ -1119,6 +1127,62 @@
       "pred_pct": 0.74,
       "confidence": 0.55,
       "reason": "Top pick #3, conf=55%, pred=+0.7%, alloc=41%"
+    },
+    {
+      "date": "2026-05-27",
+      "ticker": "UNH",
+      "action": "SELL",
+      "shares": 25,
+      "price": 384.01,
+      "value": 9600.25,
+      "pnl": 17.75,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-27",
+      "ticker": "MSFT",
+      "action": "SELL",
+      "shares": 23,
+      "price": 412.67,
+      "value": 9491.41,
+      "pnl": -77.28,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-27",
+      "ticker": "SPY",
+      "action": "BUY",
+      "shares": 13,
+      "price": 750.46,
+      "value": 9755.98,
+      "pnl": null,
+      "pred_pct": 0.46,
+      "confidence": 0.575,
+      "reason": "Top pick #2, conf=57%, pred=+0.5%, alloc=58%"
+    },
+    {
+      "date": "2026-05-27",
+      "ticker": "TXN",
+      "action": "BUY",
+      "shares": 25,
+      "price": 317.45,
+      "value": 7936.25,
+      "pnl": null,
+      "pred_pct": 1.43,
+      "confidence": 0.625,
+      "reason": "Top pick #3, conf=62%, pred=+1.4%, alloc=16%"
+    },
+    {
+      "date": "2026-05-27",
+      "ticker": "SMH",
+      "action": "BUY",
+      "shares": 9,
+      "price": 595.5,
+      "value": 5359.5,
+      "pnl": null,
+      "pred_pct": 0.7,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+0.7%, alloc=12%"
     }
   ],
   "daily_values": [
@@ -1513,9 +1577,16 @@
       "cash": 20603.26,
       "positions_value": 28658.89,
       "spy_close": 750.59
+    },
+    {
+      "date": "2026-05-27",
+      "value": 49261.92,
+      "cash": 16643.19,
+      "positions_value": 32618.73,
+      "spy_close": 750.46
     }
   ],
-  "last_updated": "2026-05-26",
+  "last_updated": "2026-05-27",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
