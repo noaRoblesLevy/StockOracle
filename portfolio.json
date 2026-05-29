@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 20562.849285354612,
+  "cash": 14004.2989389801,
   "positions": {
     "TXN": {
       "shares": 25,
@@ -18,21 +18,29 @@
       "entry_conf": 0.55,
       "entry_pred_pct": 0.7
     },
-    "KLAC": {
-      "shares": 3,
-      "entry_price": 1927.63,
-      "peak_price": 1927.63,
-      "entry_date": "2026-05-28",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 2.81
-    },
     "V": {
       "shares": 30,
       "entry_price": 324.95,
-      "peak_price": 324.95,
+      "peak_price": 326.36,
       "entry_date": "2026-05-28",
       "entry_conf": 0.675,
       "entry_pred_pct": 0.55
+    },
+    "INTC": {
+      "shares": 23,
+      "entry_price": 114.68,
+      "peak_price": 114.68,
+      "entry_date": "2026-05-29",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 8.87
+    },
+    "VTI": {
+      "shares": 26,
+      "entry_price": 372.54,
+      "peak_price": 372.54,
+      "entry_date": "2026-05-29",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.31
     }
   },
   "trades": [
@@ -1227,6 +1235,40 @@
       "pred_pct": 0.55,
       "confidence": 0.675,
       "reason": "Top pick #3, conf=68%, pred=+0.6%, alloc=47%"
+    },
+    {
+      "date": "2026-05-29",
+      "ticker": "KLAC",
+      "action": "SELL",
+      "shares": 3,
+      "price": 1921.71,
+      "value": 5765.13,
+      "pnl": -17.76,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-05-29",
+      "ticker": "INTC",
+      "action": "BUY",
+      "shares": 23,
+      "price": 114.68,
+      "value": 2637.64,
+      "pnl": null,
+      "pred_pct": 8.87,
+      "confidence": 0.575,
+      "reason": "Top pick #2, conf=57%, pred=+8.9%, alloc=5%"
+    },
+    {
+      "date": "2026-05-29",
+      "ticker": "VTI",
+      "action": "BUY",
+      "shares": 26,
+      "price": 372.54,
+      "value": 9686.04,
+      "pnl": null,
+      "pred_pct": 0.31,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+0.3%, alloc=39%"
     }
   ],
   "daily_values": [
@@ -1635,9 +1677,16 @@
       "cash": 20562.85,
       "positions_value": 28828.61,
       "spy_close": 754.6
+    },
+    {
+      "date": "2026-05-29",
+      "value": 49151.15,
+      "cash": 14004.3,
+      "positions_value": 35146.85,
+      "spy_close": 756.48
     }
   ],
-  "last_updated": "2026-05-28",
+  "last_updated": "2026-05-29",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
