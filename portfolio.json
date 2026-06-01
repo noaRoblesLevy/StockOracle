@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 14004.2989389801,
+  "cash": 10372.10918067932,
   "positions": {
     "TXN": {
       "shares": 25,
@@ -9,14 +9,6 @@
       "entry_date": "2026-05-27",
       "entry_conf": 0.625,
       "entry_pred_pct": 1.43
-    },
-    "SMH": {
-      "shares": 9,
-      "entry_price": 595.5,
-      "peak_price": 599.83,
-      "entry_date": "2026-05-27",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 0.7
     },
     "V": {
       "shares": 30,
@@ -37,9 +29,17 @@
     "VTI": {
       "shares": 26,
       "entry_price": 372.54,
-      "peak_price": 372.54,
+      "peak_price": 373.4,
       "entry_date": "2026-05-29",
       "entry_conf": 0.55,
+      "entry_pred_pct": 0.31
+    },
+    "SPY": {
+      "shares": 12,
+      "entry_price": 758.54,
+      "peak_price": 758.54,
+      "entry_date": "2026-06-01",
+      "entry_conf": 0.6,
       "entry_pred_pct": 0.31
     }
   },
@@ -1269,6 +1269,28 @@
       "pred_pct": 0.31,
       "confidence": 0.55,
       "reason": "Top pick #4, conf=55%, pred=+0.3%, alloc=39%"
+    },
+    {
+      "date": "2026-06-01",
+      "ticker": "SMH",
+      "action": "SELL",
+      "shares": 9,
+      "price": 607.81,
+      "value": 5470.29,
+      "pnl": 110.79,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-01",
+      "ticker": "SPY",
+      "action": "BUY",
+      "shares": 12,
+      "price": 758.54,
+      "value": 9102.48,
+      "pnl": null,
+      "pred_pct": 0.31,
+      "confidence": 0.6,
+      "reason": "Top pick #4, conf=60%, pred=+0.3%, alloc=39%"
     }
   ],
   "daily_values": [
@@ -1684,9 +1706,16 @@
       "cash": 14004.3,
       "positions_value": 35146.85,
       "spy_close": 756.48
+    },
+    {
+      "date": "2026-06-01",
+      "value": 48710.68,
+      "cash": 10372.11,
+      "positions_value": 38338.57,
+      "spy_close": 758.54
     }
   ],
-  "last_updated": "2026-05-29",
+  "last_updated": "2026-06-01",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
