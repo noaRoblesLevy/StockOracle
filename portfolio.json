@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 10372.10918067932,
+  "cash": 12332.199066848752,
   "positions": {
     "TXN": {
       "shares": 25,
@@ -18,29 +18,21 @@
       "entry_conf": 0.675,
       "entry_pred_pct": 0.55
     },
-    "INTC": {
-      "shares": 23,
-      "entry_price": 114.68,
-      "peak_price": 114.68,
-      "entry_date": "2026-05-29",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 8.87
-    },
     "VTI": {
       "shares": 26,
       "entry_price": 372.54,
-      "peak_price": 373.4,
+      "peak_price": 374.36,
       "entry_date": "2026-05-29",
       "entry_conf": 0.55,
       "entry_pred_pct": 0.31
     },
-    "SPY": {
-      "shares": 12,
-      "entry_price": 758.54,
-      "peak_price": 758.54,
-      "entry_date": "2026-06-01",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 0.31
+    "IWM": {
+      "shares": 33,
+      "entry_price": 291.66,
+      "peak_price": 291.66,
+      "entry_date": "2026-06-02",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 1.03
     }
   },
   "trades": [
@@ -1291,6 +1283,38 @@
       "pred_pct": 0.31,
       "confidence": 0.6,
       "reason": "Top pick #4, conf=60%, pred=+0.3%, alloc=39%"
+    },
+    {
+      "date": "2026-06-02",
+      "ticker": "INTC",
+      "action": "SELL",
+      "shares": 23,
+      "price": 107.93,
+      "value": 2482.39,
+      "pnl": -155.25,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-02",
+      "ticker": "SPY",
+      "action": "SELL",
+      "shares": 12,
+      "price": 758.54,
+      "value": 9102.48,
+      "pnl": 0.0,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-02",
+      "ticker": "IWM",
+      "action": "BUY",
+      "shares": 33,
+      "price": 291.66,
+      "value": 9624.78,
+      "pnl": null,
+      "pred_pct": 1.03,
+      "confidence": 0.55,
+      "reason": "Top pick #3, conf=55%, pred=+1.0%, alloc=25%"
     }
   ],
   "daily_values": [
@@ -1713,9 +1737,16 @@
       "cash": 10372.11,
       "positions_value": 38338.57,
       "spy_close": 758.54
+    },
+    {
+      "date": "2026-06-02",
+      "value": 48912.94,
+      "cash": 12332.2,
+      "positions_value": 36580.74,
+      "spy_close": null
     }
   ],
-  "last_updated": "2026-06-01",
+  "last_updated": "2026-06-02",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
