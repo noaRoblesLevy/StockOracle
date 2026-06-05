@@ -1,15 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 13592.759461135862,
+  "cash": 17473.859345169065,
   "positions": {
-    "TXN": {
-      "shares": 25,
-      "entry_price": 317.45,
-      "peak_price": 317.45,
-      "entry_date": "2026-05-27",
-      "entry_conf": 0.625,
-      "entry_pred_pct": 1.43
-    },
     "VTI": {
       "shares": 26,
       "entry_price": 372.54,
@@ -41,6 +33,14 @@
       "entry_date": "2026-06-04",
       "entry_conf": 0.625,
       "entry_pred_pct": 1.44
+    },
+    "XLK": {
+      "shares": 18,
+      "entry_price": 180.3,
+      "peak_price": 180.3,
+      "entry_date": "2026-06-05",
+      "entry_conf": 0.7,
+      "entry_pred_pct": 5.01
     }
   },
   "trades": [
@@ -1401,6 +1401,28 @@
       "pred_pct": 1.44,
       "confidence": 0.625,
       "reason": "Top pick #5, conf=62%, pred=+1.4%, alloc=12%"
+    },
+    {
+      "date": "2026-06-05",
+      "ticker": "TXN",
+      "action": "SELL",
+      "shares": 25,
+      "price": 285.06,
+      "value": 7126.5,
+      "pnl": -809.75,
+      "reason": "Trailing stop: -10.2% from $317.45 peak"
+    },
+    {
+      "date": "2026-06-05",
+      "ticker": "XLK",
+      "action": "BUY",
+      "shares": 18,
+      "price": 180.3,
+      "value": 3245.4,
+      "pnl": null,
+      "pred_pct": 5.01,
+      "confidence": 0.7,
+      "reason": "Top pick #5, conf=70%, pred=+5.0%, alloc=7%"
     }
   ],
   "daily_values": [
@@ -1844,9 +1866,16 @@
       "cash": 13592.76,
       "positions_value": 35284.46,
       "spy_close": 757.09
+    },
+    {
+      "date": "2026-06-05",
+      "value": 47358.33,
+      "cash": 17473.86,
+      "positions_value": 29884.47,
+      "spy_close": 737.55
     }
   ],
-  "last_updated": "2026-06-04",
+  "last_updated": "2026-06-05",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
