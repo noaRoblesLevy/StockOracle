@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 17473.859345169065,
+  "cash": 11441.35894844055,
   "positions": {
     "VTI": {
       "shares": 26,
@@ -34,13 +34,13 @@
       "entry_conf": 0.625,
       "entry_pred_pct": 1.44
     },
-    "XLK": {
-      "shares": 18,
-      "entry_price": 180.3,
-      "peak_price": 180.3,
-      "entry_date": "2026-06-05",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 5.01
+    "AAPL": {
+      "shares": 31,
+      "entry_price": 301.54,
+      "peak_price": 301.54,
+      "entry_date": "2026-06-08",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 3.35
     }
   },
   "trades": [
@@ -1423,6 +1423,28 @@
       "pred_pct": 5.01,
       "confidence": 0.7,
       "reason": "Top pick #5, conf=70%, pred=+5.0%, alloc=7%"
+    },
+    {
+      "date": "2026-06-08",
+      "ticker": "XLK",
+      "action": "SELL",
+      "shares": 18,
+      "price": 184.18,
+      "value": 3315.24,
+      "pnl": 69.84,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-08",
+      "ticker": "AAPL",
+      "action": "BUY",
+      "shares": 31,
+      "price": 301.54,
+      "value": 9347.74,
+      "pnl": null,
+      "pred_pct": 3.35,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+3.4%, alloc=25%"
     }
   ],
   "daily_values": [
@@ -1873,9 +1895,16 @@
       "cash": 17473.86,
       "positions_value": 29884.47,
       "spy_close": 737.55
+    },
+    {
+      "date": "2026-06-08",
+      "value": 47640.72,
+      "cash": 11441.36,
+      "positions_value": 36199.36,
+      "spy_close": 739.22
     }
   ],
-  "last_updated": "2026-06-05",
+  "last_updated": "2026-06-08",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
