@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 16611.13348457336,
+  "cash": 15723.153504104612,
   "positions": {
     "VTI": {
       "shares": 26,
@@ -29,18 +29,18 @@
     "XLK": {
       "shares": 18,
       "entry_price": 180.77,
-      "peak_price": 180.77,
+      "peak_price": 183.21,
       "entry_date": "2026-06-09",
       "entry_conf": 0.65,
       "entry_pred_pct": 5.2
     },
-    "AMD": {
-      "shares": 7,
-      "entry_price": 475.51,
-      "peak_price": 475.51,
-      "entry_date": "2026-06-09",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 10.07
+    "APP": {
+      "shares": 9,
+      "entry_price": 478.57,
+      "peak_price": 478.57,
+      "entry_date": "2026-06-11",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 8.87
     }
   },
   "trades": [
@@ -1489,6 +1489,28 @@
       "pred_pct": 10.07,
       "confidence": 0.65,
       "reason": "Top pick #5, conf=65%, pred=+10.1%, alloc=8%"
+    },
+    {
+      "date": "2026-06-11",
+      "ticker": "AMD",
+      "action": "SELL",
+      "shares": 7,
+      "price": 488.45,
+      "value": 3419.15,
+      "pnl": 90.58,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-11",
+      "ticker": "APP",
+      "action": "BUY",
+      "shares": 9,
+      "price": 478.57,
+      "value": 4307.13,
+      "pnl": null,
+      "pred_pct": 8.87,
+      "confidence": 0.625,
+      "reason": "Top pick #4, conf=62%, pred=+8.9%, alloc=9%"
     }
   ],
   "daily_values": [
@@ -1960,9 +1982,16 @@
       "cash": 16611.13,
       "positions_value": 29909.86,
       "spy_close": 725.43
+    },
+    {
+      "date": "2026-06-11",
+      "value": 47389.94,
+      "cash": 15723.15,
+      "positions_value": 31666.79,
+      "spy_close": 737.76
     }
   ],
-  "last_updated": "2026-06-10",
+  "last_updated": "2026-06-11",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
