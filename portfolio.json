@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 10798.123657913206,
+  "cash": 10989.913651199338,
   "positions": {
     "VTI": {
       "shares": 26,
@@ -21,26 +21,26 @@
     "QQQ": {
       "shares": 8,
       "entry_price": 740.61,
-      "peak_price": 740.61,
+      "peak_price": 744.0,
       "entry_date": "2026-06-04",
       "entry_conf": 0.625,
       "entry_pred_pct": 1.44
     },
-    "XLK": {
-      "shares": 18,
-      "entry_price": 180.77,
-      "peak_price": 184.8,
-      "entry_date": "2026-06-09",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 5.2
-    },
     "UNH": {
       "shares": 23,
       "entry_price": 408.52,
-      "peak_price": 408.52,
+      "peak_price": 411.04,
       "entry_date": "2026-06-12",
       "entry_conf": 0.55,
       "entry_pred_pct": 3.89
+    },
+    "XLK": {
+      "shares": 17,
+      "entry_price": 191.79,
+      "peak_price": 191.79,
+      "entry_date": "2026-06-15",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 2.89
     }
   },
   "trades": [
@@ -1533,6 +1533,28 @@
       "pred_pct": 3.89,
       "confidence": 0.55,
       "reason": "Top pick #4, conf=55%, pred=+3.9%, alloc=22%"
+    },
+    {
+      "date": "2026-06-15",
+      "ticker": "XLK",
+      "action": "SELL",
+      "shares": 18,
+      "price": 191.79,
+      "value": 3452.22,
+      "pnl": 198.36,
+      "reason": "Take-profit: +6.1% reached target +5.2%"
+    },
+    {
+      "date": "2026-06-15",
+      "ticker": "XLK",
+      "action": "BUY",
+      "shares": 17,
+      "price": 191.79,
+      "value": 3260.43,
+      "pnl": null,
+      "pred_pct": 2.89,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+2.9%, alloc=7%"
     }
   ],
   "daily_values": [
@@ -2018,9 +2040,16 @@
       "cash": 10798.12,
       "positions_value": 36919.44,
       "spy_close": 741.75
+    },
+    {
+      "date": "2026-06-15",
+      "value": 48400.0,
+      "cash": 10989.91,
+      "positions_value": 37410.09,
+      "spy_close": 754.83
     }
   ],
-  "last_updated": "2026-06-12",
+  "last_updated": "2026-06-15",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
