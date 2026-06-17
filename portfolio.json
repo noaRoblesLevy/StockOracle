@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 11115.653641433713,
+  "cash": 11031.93347236633,
   "positions": {
     "VTI": {
       "shares": 26,
@@ -34,13 +34,13 @@
       "entry_conf": 0.55,
       "entry_pred_pct": 3.89
     },
-    "AMD": {
-      "shares": 6,
-      "entry_price": 507.29,
-      "peak_price": 507.29,
-      "entry_date": "2026-06-16",
+    "XLK": {
+      "shares": 17,
+      "entry_price": 185.8,
+      "peak_price": 185.8,
+      "entry_date": "2026-06-17",
       "entry_conf": 0.55,
-      "entry_pred_pct": 8.77
+      "entry_pred_pct": 4.85
     }
   },
   "trades": [
@@ -1577,6 +1577,28 @@
       "pred_pct": 8.77,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+8.8%, alloc=7%"
+    },
+    {
+      "date": "2026-06-17",
+      "ticker": "AMD",
+      "action": "SELL",
+      "shares": 6,
+      "price": 512.48,
+      "value": 3074.88,
+      "pnl": 31.14,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-17",
+      "ticker": "XLK",
+      "action": "BUY",
+      "shares": 17,
+      "price": 185.8,
+      "value": 3158.6,
+      "pnl": null,
+      "pred_pct": 4.85,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+4.8%, alloc=7%"
     }
   ],
   "daily_values": [
@@ -2076,9 +2098,16 @@
       "cash": 11115.65,
       "positions_value": 36892.15,
       "spy_close": 750.33
+    },
+    {
+      "date": "2026-06-17",
+      "value": 47561.08,
+      "cash": 11031.93,
+      "positions_value": 36529.15,
+      "spy_close": 740.96
     }
   ],
-  "last_updated": "2026-06-16",
+  "last_updated": "2026-06-17",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
