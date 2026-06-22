@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 6011.193268508909,
+  "cash": 13557.123627395627,
   "positions": {
     "VTI": {
       "shares": 26,
@@ -9,14 +9,6 @@
       "entry_date": "2026-05-29",
       "entry_conf": 0.55,
       "entry_pred_pct": 0.31
-    },
-    "SPY": {
-      "shares": 12,
-      "entry_price": 754.24,
-      "peak_price": 757.09,
-      "entry_date": "2026-06-03",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 1.11
     },
     "UNH": {
       "shares": 23,
@@ -29,18 +21,26 @@
     "FTNT": {
       "shares": 34,
       "entry_price": 144.73,
-      "peak_price": 144.73,
+      "peak_price": 145.39,
       "entry_date": "2026-06-18",
       "entry_conf": 0.625,
       "entry_pred_pct": 5.72
     },
-    "DIA": {
-      "shares": 18,
-      "entry_price": 515.52,
-      "peak_price": 515.52,
-      "entry_date": "2026-06-18",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 1.61
+    "CRWD": {
+      "shares": 6,
+      "entry_price": 675.44,
+      "peak_price": 675.44,
+      "entry_date": "2026-06-22",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 7.81
+    },
+    "QQQ": {
+      "shares": 9,
+      "entry_price": 737.95,
+      "peak_price": 737.95,
+      "entry_date": "2026-06-22",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 3.36
     }
   },
   "trades": [
@@ -1643,6 +1643,50 @@
       "pred_pct": 1.61,
       "confidence": 0.6,
       "reason": "Top pick #5, conf=60%, pred=+1.6%, alloc=22%"
+    },
+    {
+      "date": "2026-06-22",
+      "ticker": "SPY",
+      "action": "SELL",
+      "shares": 12,
+      "price": 744.39,
+      "value": 8932.68,
+      "pnl": -118.2,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-22",
+      "ticker": "DIA",
+      "action": "SELL",
+      "shares": 18,
+      "price": 517.08,
+      "value": 9307.44,
+      "pnl": 28.08,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-22",
+      "ticker": "CRWD",
+      "action": "BUY",
+      "shares": 6,
+      "price": 675.44,
+      "value": 4052.64,
+      "pnl": null,
+      "pred_pct": 7.81,
+      "confidence": 0.575,
+      "reason": "Top pick #4, conf=57%, pred=+7.8%, alloc=9%"
+    },
+    {
+      "date": "2026-06-22",
+      "ticker": "QQQ",
+      "action": "BUY",
+      "shares": 9,
+      "price": 737.95,
+      "value": 6641.55,
+      "pnl": null,
+      "pred_pct": 3.36,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+3.4%, alloc=15%"
     }
   ],
   "daily_values": [
@@ -2156,9 +2200,16 @@
       "cash": 6011.19,
       "positions_value": 42002.88,
       "spy_close": 746.74
+    },
+    {
+      "date": "2026-06-22",
+      "value": 48137.27,
+      "cash": 13557.12,
+      "positions_value": 34580.15,
+      "spy_close": 744.39
     }
   ],
-  "last_updated": "2026-06-18",
+  "last_updated": "2026-06-22",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
