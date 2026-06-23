@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 13557.123627395627,
+  "cash": 15503.363617630002,
   "positions": {
     "VTI": {
       "shares": 26,
@@ -18,22 +18,6 @@
       "entry_conf": 0.55,
       "entry_pred_pct": 3.89
     },
-    "FTNT": {
-      "shares": 34,
-      "entry_price": 144.73,
-      "peak_price": 145.39,
-      "entry_date": "2026-06-18",
-      "entry_conf": 0.625,
-      "entry_pred_pct": 5.72
-    },
-    "CRWD": {
-      "shares": 6,
-      "entry_price": 675.44,
-      "peak_price": 675.44,
-      "entry_date": "2026-06-22",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 7.81
-    },
     "QQQ": {
       "shares": 9,
       "entry_price": 737.95,
@@ -41,6 +25,22 @@
       "entry_date": "2026-06-22",
       "entry_conf": 0.55,
       "entry_pred_pct": 3.36
+    },
+    "XLK": {
+      "shares": 22,
+      "entry_price": 184.19,
+      "peak_price": 184.19,
+      "entry_date": "2026-06-23",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 5.94
+    },
+    "AMD": {
+      "shares": 6,
+      "entry_price": 519.85,
+      "peak_price": 519.85,
+      "entry_date": "2026-06-23",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 9.43
     }
   },
   "trades": [
@@ -1687,6 +1687,50 @@
       "pred_pct": 3.36,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+3.4%, alloc=15%"
+    },
+    {
+      "date": "2026-06-23",
+      "ticker": "FTNT",
+      "action": "SELL",
+      "shares": 34,
+      "price": 148.0,
+      "value": 5032.0,
+      "pnl": 111.18,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-23",
+      "ticker": "CRWD",
+      "action": "SELL",
+      "shares": 6,
+      "price": 680.92,
+      "value": 4085.52,
+      "pnl": 32.88,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-23",
+      "ticker": "XLK",
+      "action": "BUY",
+      "shares": 22,
+      "price": 184.19,
+      "value": 4052.18,
+      "pnl": null,
+      "pred_pct": 5.94,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+5.9%, alloc=9%"
+    },
+    {
+      "date": "2026-06-23",
+      "ticker": "AMD",
+      "action": "BUY",
+      "shares": 6,
+      "price": 519.85,
+      "value": 3119.1,
+      "pnl": null,
+      "pred_pct": 9.43,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+9.4%, alloc=7%"
     }
   ],
   "daily_values": [
@@ -2207,9 +2251,16 @@
       "cash": 13557.12,
       "positions_value": 34580.15,
       "spy_close": 744.39
+    },
+    {
+      "date": "2026-06-23",
+      "value": 47966.44,
+      "cash": 15503.36,
+      "positions_value": 32463.08,
+      "spy_close": 733.58
     }
   ],
-  "last_updated": "2026-06-22",
+  "last_updated": "2026-06-23",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
