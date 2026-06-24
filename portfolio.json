@@ -1,15 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 15503.363617630002,
+  "cash": 14541.932831497194,
   "positions": {
-    "VTI": {
-      "shares": 26,
-      "entry_price": 372.54,
-      "peak_price": 374.36,
-      "entry_date": "2026-05-29",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 0.31
-    },
     "UNH": {
       "shares": 23,
       "entry_price": 408.52,
@@ -18,29 +10,37 @@
       "entry_conf": 0.55,
       "entry_pred_pct": 3.89
     },
-    "QQQ": {
-      "shares": 9,
-      "entry_price": 737.95,
-      "peak_price": 737.95,
-      "entry_date": "2026-06-22",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 3.36
+    "INTC": {
+      "shares": 23,
+      "entry_price": 131.65,
+      "peak_price": 131.65,
+      "entry_date": "2026-06-24",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 8.76
     },
-    "XLK": {
-      "shares": 22,
-      "entry_price": 184.19,
-      "peak_price": 184.19,
-      "entry_date": "2026-06-23",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 5.94
+    "PANW": {
+      "shares": 18,
+      "entry_price": 285.26,
+      "peak_price": 285.26,
+      "entry_date": "2026-06-24",
+      "entry_conf": 0.675,
+      "entry_pred_pct": 4.9
     },
-    "AMD": {
+    "DIA": {
+      "shares": 18,
+      "entry_price": 518.52,
+      "peak_price": 518.52,
+      "entry_date": "2026-06-24",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 1.19
+    },
+    "GS": {
       "shares": 6,
-      "entry_price": 519.85,
-      "peak_price": 519.85,
-      "entry_date": "2026-06-23",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 9.43
+      "entry_price": 1076.91,
+      "peak_price": 1076.91,
+      "entry_date": "2026-06-24",
+      "entry_conf": 0.675,
+      "entry_pred_pct": 2.16
     }
   },
   "trades": [
@@ -1731,6 +1731,94 @@
       "pred_pct": 9.43,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+9.4%, alloc=7%"
+    },
+    {
+      "date": "2026-06-24",
+      "ticker": "VTI",
+      "action": "SELL",
+      "shares": 26,
+      "price": 363.65,
+      "value": 9454.9,
+      "pnl": -231.14,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-24",
+      "ticker": "QQQ",
+      "action": "SELL",
+      "shares": 9,
+      "price": 710.62,
+      "value": 6395.58,
+      "pnl": -245.97,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-24",
+      "ticker": "XLK",
+      "action": "SELL",
+      "shares": 22,
+      "price": 183.05,
+      "value": 4027.1,
+      "pnl": -25.08,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-24",
+      "ticker": "AMD",
+      "action": "SELL",
+      "shares": 6,
+      "price": 519.74,
+      "value": 3118.44,
+      "pnl": -0.66,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-24",
+      "ticker": "INTC",
+      "action": "BUY",
+      "shares": 23,
+      "price": 131.65,
+      "value": 3027.95,
+      "pnl": null,
+      "pred_pct": 8.76,
+      "confidence": 0.65,
+      "reason": "Top pick #2, conf=65%, pred=+8.8%, alloc=6%"
+    },
+    {
+      "date": "2026-06-24",
+      "ticker": "PANW",
+      "action": "BUY",
+      "shares": 18,
+      "price": 285.26,
+      "value": 5134.68,
+      "pnl": null,
+      "pred_pct": 4.9,
+      "confidence": 0.675,
+      "reason": "Top pick #3, conf=68%, pred=+4.9%, alloc=11%"
+    },
+    {
+      "date": "2026-06-24",
+      "ticker": "DIA",
+      "action": "BUY",
+      "shares": 18,
+      "price": 518.52,
+      "value": 9333.36,
+      "pnl": null,
+      "pred_pct": 1.19,
+      "confidence": 0.575,
+      "reason": "Top pick #4, conf=57%, pred=+1.2%, alloc=43%"
+    },
+    {
+      "date": "2026-06-24",
+      "ticker": "GS",
+      "action": "BUY",
+      "shares": 6,
+      "price": 1076.91,
+      "value": 6461.46,
+      "pnl": null,
+      "pred_pct": 2.16,
+      "confidence": 0.675,
+      "reason": "Top pick #5, conf=68%, pred=+2.2%, alloc=14%"
     }
   ],
   "daily_values": [
@@ -2258,9 +2346,16 @@
       "cash": 15503.36,
       "positions_value": 32463.08,
       "spy_close": 733.58
+    },
+    {
+      "date": "2026-06-24",
+      "value": 47832.78,
+      "cash": 14541.93,
+      "positions_value": 33290.85,
+      "spy_close": 733.24
     }
   ],
-  "last_updated": "2026-06-23",
+  "last_updated": "2026-06-24",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
