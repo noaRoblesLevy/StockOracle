@@ -1,15 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 18658.822479934694,
+  "cash": 24513.72293159485,
   "positions": {
-    "UNH": {
-      "shares": 23,
-      "entry_price": 408.52,
-      "peak_price": 415.53,
-      "entry_date": "2026-06-12",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 3.89
-    },
     "INTC": {
       "shares": 23,
       "entry_price": 131.65,
@@ -17,14 +9,6 @@
       "entry_date": "2026-06-24",
       "entry_conf": 0.65,
       "entry_pred_pct": 8.76
-    },
-    "DIA": {
-      "shares": 18,
-      "entry_price": 518.52,
-      "peak_price": 519.26,
-      "entry_date": "2026-06-24",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 1.19
     },
     "AMD": {
       "shares": 7,
@@ -41,6 +25,22 @@
       "entry_date": "2026-06-25",
       "entry_conf": 0.55,
       "entry_pred_pct": 5.43
+    },
+    "GS": {
+      "shares": 9,
+      "entry_price": 1019.61,
+      "peak_price": 1019.61,
+      "entry_date": "2026-06-26",
+      "entry_conf": 0.675,
+      "entry_pred_pct": 4.98
+    },
+    "SOXX": {
+      "shares": 7,
+      "entry_price": 589.94,
+      "peak_price": 589.94,
+      "entry_date": "2026-06-26",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 8.03
     }
   },
   "trades": [
@@ -1863,6 +1863,50 @@
       "pred_pct": 5.43,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+5.4%, alloc=9%"
+    },
+    {
+      "date": "2026-06-26",
+      "ticker": "UNH",
+      "action": "SELL",
+      "shares": 23,
+      "price": 427.89,
+      "value": 9841.47,
+      "pnl": 445.51,
+      "reason": "Take-profit: +4.7% reached target +3.9%"
+    },
+    {
+      "date": "2026-06-26",
+      "ticker": "DIA",
+      "action": "SELL",
+      "shares": 18,
+      "price": 517.75,
+      "value": 9319.5,
+      "pnl": -13.86,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-26",
+      "ticker": "GS",
+      "action": "BUY",
+      "shares": 9,
+      "price": 1019.61,
+      "value": 9176.49,
+      "pnl": null,
+      "pred_pct": 4.98,
+      "confidence": 0.675,
+      "reason": "Top pick #1, conf=68%, pred=+5.0%, alloc=38%"
+    },
+    {
+      "date": "2026-06-26",
+      "ticker": "SOXX",
+      "action": "BUY",
+      "shares": 7,
+      "price": 589.94,
+      "value": 4129.58,
+      "pnl": null,
+      "pred_pct": 8.03,
+      "confidence": 0.6,
+      "reason": "Top pick #5, conf=60%, pred=+8.0%, alloc=10%"
     }
   ],
   "daily_values": [
@@ -2404,9 +2448,16 @@
       "cash": 18658.82,
       "positions_value": 29509.15,
       "spy_close": 734.3
+    },
+    {
+      "date": "2026-06-26",
+      "value": 48091.87,
+      "cash": 24513.72,
+      "positions_value": 23578.15,
+      "spy_close": 728.99
     }
   ],
-  "last_updated": "2026-06-25",
+  "last_updated": "2026-06-26",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
