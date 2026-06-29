@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 24513.72293159485,
+  "cash": 19158.31259223938,
   "positions": {
     "INTC": {
       "shares": 23,
@@ -13,7 +13,7 @@
     "AMD": {
       "shares": 7,
       "entry_price": 532.57,
-      "peak_price": 532.57,
+      "peak_price": 539.49,
       "entry_date": "2026-06-25",
       "entry_conf": 0.55,
       "entry_pred_pct": 9.35
@@ -29,18 +29,18 @@
     "GS": {
       "shares": 9,
       "entry_price": 1019.61,
-      "peak_price": 1019.61,
+      "peak_price": 1020.21,
       "entry_date": "2026-06-26",
       "entry_conf": 0.675,
       "entry_pred_pct": 4.98
     },
-    "SOXX": {
-      "shares": 7,
-      "entry_price": 589.94,
-      "peak_price": 589.94,
-      "entry_date": "2026-06-26",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 8.03
+    "UNH": {
+      "shares": 23,
+      "entry_price": 419.82,
+      "peak_price": 419.82,
+      "entry_date": "2026-06-29",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 3.84
     }
   },
   "trades": [
@@ -1907,6 +1907,28 @@
       "pred_pct": 8.03,
       "confidence": 0.6,
       "reason": "Top pick #5, conf=60%, pred=+8.0%, alloc=10%"
+    },
+    {
+      "date": "2026-06-29",
+      "ticker": "SOXX",
+      "action": "SELL",
+      "shares": 7,
+      "price": 614.35,
+      "value": 4300.45,
+      "pnl": 170.87,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-29",
+      "ticker": "UNH",
+      "action": "BUY",
+      "shares": 23,
+      "price": 419.82,
+      "value": 9655.86,
+      "pnl": null,
+      "pred_pct": 3.84,
+      "confidence": 0.55,
+      "reason": "Top pick #1, conf=55%, pred=+3.8%, alloc=38%"
     }
   ],
   "daily_values": [
@@ -2455,9 +2477,16 @@
       "cash": 24513.72,
       "positions_value": 23578.15,
       "spy_close": 728.99
+    },
+    {
+      "date": "2026-06-29",
+      "value": 48593.93,
+      "cash": 19158.31,
+      "positions_value": 29435.62,
+      "spy_close": 741.0
     }
   ],
-  "last_updated": "2026-06-26",
+  "last_updated": "2026-06-29",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
