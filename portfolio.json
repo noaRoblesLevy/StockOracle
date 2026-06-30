@@ -1,27 +1,11 @@
 {
   "initial_balance": 50000.0,
-  "cash": 19158.31259223938,
+  "cash": 12857.842743606569,
   "positions": {
-    "INTC": {
-      "shares": 23,
-      "entry_price": 131.65,
-      "peak_price": 132.87,
-      "entry_date": "2026-06-24",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 8.76
-    },
-    "AMD": {
-      "shares": 7,
-      "entry_price": 532.57,
-      "peak_price": 539.49,
-      "entry_date": "2026-06-25",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 9.35
-    },
     "SMH": {
       "shares": 6,
       "entry_price": 636.88,
-      "peak_price": 636.88,
+      "peak_price": 655.89,
       "entry_date": "2026-06-25",
       "entry_conf": 0.55,
       "entry_pred_pct": 5.43
@@ -41,6 +25,22 @@
       "entry_date": "2026-06-29",
       "entry_conf": 0.55,
       "entry_pred_pct": 3.84
+    },
+    "FTNT": {
+      "shares": 63,
+      "entry_price": 153.62,
+      "peak_price": 153.62,
+      "entry_date": "2026-06-30",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 4.88
+    },
+    "ARM": {
+      "shares": 11,
+      "entry_price": 354.57,
+      "peak_price": 354.57,
+      "entry_date": "2026-06-30",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 10.2
     }
   },
   "trades": [
@@ -1929,6 +1929,50 @@
       "pred_pct": 3.84,
       "confidence": 0.55,
       "reason": "Top pick #1, conf=55%, pred=+3.8%, alloc=38%"
+    },
+    {
+      "date": "2026-06-30",
+      "ticker": "INTC",
+      "action": "SELL",
+      "shares": 23,
+      "price": 139.63,
+      "value": 3211.49,
+      "pnl": 183.54,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-30",
+      "ticker": "AMD",
+      "action": "SELL",
+      "shares": 7,
+      "price": 580.91,
+      "value": 4066.37,
+      "pnl": 338.38,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-06-30",
+      "ticker": "FTNT",
+      "action": "BUY",
+      "shares": 63,
+      "price": 153.62,
+      "value": 9678.06,
+      "pnl": null,
+      "pred_pct": 4.88,
+      "confidence": 0.55,
+      "reason": "Top pick #3, conf=55%, pred=+4.9%, alloc=25%"
+    },
+    {
+      "date": "2026-06-30",
+      "ticker": "ARM",
+      "action": "BUY",
+      "shares": 11,
+      "price": 354.57,
+      "value": 3900.27,
+      "pnl": null,
+      "pred_pct": 10.2,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+10.2%, alloc=8%"
     }
   ],
   "daily_values": [
@@ -2484,9 +2528,16 @@
       "cash": 19158.31,
       "positions_value": 29435.62,
       "spy_close": 741.0
+    },
+    {
+      "date": "2026-06-30",
+      "value": 49033.33,
+      "cash": 12857.84,
+      "positions_value": 36175.49,
+      "spy_close": 746.77
     }
   ],
-  "last_updated": "2026-06-29",
+  "last_updated": "2026-06-30",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
