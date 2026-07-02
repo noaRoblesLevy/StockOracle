@@ -1,23 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 18561.932648391725,
+  "cash": 8849.442932815553,
   "positions": {
-    "SMH": {
-      "shares": 6,
-      "entry_price": 636.88,
-      "peak_price": 655.89,
-      "entry_date": "2026-06-25",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 5.43
-    },
-    "GS": {
-      "shares": 9,
-      "entry_price": 1019.61,
-      "peak_price": 1020.21,
-      "entry_date": "2026-06-26",
-      "entry_conf": 0.675,
-      "entry_pred_pct": 4.98
-    },
     "INTC": {
       "shares": 62,
       "entry_price": 127.02,
@@ -26,14 +10,6 @@
       "entry_conf": 0.725,
       "entry_pred_pct": 9.63
     },
-    "MU": {
-      "shares": 5,
-      "entry_price": 1032.28,
-      "peak_price": 1032.28,
-      "entry_date": "2026-07-01",
-      "entry_conf": 0.675,
-      "entry_pred_pct": 12.88
-    },
     "SOXX": {
       "shares": 8,
       "entry_price": 599.7,
@@ -41,6 +17,30 @@
       "entry_date": "2026-07-01",
       "entry_conf": 0.675,
       "entry_pred_pct": 7.17
+    },
+    "SMH": {
+      "shares": 16,
+      "entry_price": 592.29,
+      "peak_price": 592.29,
+      "entry_date": "2026-07-02",
+      "entry_conf": 0.7,
+      "entry_pred_pct": 8.72
+    },
+    "AMD": {
+      "shares": 16,
+      "entry_price": 517.82,
+      "peak_price": 517.82,
+      "entry_date": "2026-07-02",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 11.05
+    },
+    "XLK": {
+      "shares": 53,
+      "entry_price": 180.59,
+      "peak_price": 180.59,
+      "entry_date": "2026-07-02",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 6.24
     }
   },
   "trades": [
@@ -2039,6 +2039,72 @@
       "pred_pct": 7.17,
       "confidence": 0.675,
       "reason": "Top pick #5, conf=68%, pred=+7.2%, alloc=10%"
+    },
+    {
+      "date": "2026-07-02",
+      "ticker": "SMH",
+      "action": "SELL",
+      "shares": 6,
+      "price": 592.29,
+      "value": 3553.74,
+      "pnl": -267.54,
+      "reason": "Trailing stop: -9.7% from $655.89 peak"
+    },
+    {
+      "date": "2026-07-02",
+      "ticker": "GS",
+      "action": "SELL",
+      "shares": 9,
+      "price": 1021.0,
+      "value": 9189.0,
+      "pnl": 12.51,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-02",
+      "ticker": "MU",
+      "action": "SELL",
+      "shares": 5,
+      "price": 975.56,
+      "value": 4877.8,
+      "pnl": -283.6,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-02",
+      "ticker": "SMH",
+      "action": "BUY",
+      "shares": 16,
+      "price": 592.29,
+      "value": 9476.64,
+      "pnl": null,
+      "pred_pct": 8.72,
+      "confidence": 0.7,
+      "reason": "Top pick #2, conf=70%, pred=+8.7%, alloc=26%"
+    },
+    {
+      "date": "2026-07-02",
+      "ticker": "AMD",
+      "action": "BUY",
+      "shares": 16,
+      "price": 517.82,
+      "value": 8285.12,
+      "pnl": null,
+      "pred_pct": 11.05,
+      "confidence": 0.65,
+      "reason": "Top pick #3, conf=65%, pred=+11.1%, alloc=18%"
+    },
+    {
+      "date": "2026-07-02",
+      "ticker": "XLK",
+      "action": "BUY",
+      "shares": 53,
+      "price": 180.59,
+      "value": 9571.27,
+      "pnl": null,
+      "pred_pct": 6.24,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+6.2%, alloc=28%"
     }
   ],
   "daily_values": [
@@ -2608,9 +2674,16 @@
       "cash": 18561.93,
       "positions_value": 30733.49,
       "spy_close": 745.76
+    },
+    {
+      "date": "2026-07-02",
+      "value": 48174.73,
+      "cash": 8849.44,
+      "positions_value": 39325.29,
+      "spy_close": 744.78
     }
   ],
-  "last_updated": "2026-07-01",
+  "last_updated": "2026-07-02",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
