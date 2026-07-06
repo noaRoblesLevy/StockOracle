@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 8849.442932815553,
+  "cash": 8105.652954788209,
   "positions": {
     "INTC": {
       "shares": 62,
@@ -21,26 +21,26 @@
     "SMH": {
       "shares": 16,
       "entry_price": 592.29,
-      "peak_price": 592.29,
+      "peak_price": 604.3,
       "entry_date": "2026-07-02",
       "entry_conf": 0.7,
       "entry_pred_pct": 8.72
     },
-    "AMD": {
-      "shares": 16,
-      "entry_price": 517.82,
-      "peak_price": 517.82,
-      "entry_date": "2026-07-02",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 11.05
+    "FTNT": {
+      "shares": 60,
+      "entry_price": 162.35,
+      "peak_price": 162.35,
+      "entry_date": "2026-07-06",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 4.42
     },
-    "XLK": {
-      "shares": 53,
-      "entry_price": 180.59,
-      "peak_price": 180.59,
-      "entry_date": "2026-07-02",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 6.24
+    "IWM": {
+      "shares": 32,
+      "entry_price": 298.9,
+      "peak_price": 298.9,
+      "entry_date": "2026-07-06",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 0.89
     }
   },
   "trades": [
@@ -2105,6 +2105,50 @@
       "pred_pct": 6.24,
       "confidence": 0.55,
       "reason": "Top pick #4, conf=55%, pred=+6.2%, alloc=28%"
+    },
+    {
+      "date": "2026-07-06",
+      "ticker": "AMD",
+      "action": "SELL",
+      "shares": 16,
+      "price": 552.05,
+      "value": 8832.8,
+      "pnl": 547.68,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-06",
+      "ticker": "XLK",
+      "action": "SELL",
+      "shares": 53,
+      "price": 183.57,
+      "value": 9729.21,
+      "pnl": 157.94,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-06",
+      "ticker": "FTNT",
+      "action": "BUY",
+      "shares": 60,
+      "price": 162.35,
+      "value": 9741.0,
+      "pnl": null,
+      "pred_pct": 4.42,
+      "confidence": 0.6,
+      "reason": "Top pick #1, conf=60%, pred=+4.4%, alloc=26%"
+    },
+    {
+      "date": "2026-07-06",
+      "ticker": "IWM",
+      "action": "BUY",
+      "shares": 32,
+      "price": 298.9,
+      "value": 9564.8,
+      "pnl": null,
+      "pred_pct": 0.89,
+      "confidence": 0.65,
+      "reason": "Top pick #5, conf=65%, pred=+0.9%, alloc=45%"
     }
   ],
   "daily_values": [
@@ -2681,9 +2725,16 @@
       "cash": 8849.44,
       "positions_value": 39325.29,
       "spy_close": 744.78
+    },
+    {
+      "date": "2026-07-06",
+      "value": 49308.73,
+      "cash": 8105.65,
+      "positions_value": 41203.08,
+      "spy_close": 751.28
     }
   ],
-  "last_updated": "2026-07-02",
+  "last_updated": "2026-07-06",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
