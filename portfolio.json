@@ -1,31 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 8105.652954788209,
+  "cash": 15824.283097000123,
   "positions": {
-    "INTC": {
-      "shares": 62,
-      "entry_price": 127.02,
-      "peak_price": 127.02,
-      "entry_date": "2026-07-01",
-      "entry_conf": 0.725,
-      "entry_pred_pct": 9.63
-    },
-    "SOXX": {
-      "shares": 8,
-      "entry_price": 599.7,
-      "peak_price": 599.7,
-      "entry_date": "2026-07-01",
-      "entry_conf": 0.675,
-      "entry_pred_pct": 7.17
-    },
-    "SMH": {
-      "shares": 16,
-      "entry_price": 592.29,
-      "peak_price": 604.3,
-      "entry_date": "2026-07-02",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 8.72
-    },
     "FTNT": {
       "shares": 60,
       "entry_price": 162.35,
@@ -41,6 +17,22 @@
       "entry_date": "2026-07-06",
       "entry_conf": 0.65,
       "entry_pred_pct": 0.89
+    },
+    "INTC": {
+      "shares": 31,
+      "entry_price": 110.39,
+      "peak_price": 110.39,
+      "entry_date": "2026-07-07",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 16.89
+    },
+    "UNH": {
+      "shares": 22,
+      "entry_price": 428.19,
+      "peak_price": 428.19,
+      "entry_date": "2026-07-07",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 2.18
     }
   },
   "trades": [
@@ -2149,6 +2141,60 @@
       "pred_pct": 0.89,
       "confidence": 0.65,
       "reason": "Top pick #5, conf=65%, pred=+0.9%, alloc=45%"
+    },
+    {
+      "date": "2026-07-07",
+      "ticker": "INTC",
+      "action": "SELL",
+      "shares": 62,
+      "price": 110.39,
+      "value": 6844.18,
+      "pnl": -1031.06,
+      "reason": "Trailing stop: -13.1% from $127.02 peak"
+    },
+    {
+      "date": "2026-07-07",
+      "ticker": "SOXX",
+      "action": "SELL",
+      "shares": 8,
+      "price": 551.69,
+      "value": 4413.52,
+      "pnl": -384.08,
+      "reason": "Trailing stop: -8.0% from $599.70 peak"
+    },
+    {
+      "date": "2026-07-07",
+      "ticker": "SMH",
+      "action": "SELL",
+      "shares": 16,
+      "price": 581.45,
+      "value": 9303.2,
+      "pnl": -173.44,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-07",
+      "ticker": "INTC",
+      "action": "BUY",
+      "shares": 31,
+      "price": 110.39,
+      "value": 3422.09,
+      "pnl": null,
+      "pred_pct": 16.89,
+      "confidence": 0.625,
+      "reason": "Top pick #1, conf=62%, pred=+16.9%, alloc=7%"
+    },
+    {
+      "date": "2026-07-07",
+      "ticker": "UNH",
+      "action": "BUY",
+      "shares": 22,
+      "price": 428.19,
+      "value": 9420.18,
+      "pnl": null,
+      "pred_pct": 2.18,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+2.2%, alloc=28%"
     }
   ],
   "daily_values": [
@@ -2732,9 +2778,16 @@
       "cash": 8105.65,
       "positions_value": 41203.08,
       "spy_close": 751.28
+    },
+    {
+      "date": "2026-07-07",
+      "value": 47664.83,
+      "cash": 15824.28,
+      "positions_value": 31840.55,
+      "spy_close": 747.71
     }
   ],
-  "last_updated": "2026-07-06",
+  "last_updated": "2026-07-07",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
