@@ -1,46 +1,46 @@
 {
   "initial_balance": 50000.0,
-  "cash": 5984.782723159791,
+  "cash": 8360.432625503541,
   "positions": {
     "FTNT": {
       "shares": 60,
       "entry_price": 162.35,
-      "peak_price": 162.35,
+      "peak_price": 163.73,
       "entry_date": "2026-07-06",
       "entry_conf": 0.6,
       "entry_pred_pct": 4.42
     },
-    "IWM": {
-      "shares": 32,
-      "entry_price": 298.9,
-      "peak_price": 298.9,
-      "entry_date": "2026-07-06",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 0.89
-    },
     "UNH": {
       "shares": 22,
       "entry_price": 428.19,
-      "peak_price": 428.19,
+      "peak_price": 431.68,
       "entry_date": "2026-07-07",
       "entry_conf": 0.55,
       "entry_pred_pct": 2.18
     },
-    "PANW": {
-      "shares": 12,
-      "entry_price": 320.59,
-      "peak_price": 320.59,
-      "entry_date": "2026-07-08",
-      "entry_conf": 0.775,
-      "entry_pred_pct": 8.08
-    },
     "DIA": {
       "shares": 18,
       "entry_price": 522.77,
-      "peak_price": 522.77,
+      "peak_price": 524.19,
       "entry_date": "2026-07-08",
       "entry_conf": 0.75,
       "entry_pred_pct": 0.87
+    },
+    "DDOG": {
+      "shares": 19,
+      "entry_price": 269.0,
+      "peak_price": 269.0,
+      "entry_date": "2026-07-09",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 5.14
+    },
+    "LLY": {
+      "shares": 5,
+      "entry_price": 1216.95,
+      "peak_price": 1216.95,
+      "entry_date": "2026-07-09",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 2.32
     }
   },
   "trades": [
@@ -2237,6 +2237,50 @@
       "pred_pct": 0.87,
       "confidence": 0.75,
       "reason": "Top pick #5, conf=75%, pred=+0.9%, alloc=34%"
+    },
+    {
+      "date": "2026-07-09",
+      "ticker": "IWM",
+      "action": "SELL",
+      "shares": 32,
+      "price": 297.24,
+      "value": 9511.68,
+      "pnl": -53.12,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-09",
+      "ticker": "PANW",
+      "action": "SELL",
+      "shares": 12,
+      "price": 338.31,
+      "value": 4059.72,
+      "pnl": 212.64,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-09",
+      "ticker": "DDOG",
+      "action": "BUY",
+      "shares": 19,
+      "price": 269.0,
+      "value": 5111.0,
+      "pnl": null,
+      "pred_pct": 5.14,
+      "confidence": 0.575,
+      "reason": "Top pick #2, conf=57%, pred=+5.1%, alloc=11%"
+    },
+    {
+      "date": "2026-07-09",
+      "ticker": "LLY",
+      "action": "BUY",
+      "shares": 5,
+      "price": 1216.95,
+      "value": 6084.75,
+      "pnl": null,
+      "pred_pct": 2.32,
+      "confidence": 0.6,
+      "reason": "Top pick #4, conf=60%, pred=+2.3%, alloc=15%"
     }
   ],
   "daily_values": [
@@ -2834,9 +2878,16 @@
       "cash": 5984.78,
       "positions_value": 41414.1,
       "spy_close": 745.4
+    },
+    {
+      "date": "2026-07-09",
+      "value": 48312.36,
+      "cash": 8360.43,
+      "positions_value": 39951.93,
+      "spy_close": 751.71
     }
   ],
-  "last_updated": "2026-07-08",
+  "last_updated": "2026-07-09",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
