@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 8352.793465347291,
+  "cash": 8303.694344253541,
   "positions": {
     "FTNT": {
       "shares": 60,
@@ -34,13 +34,13 @@
       "entry_conf": 0.6,
       "entry_pred_pct": 2.32
     },
-    "IWM": {
-      "shares": 32,
-      "entry_price": 295.99,
-      "peak_price": 295.99,
-      "entry_date": "2026-07-10",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 1.19
+    "DIA": {
+      "shares": 18,
+      "entry_price": 524.47,
+      "peak_price": 524.47,
+      "entry_date": "2026-07-13",
+      "entry_conf": 0.75,
+      "entry_pred_pct": 0.67
     }
   },
   "trades": [
@@ -2303,6 +2303,28 @@
       "pred_pct": 1.19,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+1.2%, alloc=35%"
+    },
+    {
+      "date": "2026-07-13",
+      "ticker": "IWM",
+      "action": "SELL",
+      "shares": 32,
+      "price": 293.48,
+      "value": 9391.36,
+      "pnl": -80.32,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-13",
+      "ticker": "DIA",
+      "action": "BUY",
+      "shares": 18,
+      "price": 524.47,
+      "value": 9440.46,
+      "pnl": null,
+      "pred_pct": 0.67,
+      "confidence": 0.75,
+      "reason": "Top pick #4, conf=75%, pred=+0.7%, alloc=50%"
     }
   ],
   "daily_values": [
@@ -2914,9 +2936,16 @@
       "cash": 8352.79,
       "positions_value": 39100.08,
       "spy_close": 754.95
+    },
+    {
+      "date": "2026-07-13",
+      "value": 47675.24,
+      "cash": 8303.69,
+      "positions_value": 39371.55,
+      "spy_close": 749.17
     }
   ],
-  "last_updated": "2026-07-10",
+  "last_updated": "2026-07-13",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
