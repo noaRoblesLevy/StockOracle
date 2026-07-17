@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 10783.074471206666,
+  "cash": 8427.554421157838,
   "positions": {
     "FTNT": {
       "shares": 60,
@@ -10,22 +10,6 @@
       "entry_conf": 0.6,
       "entry_pred_pct": 4.42
     },
-    "UNH": {
-      "shares": 22,
-      "entry_price": 428.19,
-      "peak_price": 431.68,
-      "entry_date": "2026-07-07",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 2.18
-    },
-    "LLY": {
-      "shares": 5,
-      "entry_price": 1216.95,
-      "peak_price": 1216.95,
-      "entry_date": "2026-07-09",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 2.32
-    },
     "DIA": {
       "shares": 18,
       "entry_price": 524.47,
@@ -34,13 +18,29 @@
       "entry_conf": 0.75,
       "entry_pred_pct": 0.67
     },
-    "AMD": {
-      "shares": 5,
-      "entry_price": 500.94,
-      "peak_price": 500.94,
-      "entry_date": "2026-07-16",
+    "SNOW": {
+      "shares": 13,
+      "entry_price": 268.9,
+      "peak_price": 268.9,
+      "entry_date": "2026-07-17",
+      "entry_conf": 0.8,
+      "entry_pred_pct": 6.33
+    },
+    "VTI": {
+      "shares": 25,
+      "entry_price": 367.01,
+      "peak_price": 367.01,
+      "entry_date": "2026-07-17",
       "entry_conf": 0.575,
-      "entry_pred_pct": 11.62
+      "entry_pred_pct": 1.32
+    },
+    "SPY": {
+      "shares": 10,
+      "entry_price": 743.29,
+      "peak_price": 743.29,
+      "entry_date": "2026-07-17",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 1.23
     }
   },
   "trades": [
@@ -2347,6 +2347,72 @@
       "pred_pct": 11.62,
       "confidence": 0.575,
       "reason": "Top pick #2, conf=57%, pred=+11.6%, alloc=6%"
+    },
+    {
+      "date": "2026-07-17",
+      "ticker": "UNH",
+      "action": "SELL",
+      "shares": 22,
+      "price": 426.09,
+      "value": 9373.98,
+      "pnl": -46.2,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-17",
+      "ticker": "LLY",
+      "action": "SELL",
+      "shares": 5,
+      "price": 1179.11,
+      "value": 5895.55,
+      "pnl": -189.2,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-17",
+      "ticker": "AMD",
+      "action": "SELL",
+      "shares": 5,
+      "price": 495.76,
+      "value": 2478.8,
+      "pnl": -25.9,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-17",
+      "ticker": "SNOW",
+      "action": "BUY",
+      "shares": 13,
+      "price": 268.9,
+      "value": 3495.7,
+      "pnl": null,
+      "pred_pct": 6.33,
+      "confidence": 0.8,
+      "reason": "Top pick #3, conf=80%, pred=+6.3%, alloc=8%"
+    },
+    {
+      "date": "2026-07-17",
+      "ticker": "VTI",
+      "action": "BUY",
+      "shares": 25,
+      "price": 367.01,
+      "value": 9175.25,
+      "pnl": null,
+      "pred_pct": 1.32,
+      "confidence": 0.575,
+      "reason": "Top pick #4, conf=57%, pred=+1.3%, alloc=27%"
+    },
+    {
+      "date": "2026-07-17",
+      "ticker": "SPY",
+      "action": "BUY",
+      "shares": 10,
+      "price": 743.29,
+      "value": 7432.9,
+      "pnl": null,
+      "pred_pct": 1.23,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+1.2%, alloc=16%"
     }
   ],
   "daily_values": [
@@ -2986,9 +3052,16 @@
       "cash": 10783.07,
       "positions_value": 36758.65,
       "spy_close": 750.72
+    },
+    {
+      "date": "2026-07-17",
+      "value": 47602.58,
+      "cash": 8427.55,
+      "positions_value": 39175.03,
+      "spy_close": 743.29
     }
   ],
-  "last_updated": "2026-07-16",
+  "last_updated": "2026-07-17",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
