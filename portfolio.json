@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 8427.554421157838,
+  "cash": 10617.974678726197,
   "positions": {
     "FTNT": {
       "shares": 60,
@@ -18,14 +18,6 @@
       "entry_conf": 0.75,
       "entry_pred_pct": 0.67
     },
-    "SNOW": {
-      "shares": 13,
-      "entry_price": 268.9,
-      "peak_price": 268.9,
-      "entry_date": "2026-07-17",
-      "entry_conf": 0.8,
-      "entry_pred_pct": 6.33
-    },
     "VTI": {
       "shares": 25,
       "entry_price": 367.01,
@@ -34,13 +26,21 @@
       "entry_conf": 0.575,
       "entry_pred_pct": 1.32
     },
-    "SPY": {
-      "shares": 10,
-      "entry_price": 743.29,
-      "peak_price": 743.29,
-      "entry_date": "2026-07-17",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 1.23
+    "DDOG": {
+      "shares": 11,
+      "entry_price": 263.2,
+      "peak_price": 263.2,
+      "entry_date": "2026-07-20",
+      "entry_conf": 0.675,
+      "entry_pred_pct": 6.66
+    },
+    "UNH": {
+      "shares": 14,
+      "entry_price": 421.55,
+      "peak_price": 421.55,
+      "entry_date": "2026-07-20",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 2.64
     }
   },
   "trades": [
@@ -2413,6 +2413,50 @@
       "pred_pct": 1.23,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+1.2%, alloc=16%"
+    },
+    {
+      "date": "2026-07-20",
+      "ticker": "SNOW",
+      "action": "SELL",
+      "shares": 13,
+      "price": 274.34,
+      "value": 3566.42,
+      "pnl": 70.72,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-20",
+      "ticker": "SPY",
+      "action": "SELL",
+      "shares": 10,
+      "price": 742.09,
+      "value": 7420.9,
+      "pnl": -12.0,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-20",
+      "ticker": "DDOG",
+      "action": "BUY",
+      "shares": 11,
+      "price": 263.2,
+      "value": 2895.2,
+      "pnl": null,
+      "pred_pct": 6.66,
+      "confidence": 0.675,
+      "reason": "Top pick #3, conf=68%, pred=+6.7%, alloc=6%"
+    },
+    {
+      "date": "2026-07-20",
+      "ticker": "UNH",
+      "action": "BUY",
+      "shares": 14,
+      "price": 421.55,
+      "value": 5901.7,
+      "pnl": null,
+      "pred_pct": 2.64,
+      "confidence": 0.6,
+      "reason": "Top pick #5, conf=60%, pred=+2.6%, alloc=13%"
     }
   ],
   "daily_values": [
@@ -3059,9 +3103,16 @@
       "cash": 8427.55,
       "positions_value": 39175.03,
       "spy_close": 743.29
+    },
+    {
+      "date": "2026-07-20",
+      "value": 47515.64,
+      "cash": 10617.97,
+      "positions_value": 36897.67,
+      "spy_close": 742.09
     }
   ],
-  "last_updated": "2026-07-17",
+  "last_updated": "2026-07-20",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
