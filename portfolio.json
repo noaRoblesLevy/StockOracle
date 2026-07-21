@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 10617.974678726197,
+  "cash": 12194.474846572877,
   "positions": {
     "FTNT": {
       "shares": 60,
@@ -18,29 +18,29 @@
       "entry_conf": 0.75,
       "entry_pred_pct": 0.67
     },
-    "VTI": {
-      "shares": 25,
-      "entry_price": 367.01,
-      "peak_price": 367.01,
-      "entry_date": "2026-07-17",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 1.32
+    "SNOW": {
+      "shares": 18,
+      "entry_price": 271.73,
+      "peak_price": 271.73,
+      "entry_date": "2026-07-21",
+      "entry_conf": 0.8,
+      "entry_pred_pct": 6.29
     },
-    "DDOG": {
-      "shares": 11,
-      "entry_price": 263.2,
-      "peak_price": 263.2,
-      "entry_date": "2026-07-20",
-      "entry_conf": 0.675,
-      "entry_pred_pct": 6.66
+    "GS": {
+      "shares": 3,
+      "entry_price": 1085.56,
+      "peak_price": 1085.56,
+      "entry_date": "2026-07-21",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 2.1
     },
-    "UNH": {
-      "shares": 14,
-      "entry_price": 421.55,
-      "peak_price": 421.55,
-      "entry_date": "2026-07-20",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 2.64
+    "AMGN": {
+      "shares": 23,
+      "entry_price": 366.24,
+      "peak_price": 366.24,
+      "entry_date": "2026-07-21",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.47
     }
   },
   "trades": [
@@ -2457,6 +2457,72 @@
       "pred_pct": 2.64,
       "confidence": 0.6,
       "reason": "Top pick #5, conf=60%, pred=+2.6%, alloc=13%"
+    },
+    {
+      "date": "2026-07-21",
+      "ticker": "UNH",
+      "action": "SELL",
+      "shares": 14,
+      "price": 436.35,
+      "value": 6108.9,
+      "pnl": 207.2,
+      "reason": "Take-profit: +3.5% reached target +2.6%"
+    },
+    {
+      "date": "2026-07-21",
+      "ticker": "VTI",
+      "action": "SELL",
+      "shares": 25,
+      "price": 369.45,
+      "value": 9236.25,
+      "pnl": 61.0,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-21",
+      "ticker": "DDOG",
+      "action": "SELL",
+      "shares": 11,
+      "price": 254.79,
+      "value": 2802.69,
+      "pnl": -92.51,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-21",
+      "ticker": "SNOW",
+      "action": "BUY",
+      "shares": 18,
+      "price": 271.73,
+      "value": 4891.14,
+      "pnl": null,
+      "pred_pct": 6.29,
+      "confidence": 0.8,
+      "reason": "Top pick #2, conf=80%, pred=+6.3%, alloc=10%"
+    },
+    {
+      "date": "2026-07-21",
+      "ticker": "GS",
+      "action": "BUY",
+      "shares": 3,
+      "price": 1085.56,
+      "value": 3256.68,
+      "pnl": null,
+      "pred_pct": 2.1,
+      "confidence": 0.65,
+      "reason": "Top pick #4, conf=65%, pred=+2.1%, alloc=9%"
+    },
+    {
+      "date": "2026-07-21",
+      "ticker": "AMGN",
+      "action": "BUY",
+      "shares": 23,
+      "price": 366.24,
+      "value": 8423.52,
+      "pnl": null,
+      "pred_pct": 0.47,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+0.5%, alloc=18%"
     }
   ],
   "daily_values": [
@@ -3110,9 +3176,16 @@
       "cash": 10617.97,
       "positions_value": 36897.67,
       "spy_close": 742.09
+    },
+    {
+      "date": "2026-07-21",
+      "value": 47639.0,
+      "cash": 12194.47,
+      "positions_value": 35444.52,
+      "spy_close": 748.28
     }
   ],
-  "last_updated": "2026-07-20",
+  "last_updated": "2026-07-21",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
