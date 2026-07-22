@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 12194.474846572877,
+  "cash": 14027.824486465455,
   "positions": {
     "FTNT": {
       "shares": 60,
@@ -29,18 +29,18 @@
     "GS": {
       "shares": 3,
       "entry_price": 1085.56,
-      "peak_price": 1085.56,
+      "peak_price": 1098.2,
       "entry_date": "2026-07-21",
       "entry_conf": 0.65,
       "entry_pred_pct": 2.1
     },
-    "AMGN": {
-      "shares": 23,
-      "entry_price": 366.24,
-      "peak_price": 366.24,
-      "entry_date": "2026-07-21",
+    "ABBV": {
+      "shares": 26,
+      "entry_price": 253.3,
+      "peak_price": 253.3,
+      "entry_date": "2026-07-22",
       "entry_conf": 0.55,
-      "entry_pred_pct": 0.47
+      "entry_pred_pct": 1.79
     }
   },
   "trades": [
@@ -2523,6 +2523,28 @@
       "pred_pct": 0.47,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+0.5%, alloc=18%"
+    },
+    {
+      "date": "2026-07-22",
+      "ticker": "AMGN",
+      "action": "SELL",
+      "shares": 23,
+      "price": 366.05,
+      "value": 8419.15,
+      "pnl": -4.37,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-22",
+      "ticker": "ABBV",
+      "action": "BUY",
+      "shares": 26,
+      "price": 253.3,
+      "value": 6585.8,
+      "pnl": null,
+      "pred_pct": 1.79,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+1.8%, alloc=14%"
     }
   ],
   "daily_values": [
@@ -3183,9 +3205,16 @@
       "cash": 12194.47,
       "positions_value": 35444.52,
       "spy_close": 748.28
+    },
+    {
+      "date": "2026-07-22",
+      "value": 47418.08,
+      "cash": 14027.82,
+      "positions_value": 33390.26,
+      "spy_close": 747.41
     }
   ],
-  "last_updated": "2026-07-21",
+  "last_updated": "2026-07-22",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
