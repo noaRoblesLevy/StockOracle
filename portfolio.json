@@ -1,23 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 14027.824486465455,
+  "cash": 14453.944634170533,
   "positions": {
-    "FTNT": {
-      "shares": 60,
-      "entry_price": 162.35,
-      "peak_price": 166.83,
-      "entry_date": "2026-07-06",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 4.42
-    },
-    "DIA": {
-      "shares": 18,
-      "entry_price": 524.47,
-      "peak_price": 525.95,
-      "entry_date": "2026-07-13",
-      "entry_conf": 0.75,
-      "entry_pred_pct": 0.67
-    },
     "SNOW": {
       "shares": 18,
       "entry_price": 271.73,
@@ -34,13 +18,29 @@
       "entry_conf": 0.65,
       "entry_pred_pct": 2.1
     },
-    "ABBV": {
-      "shares": 26,
-      "entry_price": 253.3,
-      "peak_price": 253.3,
-      "entry_date": "2026-07-22",
+    "FTNT": {
+      "shares": 42,
+      "entry_price": 151.54,
+      "peak_price": 151.54,
+      "entry_date": "2026-07-23",
       "entry_conf": 0.55,
-      "entry_pred_pct": 1.79
+      "entry_pred_pct": 10.34
+    },
+    "UNH": {
+      "shares": 21,
+      "entry_price": 423.56,
+      "peak_price": 423.56,
+      "entry_date": "2026-07-23",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 2.59
+    },
+    "XLF": {
+      "shares": 168,
+      "entry_price": 55.83,
+      "peak_price": 55.83,
+      "entry_date": "2026-07-23",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.89
     }
   },
   "trades": [
@@ -2545,6 +2545,72 @@
       "pred_pct": 1.79,
       "confidence": 0.55,
       "reason": "Top pick #4, conf=55%, pred=+1.8%, alloc=14%"
+    },
+    {
+      "date": "2026-07-23",
+      "ticker": "FTNT",
+      "action": "SELL",
+      "shares": 60,
+      "price": 151.54,
+      "value": 9092.4,
+      "pnl": -648.6,
+      "reason": "Trailing stop: -9.2% from $166.83 peak"
+    },
+    {
+      "date": "2026-07-23",
+      "ticker": "DIA",
+      "action": "SELL",
+      "shares": 18,
+      "price": 516.26,
+      "value": 9292.68,
+      "pnl": -147.78,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-23",
+      "ticker": "ABBV",
+      "action": "SELL",
+      "shares": 26,
+      "price": 256.92,
+      "value": 6679.92,
+      "pnl": 94.12,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-23",
+      "ticker": "FTNT",
+      "action": "BUY",
+      "shares": 42,
+      "price": 151.54,
+      "value": 6364.68,
+      "pnl": null,
+      "pred_pct": 10.34,
+      "confidence": 0.55,
+      "reason": "Top pick #1, conf=55%, pred=+10.3%, alloc=14%"
+    },
+    {
+      "date": "2026-07-23",
+      "ticker": "UNH",
+      "action": "BUY",
+      "shares": 21,
+      "price": 423.56,
+      "value": 8894.76,
+      "pnl": null,
+      "pred_pct": 2.59,
+      "confidence": 0.6,
+      "reason": "Top pick #3, conf=60%, pred=+2.6%, alloc=20%"
+    },
+    {
+      "date": "2026-07-23",
+      "ticker": "XLF",
+      "action": "BUY",
+      "shares": 168,
+      "price": 55.83,
+      "value": 9379.44,
+      "pnl": null,
+      "pred_pct": 0.89,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+0.9%, alloc=41%"
     }
   ],
   "daily_values": [
@@ -3212,9 +3278,16 @@
       "cash": 14027.82,
       "positions_value": 33390.26,
       "spy_close": 747.41
+    },
+    {
+      "date": "2026-07-23",
+      "value": 47089.32,
+      "cash": 14453.94,
+      "positions_value": 32635.38,
+      "spy_close": 738.18
     }
   ],
-  "last_updated": "2026-07-22",
+  "last_updated": "2026-07-23",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
