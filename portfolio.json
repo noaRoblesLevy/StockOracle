@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 14453.944634170533,
+  "cash": 14064.525170059205,
   "positions": {
     "SNOW": {
       "shares": 18,
@@ -18,14 +18,6 @@
       "entry_conf": 0.65,
       "entry_pred_pct": 2.1
     },
-    "FTNT": {
-      "shares": 42,
-      "entry_price": 151.54,
-      "peak_price": 151.54,
-      "entry_date": "2026-07-23",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 10.34
-    },
     "UNH": {
       "shares": 21,
       "entry_price": 423.56,
@@ -34,13 +26,21 @@
       "entry_conf": 0.6,
       "entry_pred_pct": 2.59
     },
-    "XLF": {
-      "shares": 168,
-      "entry_price": 55.83,
-      "peak_price": 55.83,
-      "entry_date": "2026-07-23",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 0.89
+    "DDOG": {
+      "shares": 28,
+      "entry_price": 246.86,
+      "peak_price": 246.86,
+      "entry_date": "2026-07-24",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 7.55
+    },
+    "ABBV": {
+      "shares": 36,
+      "entry_price": 259.36,
+      "peak_price": 259.36,
+      "entry_date": "2026-07-24",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 0.82
     }
   },
   "trades": [
@@ -2611,6 +2611,50 @@
       "pred_pct": 0.89,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+0.9%, alloc=41%"
+    },
+    {
+      "date": "2026-07-24",
+      "ticker": "FTNT",
+      "action": "SELL",
+      "shares": 42,
+      "price": 152.37,
+      "value": 6399.54,
+      "pnl": 34.86,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-24",
+      "ticker": "XLF",
+      "action": "SELL",
+      "shares": 168,
+      "price": 56.31,
+      "value": 9460.08,
+      "pnl": 80.64,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-24",
+      "ticker": "DDOG",
+      "action": "BUY",
+      "shares": 28,
+      "price": 246.86,
+      "value": 6912.08,
+      "pnl": null,
+      "pred_pct": 7.55,
+      "confidence": 0.575,
+      "reason": "Top pick #2, conf=57%, pred=+7.5%, alloc=15%"
+    },
+    {
+      "date": "2026-07-24",
+      "ticker": "ABBV",
+      "action": "BUY",
+      "shares": 36,
+      "price": 259.36,
+      "value": 9336.96,
+      "pnl": null,
+      "pred_pct": 0.82,
+      "confidence": 0.6,
+      "reason": "Top pick #5, conf=60%, pred=+0.8%, alloc=25%"
     }
   ],
   "daily_values": [
@@ -3285,9 +3329,16 @@
       "cash": 14453.94,
       "positions_value": 32635.38,
       "spy_close": 738.18
+    },
+    {
+      "date": "2026-07-24",
+      "value": 47157.87,
+      "cash": 14064.53,
+      "positions_value": 33093.35,
+      "spy_close": 738.93
     }
   ],
-  "last_updated": "2026-07-23",
+  "last_updated": "2026-07-24",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
