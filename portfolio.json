@@ -5,7 +5,7 @@
     "SNOW": {
       "shares": 18,
       "entry_price": 271.73,
-      "peak_price": 271.73,
+      "peak_price": 272.92,
       "entry_date": "2026-07-21",
       "entry_conf": 0.8,
       "entry_pred_pct": 6.29
@@ -29,7 +29,7 @@
     "DDOG": {
       "shares": 28,
       "entry_price": 246.86,
-      "peak_price": 246.86,
+      "peak_price": 251.86,
       "entry_date": "2026-07-24",
       "entry_conf": 0.575,
       "entry_pred_pct": 7.55
@@ -3336,9 +3336,16 @@
       "cash": 14064.53,
       "positions_value": 33093.35,
       "spy_close": 738.93
+    },
+    {
+      "date": "2026-07-27",
+      "value": 47193.06,
+      "cash": 14064.53,
+      "positions_value": 33128.53,
+      "spy_close": 739.09
     }
   ],
-  "last_updated": "2026-07-24",
+  "last_updated": "2026-07-27",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
