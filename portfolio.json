@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 10057.625614852906,
+  "cash": 3127.8057906341564,
   "positions": {
     "ABBV": {
       "shares": 36,
@@ -21,7 +21,7 @@
     "JPM": {
       "shares": 27,
       "entry_price": 344.71,
-      "peak_price": 344.71,
+      "peak_price": 350.85,
       "entry_date": "2026-07-29",
       "entry_conf": 0.75,
       "entry_pred_pct": 2.38
@@ -29,10 +29,18 @@
     "XLF": {
       "shares": 167,
       "entry_price": 56.68,
-      "peak_price": 56.68,
+      "peak_price": 57.0,
       "entry_date": "2026-07-29",
       "entry_conf": 0.55,
       "entry_pred_pct": 0.83
+    },
+    "LLY": {
+      "shares": 6,
+      "entry_price": 1154.97,
+      "peak_price": 1154.97,
+      "entry_date": "2026-07-30",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 4.97
     }
   },
   "trades": [
@@ -2723,6 +2731,18 @@
       "pred_pct": 0.83,
       "confidence": 0.55,
       "reason": "Top pick #3, conf=55%, pred=+0.8%, alloc=31%"
+    },
+    {
+      "date": "2026-07-30",
+      "ticker": "LLY",
+      "action": "BUY",
+      "shares": 6,
+      "price": 1154.97,
+      "value": 6929.82,
+      "pnl": null,
+      "pred_pct": 4.97,
+      "confidence": 0.55,
+      "reason": "Top pick #1, conf=55%, pred=+5.0%, alloc=15%"
     }
   ],
   "daily_values": [
@@ -3425,9 +3445,16 @@
       "cash": 10057.63,
       "positions_value": 37473.1,
       "spy_close": 729.46
+    },
+    {
+      "date": "2026-07-30",
+      "value": 47637.57,
+      "cash": 3127.81,
+      "positions_value": 44509.76,
+      "spy_close": 741.69
     }
   ],
-  "last_updated": "2026-07-29",
+  "last_updated": "2026-07-30",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
