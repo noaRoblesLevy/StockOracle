@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 3127.8057906341564,
+  "cash": 8760.185970993043,
   "positions": {
     "ABBV": {
       "shares": 36,
@@ -18,14 +18,6 @@
       "entry_conf": 0.7,
       "entry_pred_pct": 0.49
     },
-    "JPM": {
-      "shares": 27,
-      "entry_price": 344.71,
-      "peak_price": 350.85,
-      "entry_date": "2026-07-29",
-      "entry_conf": 0.75,
-      "entry_pred_pct": 2.38
-    },
     "XLF": {
       "shares": 167,
       "entry_price": 56.68,
@@ -41,6 +33,14 @@
       "entry_date": "2026-07-30",
       "entry_conf": 0.55,
       "entry_pred_pct": 4.97
+    },
+    "SHOP": {
+      "shares": 33,
+      "entry_price": 117.15,
+      "peak_price": 117.15,
+      "entry_date": "2026-07-31",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 3.78
     }
   },
   "trades": [
@@ -2743,6 +2743,28 @@
       "pred_pct": 4.97,
       "confidence": 0.55,
       "reason": "Top pick #1, conf=55%, pred=+5.0%, alloc=15%"
+    },
+    {
+      "date": "2026-07-31",
+      "ticker": "JPM",
+      "action": "SELL",
+      "shares": 27,
+      "price": 351.79,
+      "value": 9498.33,
+      "pnl": 191.16,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-07-31",
+      "ticker": "SHOP",
+      "action": "BUY",
+      "shares": 33,
+      "price": 117.15,
+      "value": 3865.95,
+      "pnl": null,
+      "pred_pct": 3.78,
+      "confidence": 0.6,
+      "reason": "Top pick #4, conf=60%, pred=+3.8%, alloc=8%"
     }
   ],
   "daily_values": [
@@ -3452,9 +3474,16 @@
       "cash": 3127.81,
       "positions_value": 44509.76,
       "spy_close": 741.69
+    },
+    {
+      "date": "2026-07-31",
+      "value": 47416.45,
+      "cash": 8760.19,
+      "positions_value": 38656.26,
+      "spy_close": 747.03
     }
   ],
-  "last_updated": "2026-07-30",
+  "last_updated": "2026-07-31",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
