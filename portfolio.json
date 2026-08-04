@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 16254.805695266725,
+  "cash": 19966.18580696106,
   "positions": {
     "ABBV": {
       "shares": 36,
@@ -13,26 +13,18 @@
     "BAC": {
       "shares": 151,
       "entry_price": 62.62,
-      "peak_price": 62.62,
+      "peak_price": 62.9,
       "entry_date": "2026-07-28",
       "entry_conf": 0.7,
       "entry_pred_pct": 0.49
     },
-    "SHOP": {
-      "shares": 33,
-      "entry_price": 117.15,
-      "peak_price": 117.15,
-      "entry_date": "2026-07-31",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 3.78
-    },
     "JPM": {
-      "shares": 25,
-      "entry_price": 352.64,
-      "peak_price": 352.64,
-      "entry_date": "2026-08-03",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 1.08
+      "shares": 26,
+      "entry_price": 357.52,
+      "peak_price": 357.52,
+      "entry_date": "2026-08-04",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 0.57
     }
   },
   "trades": [
@@ -2789,6 +2781,38 @@
       "pred_pct": 1.08,
       "confidence": 0.7,
       "reason": "Top pick #5, conf=70%, pred=+1.1%, alloc=19%"
+    },
+    {
+      "date": "2026-08-04",
+      "ticker": "SHOP",
+      "action": "SELL",
+      "shares": 33,
+      "price": 123.3,
+      "value": 4068.9,
+      "pnl": 202.95,
+      "reason": "Take-profit: +5.2% reached target +3.8%"
+    },
+    {
+      "date": "2026-08-04",
+      "ticker": "JPM",
+      "action": "SELL",
+      "shares": 25,
+      "price": 357.52,
+      "value": 8938.0,
+      "pnl": 122.0,
+      "reason": "Take-profit: +1.4% reached target +1.1%"
+    },
+    {
+      "date": "2026-08-04",
+      "ticker": "JPM",
+      "action": "BUY",
+      "shares": 26,
+      "price": 357.52,
+      "value": 9295.52,
+      "pnl": null,
+      "pred_pct": 0.57,
+      "confidence": 0.65,
+      "reason": "Top pick #3, conf=65%, pred=+0.6%, alloc=25%"
     }
   ],
   "daily_values": [
@@ -3512,9 +3536,16 @@
       "cash": 16254.81,
       "positions_value": 30935.41,
       "spy_close": 757.67
+    },
+    {
+      "date": "2026-08-04",
+      "value": 47536.41,
+      "cash": 19966.19,
+      "positions_value": 27570.22,
+      "spy_close": 771.33
     }
   ],
-  "last_updated": "2026-08-03",
+  "last_updated": "2026-08-04",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
