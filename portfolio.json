@@ -1,22 +1,14 @@
 {
   "initial_balance": 50000.0,
-  "cash": 7362.625748367311,
+  "cash": 8824.57562324524,
   "positions": {
     "BAC": {
       "shares": 151,
       "entry_price": 62.62,
-      "peak_price": 63.25,
+      "peak_price": 63.86,
       "entry_date": "2026-07-28",
       "entry_conf": 0.7,
       "entry_pred_pct": 0.49
-    },
-    "JPM": {
-      "shares": 26,
-      "entry_price": 357.52,
-      "peak_price": 359.24,
-      "entry_date": "2026-08-04",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 0.57
     },
     "XLF": {
       "shares": 164,
@@ -34,13 +26,21 @@
       "entry_conf": 0.625,
       "entry_pred_pct": 2.4
     },
-    "NET": {
-      "shares": 16,
-      "entry_price": 284.43,
-      "peak_price": 284.43,
-      "entry_date": "2026-08-07",
+    "OKTA": {
+      "shares": 23,
+      "entry_price": 150.77,
+      "peak_price": 150.77,
+      "entry_date": "2026-08-10",
       "entry_conf": 0.6,
-      "entry_pred_pct": 2.43
+      "entry_pred_pct": 6.28
+    },
+    "V": {
+      "shares": 26,
+      "entry_price": 361.32,
+      "peak_price": 361.32,
+      "entry_date": "2026-08-10",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 2.03
     }
   },
   "trades": [
@@ -2875,6 +2875,50 @@
       "pred_pct": 2.43,
       "confidence": 0.6,
       "reason": "Top pick #5, conf=60%, pred=+2.4%, alloc=10%"
+    },
+    {
+      "date": "2026-08-10",
+      "ticker": "NET",
+      "action": "SELL",
+      "shares": 16,
+      "price": 310.59,
+      "value": 4969.44,
+      "pnl": 418.56,
+      "reason": "Take-profit: +9.2% reached target +2.4%"
+    },
+    {
+      "date": "2026-08-10",
+      "ticker": "JPM",
+      "action": "SELL",
+      "shares": 26,
+      "price": 359.79,
+      "value": 9354.54,
+      "pnl": 59.02,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-10",
+      "ticker": "OKTA",
+      "action": "BUY",
+      "shares": 23,
+      "price": 150.77,
+      "value": 3467.71,
+      "pnl": null,
+      "pred_pct": 6.28,
+      "confidence": 0.6,
+      "reason": "Top pick #1, conf=60%, pred=+6.3%, alloc=7%"
+    },
+    {
+      "date": "2026-08-10",
+      "ticker": "V",
+      "action": "BUY",
+      "shares": 26,
+      "price": 361.32,
+      "value": 9394.32,
+      "pnl": null,
+      "pred_pct": 2.03,
+      "confidence": 0.625,
+      "reason": "Top pick #2, conf=62%, pred=+2.0%, alloc=20%"
     }
   ],
   "daily_values": [
@@ -3619,9 +3663,16 @@
       "cash": 7362.63,
       "positions_value": 40128.52,
       "spy_close": 768.56
+    },
+    {
+      "date": "2026-08-10",
+      "value": 48107.67,
+      "cash": 8824.58,
+      "positions_value": 39283.09,
+      "spy_close": 773.03
     }
   ],
-  "last_updated": "2026-08-07",
+  "last_updated": "2026-08-10",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
