@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 12925.655457229615,
+  "cash": 13712.716126174928,
   "positions": {
     "BAC": {
       "shares": 151,
@@ -13,7 +13,7 @@
     "XLF": {
       "shares": 164,
       "entry_price": 58.0,
-      "peak_price": 58.0,
+      "peak_price": 58.26,
       "entry_date": "2026-08-05",
       "entry_conf": 0.6,
       "entry_pred_pct": 0.38
@@ -21,18 +21,10 @@
     "OKTA": {
       "shares": 23,
       "entry_price": 150.77,
-      "peak_price": 150.77,
+      "peak_price": 154.95,
       "entry_date": "2026-08-10",
       "entry_conf": 0.6,
       "entry_pred_pct": 6.28
-    },
-    "V": {
-      "shares": 26,
-      "entry_price": 361.32,
-      "peak_price": 362.82,
-      "entry_date": "2026-08-10",
-      "entry_conf": 0.625,
-      "entry_pred_pct": 2.03
     },
     "MELI": {
       "shares": 2,
@@ -41,6 +33,14 @@
       "entry_date": "2026-08-12",
       "entry_conf": 0.6,
       "entry_pred_pct": 2.9
+    },
+    "JPM": {
+      "shares": 24,
+      "entry_price": 363.11,
+      "peak_price": 363.11,
+      "entry_date": "2026-08-13",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 1.48
     }
   },
   "trades": [
@@ -2963,6 +2963,28 @@
       "pred_pct": 2.9,
       "confidence": 0.6,
       "reason": "Top pick #5, conf=60%, pred=+2.9%, alloc=10%"
+    },
+    {
+      "date": "2026-08-13",
+      "ticker": "V",
+      "action": "SELL",
+      "shares": 26,
+      "price": 365.45,
+      "value": 9501.7,
+      "pnl": 107.38,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-13",
+      "ticker": "JPM",
+      "action": "BUY",
+      "shares": 24,
+      "price": 363.11,
+      "value": 8714.64,
+      "pnl": null,
+      "pred_pct": 1.48,
+      "confidence": 0.65,
+      "reason": "Top pick #3, conf=65%, pred=+1.5%, alloc=18%"
     }
   ],
   "daily_values": [
@@ -3728,9 +3750,16 @@
       "cash": 12925.66,
       "positions_value": 35674.59,
       "spy_close": 772.49
+    },
+    {
+      "date": "2026-08-13",
+      "value": 48879.93,
+      "cash": 13712.72,
+      "positions_value": 35167.22,
+      "spy_close": 777.88
     }
   ],
-  "last_updated": "2026-08-12",
+  "last_updated": "2026-08-13",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
