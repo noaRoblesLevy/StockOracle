@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 13712.716126174928,
+  "cash": 11961.536225051881,
   "positions": {
     "BAC": {
       "shares": 151,
@@ -26,14 +26,6 @@
       "entry_conf": 0.6,
       "entry_pred_pct": 6.28
     },
-    "MELI": {
-      "shares": 2,
-      "entry_price": 1828.29,
-      "peak_price": 1828.29,
-      "entry_date": "2026-08-12",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 2.9
-    },
     "JPM": {
       "shares": 24,
       "entry_price": 363.11,
@@ -41,6 +33,14 @@
       "entry_date": "2026-08-13",
       "entry_conf": 0.65,
       "entry_pred_pct": 1.48
+    },
+    "FTNT": {
+      "shares": 34,
+      "entry_price": 160.01,
+      "peak_price": 160.01,
+      "entry_date": "2026-08-14",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 3.37
     }
   },
   "trades": [
@@ -2985,6 +2985,28 @@
       "pred_pct": 1.48,
       "confidence": 0.65,
       "reason": "Top pick #3, conf=65%, pred=+1.5%, alloc=18%"
+    },
+    {
+      "date": "2026-08-14",
+      "ticker": "MELI",
+      "action": "SELL",
+      "shares": 2,
+      "price": 1844.58,
+      "value": 3689.16,
+      "pnl": 32.58,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-14",
+      "ticker": "FTNT",
+      "action": "BUY",
+      "shares": 34,
+      "price": 160.01,
+      "value": 5440.34,
+      "pnl": null,
+      "pred_pct": 3.37,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+3.4%, alloc=11%"
     }
   ],
   "daily_values": [
@@ -3757,9 +3779,16 @@
       "cash": 13712.72,
       "positions_value": 35167.22,
       "spy_close": 777.88
+    },
+    {
+      "date": "2026-08-14",
+      "value": 48777.16,
+      "cash": 11961.54,
+      "positions_value": 36815.62,
+      "spy_close": 776.34
     }
   ],
-  "last_updated": "2026-08-13",
+  "last_updated": "2026-08-14",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
