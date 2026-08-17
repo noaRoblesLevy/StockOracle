@@ -3786,9 +3786,16 @@
       "cash": 11961.54,
       "positions_value": 36815.62,
       "spy_close": 776.34
+    },
+    {
+      "date": "2026-08-17",
+      "value": 48308.51,
+      "cash": 11961.54,
+      "positions_value": 36346.97,
+      "spy_close": 772.67
     }
   ],
-  "last_updated": "2026-08-14",
+  "last_updated": "2026-08-17",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
