@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 11961.536225051881,
+  "cash": 12844.195862503053,
   "positions": {
     "BAC": {
       "shares": 151,
@@ -29,18 +29,18 @@
     "JPM": {
       "shares": 24,
       "entry_price": 363.11,
-      "peak_price": 363.11,
+      "peak_price": 363.25,
       "entry_date": "2026-08-13",
       "entry_conf": 0.65,
       "entry_pred_pct": 1.48
     },
-    "FTNT": {
-      "shares": 34,
-      "entry_price": 160.01,
-      "peak_price": 160.01,
-      "entry_date": "2026-08-14",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 3.37
+    "PANW": {
+      "shares": 12,
+      "entry_price": 374.14,
+      "peak_price": 374.14,
+      "entry_date": "2026-08-18",
+      "entry_conf": 0.7,
+      "entry_pred_pct": 3.99
     }
   },
   "trades": [
@@ -3007,6 +3007,28 @@
       "pred_pct": 3.37,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+3.4%, alloc=11%"
+    },
+    {
+      "date": "2026-08-18",
+      "ticker": "FTNT",
+      "action": "SELL",
+      "shares": 34,
+      "price": 158.01,
+      "value": 5372.34,
+      "pnl": -68.0,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-18",
+      "ticker": "PANW",
+      "action": "BUY",
+      "shares": 12,
+      "price": 374.14,
+      "value": 4489.68,
+      "pnl": null,
+      "pred_pct": 3.99,
+      "confidence": 0.7,
+      "reason": "Top pick #4, conf=70%, pred=+4.0%, alloc=9%"
     }
   ],
   "daily_values": [
@@ -3793,9 +3815,16 @@
       "cash": 11961.54,
       "positions_value": 36346.97,
       "spy_close": 772.67
+    },
+    {
+      "date": "2026-08-18",
+      "value": 48546.53,
+      "cash": 12844.2,
+      "positions_value": 35702.33,
+      "spy_close": 767.45
     }
   ],
-  "last_updated": "2026-08-17",
+  "last_updated": "2026-08-18",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
