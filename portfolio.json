@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 12844.195862503053,
+  "cash": 11149.675781936647,
   "positions": {
     "BAC": {
       "shares": 151,
@@ -18,14 +18,6 @@
       "entry_conf": 0.6,
       "entry_pred_pct": 0.38
     },
-    "OKTA": {
-      "shares": 23,
-      "entry_price": 150.77,
-      "peak_price": 154.95,
-      "entry_date": "2026-08-10",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 6.28
-    },
     "JPM": {
       "shares": 24,
       "entry_price": 363.11,
@@ -41,6 +33,14 @@
       "entry_date": "2026-08-18",
       "entry_conf": 0.7,
       "entry_pred_pct": 3.99
+    },
+    "OKTA": {
+      "shares": 35,
+      "entry_price": 141.21,
+      "peak_price": 141.21,
+      "entry_date": "2026-08-19",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 7.11
     }
   },
   "trades": [
@@ -3029,6 +3029,28 @@
       "pred_pct": 3.99,
       "confidence": 0.7,
       "reason": "Top pick #4, conf=70%, pred=+4.0%, alloc=9%"
+    },
+    {
+      "date": "2026-08-19",
+      "ticker": "OKTA",
+      "action": "SELL",
+      "shares": 23,
+      "price": 141.21,
+      "value": 3247.83,
+      "pnl": -219.88,
+      "reason": "Trailing stop: -8.9% from $154.95 peak"
+    },
+    {
+      "date": "2026-08-19",
+      "ticker": "OKTA",
+      "action": "BUY",
+      "shares": 35,
+      "price": 141.21,
+      "value": 4942.35,
+      "pnl": null,
+      "pred_pct": 7.11,
+      "confidence": 0.65,
+      "reason": "Top pick #4, conf=65%, pred=+7.1%, alloc=11%"
     }
   ],
   "daily_values": [
@@ -3822,9 +3844,16 @@
       "cash": 12844.2,
       "positions_value": 35702.33,
       "spy_close": 767.45
+    },
+    {
+      "date": "2026-08-19",
+      "value": 47948.78,
+      "cash": 11149.68,
+      "positions_value": 36799.1,
+      "spy_close": 769.06
     }
   ],
-  "last_updated": "2026-08-18",
+  "last_updated": "2026-08-19",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
