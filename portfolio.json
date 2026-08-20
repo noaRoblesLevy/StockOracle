@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 11149.675781936647,
+  "cash": 11940.535858840944,
   "positions": {
     "BAC": {
       "shares": 151,
@@ -34,13 +34,13 @@
       "entry_conf": 0.7,
       "entry_pred_pct": 3.99
     },
-    "OKTA": {
-      "shares": 35,
-      "entry_price": 141.21,
-      "peak_price": 141.21,
-      "entry_date": "2026-08-19",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 7.11
+    "NET": {
+      "shares": 14,
+      "entry_price": 278.91,
+      "peak_price": 278.91,
+      "entry_date": "2026-08-20",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 6.39
     }
   },
   "trades": [
@@ -3051,6 +3051,28 @@
       "pred_pct": 7.11,
       "confidence": 0.65,
       "reason": "Top pick #4, conf=65%, pred=+7.1%, alloc=11%"
+    },
+    {
+      "date": "2026-08-20",
+      "ticker": "OKTA",
+      "action": "SELL",
+      "shares": 35,
+      "price": 134.16,
+      "value": 4695.6,
+      "pnl": -246.75,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-20",
+      "ticker": "NET",
+      "action": "BUY",
+      "shares": 14,
+      "price": 278.91,
+      "value": 3904.74,
+      "pnl": null,
+      "pred_pct": 6.39,
+      "confidence": 0.625,
+      "reason": "Top pick #5, conf=62%, pred=+6.4%, alloc=9%"
     }
   ],
   "daily_values": [
@@ -3851,9 +3873,16 @@
       "cash": 11149.68,
       "positions_value": 36799.1,
       "spy_close": 769.06
+    },
+    {
+      "date": "2026-08-20",
+      "value": 47157.86,
+      "cash": 11940.54,
+      "positions_value": 35217.32,
+      "spy_close": 762.6
     }
   ],
-  "last_updated": "2026-08-19",
+  "last_updated": "2026-08-20",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
