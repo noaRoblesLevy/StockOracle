@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 6996.756561965944,
+  "cash": 14335.087006301881,
   "positions": {
     "BAC": {
       "shares": 151,
@@ -9,14 +9,6 @@
       "entry_date": "2026-07-28",
       "entry_conf": 0.7,
       "entry_pred_pct": 0.49
-    },
-    "XLF": {
-      "shares": 164,
-      "entry_price": 58.0,
-      "peak_price": 58.26,
-      "entry_date": "2026-08-05",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 0.38
     },
     "JPM": {
       "shares": 24,
@@ -34,13 +26,21 @@
       "entry_conf": 0.7,
       "entry_pred_pct": 3.99
     },
-    "DIA": {
+    "NET": {
       "shares": 17,
-      "entry_price": 532.22,
-      "peak_price": 532.22,
-      "entry_date": "2026-08-21",
+      "entry_price": 280.35,
+      "peak_price": 280.35,
+      "entry_date": "2026-08-24",
       "entry_conf": 0.55,
-      "entry_pred_pct": 0.89
+      "entry_pred_pct": 4.91
+    },
+    "BABA": {
+      "shares": 55,
+      "entry_price": 118.47,
+      "peak_price": 118.47,
+      "entry_date": "2026-08-24",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 1.83
     }
   },
   "trades": [
@@ -3095,6 +3095,50 @@
       "pred_pct": 0.89,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+0.9%, alloc=26%"
+    },
+    {
+      "date": "2026-08-24",
+      "ticker": "XLF",
+      "action": "SELL",
+      "shares": 164,
+      "price": 58.22,
+      "value": 9548.08,
+      "pnl": 36.08,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-24",
+      "ticker": "DIA",
+      "action": "SELL",
+      "shares": 17,
+      "price": 533.65,
+      "value": 9072.05,
+      "pnl": 24.31,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-24",
+      "ticker": "NET",
+      "action": "BUY",
+      "shares": 17,
+      "price": 280.35,
+      "value": 4765.95,
+      "pnl": null,
+      "pred_pct": 4.91,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+4.9%, alloc=10%"
+    },
+    {
+      "date": "2026-08-24",
+      "ticker": "BABA",
+      "action": "BUY",
+      "shares": 55,
+      "price": 118.47,
+      "value": 6515.85,
+      "pnl": null,
+      "pred_pct": 1.83,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+1.8%, alloc=14%"
     }
   ],
   "daily_values": [
@@ -3909,9 +3953,16 @@
       "cash": 6996.76,
       "positions_value": 40522.01,
       "spy_close": 765.72
+    },
+    {
+      "date": "2026-08-24",
+      "value": 47792.88,
+      "cash": 14335.09,
+      "positions_value": 33457.79,
+      "spy_close": 763.47
     }
   ],
-  "last_updated": "2026-08-21",
+  "last_updated": "2026-08-24",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
