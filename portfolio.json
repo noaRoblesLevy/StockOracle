@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 14335.087006301881,
+  "cash": 9908.296692581178,
   "positions": {
     "BAC": {
       "shares": 151,
@@ -19,28 +19,28 @@
       "entry_pred_pct": 1.48
     },
     "PANW": {
-      "shares": 12,
-      "entry_price": 374.14,
-      "peak_price": 374.14,
-      "entry_date": "2026-08-18",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 3.99
+      "shares": 16,
+      "entry_price": 339.9,
+      "peak_price": 339.9,
+      "entry_date": "2026-08-25",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 7.99
     },
-    "NET": {
-      "shares": 17,
-      "entry_price": 280.35,
-      "peak_price": 280.35,
-      "entry_date": "2026-08-24",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 4.91
+    "ZS": {
+      "shares": 30,
+      "entry_price": 168.42,
+      "peak_price": 168.42,
+      "entry_date": "2026-08-25",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 3.65
     },
-    "BABA": {
-      "shares": 55,
-      "entry_price": 118.47,
-      "peak_price": 118.47,
-      "entry_date": "2026-08-24",
+    "ABBV": {
+      "shares": 35,
+      "entry_price": 265.79,
+      "peak_price": 265.79,
+      "entry_date": "2026-08-25",
       "entry_conf": 0.55,
-      "entry_pred_pct": 1.83
+      "entry_pred_pct": 1.09
     }
   },
   "trades": [
@@ -3139,6 +3139,72 @@
       "pred_pct": 1.83,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+1.8%, alloc=14%"
+    },
+    {
+      "date": "2026-08-25",
+      "ticker": "PANW",
+      "action": "SELL",
+      "shares": 12,
+      "price": 339.9,
+      "value": 4078.8,
+      "pnl": -410.88,
+      "reason": "Trailing stop: -9.2% from $374.14 peak"
+    },
+    {
+      "date": "2026-08-25",
+      "ticker": "NET",
+      "action": "SELL",
+      "shares": 17,
+      "price": 277.58,
+      "value": 4718.86,
+      "pnl": -47.09,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-25",
+      "ticker": "BABA",
+      "action": "SELL",
+      "shares": 55,
+      "price": 119.44,
+      "value": 6569.2,
+      "pnl": 53.35,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-25",
+      "ticker": "PANW",
+      "action": "BUY",
+      "shares": 16,
+      "price": 339.9,
+      "value": 5438.4,
+      "pnl": null,
+      "pred_pct": 7.99,
+      "confidence": 0.6,
+      "reason": "Top pick #2, conf=60%, pred=+8.0%, alloc=12%"
+    },
+    {
+      "date": "2026-08-25",
+      "ticker": "ZS",
+      "action": "BUY",
+      "shares": 30,
+      "price": 168.42,
+      "value": 5052.6,
+      "pnl": null,
+      "pred_pct": 3.65,
+      "confidence": 0.6,
+      "reason": "Top pick #4, conf=60%, pred=+3.6%, alloc=11%"
+    },
+    {
+      "date": "2026-08-25",
+      "ticker": "ABBV",
+      "action": "BUY",
+      "shares": 35,
+      "price": 265.79,
+      "value": 9302.65,
+      "pnl": null,
+      "pred_pct": 1.09,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+1.1%, alloc=23%"
     }
   ],
   "daily_values": [
@@ -3960,9 +4026,16 @@
       "cash": 14335.09,
       "positions_value": 33457.79,
       "spy_close": 763.47
+    },
+    {
+      "date": "2026-08-25",
+      "value": 47689.44,
+      "cash": 9908.3,
+      "positions_value": 37781.14,
+      "spy_close": 765.91
     }
   ],
-  "last_updated": "2026-08-24",
+  "last_updated": "2026-08-25",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
