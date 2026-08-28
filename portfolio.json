@@ -1,23 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 5515.8763053131115,
+  "cash": 5023.366554946901,
   "positions": {
-    "BAC": {
-      "shares": 151,
-      "entry_price": 62.62,
-      "peak_price": 64.81,
-      "entry_date": "2026-07-28",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 0.49
-    },
-    "ZS": {
-      "shares": 30,
-      "entry_price": 168.42,
-      "peak_price": 170.31,
-      "entry_date": "2026-08-25",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 3.65
-    },
     "ABBV": {
       "shares": 35,
       "entry_price": 265.79,
@@ -41,6 +25,22 @@
       "entry_date": "2026-08-27",
       "entry_conf": 0.725,
       "entry_pred_pct": 1.34
+    },
+    "MA": {
+      "shares": 16,
+      "entry_price": 591.73,
+      "peak_price": 591.73,
+      "entry_date": "2026-08-28",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 1.6
+    },
+    "LLY": {
+      "shares": 5,
+      "entry_price": 1176.1,
+      "peak_price": 1176.1,
+      "entry_date": "2026-08-28",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 2.81
     }
   },
   "trades": [
@@ -3249,6 +3249,50 @@
       "pred_pct": 1.34,
       "confidence": 0.725,
       "reason": "Top pick #5, conf=72%, pred=+1.3%, alloc=19%"
+    },
+    {
+      "date": "2026-08-28",
+      "ticker": "ZS",
+      "action": "SELL",
+      "shares": 30,
+      "price": 187.3,
+      "value": 5619.0,
+      "pnl": 566.4,
+      "reason": "Take-profit: +11.2% reached target +3.6%"
+    },
+    {
+      "date": "2026-08-28",
+      "ticker": "BAC",
+      "action": "SELL",
+      "shares": 151,
+      "price": 61.17,
+      "value": 9236.67,
+      "pnl": -218.95,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-08-28",
+      "ticker": "MA",
+      "action": "BUY",
+      "shares": 16,
+      "price": 591.73,
+      "value": 9467.68,
+      "pnl": null,
+      "pred_pct": 1.6,
+      "confidence": 0.6,
+      "reason": "Top pick #4, conf=60%, pred=+1.6%, alloc=25%"
+    },
+    {
+      "date": "2026-08-28",
+      "ticker": "LLY",
+      "action": "BUY",
+      "shares": 5,
+      "price": 1176.1,
+      "value": 5880.5,
+      "pnl": null,
+      "pred_pct": 2.81,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+2.8%, alloc=13%"
     }
   ],
   "daily_values": [
@@ -4084,9 +4128,16 @@
       "cash": 5515.88,
       "positions_value": 42084.91,
       "spy_close": 766.08
+    },
+    {
+      "date": "2026-08-28",
+      "value": 47633.82,
+      "cash": 5023.37,
+      "positions_value": 42610.45,
+      "spy_close": 771.1
     }
   ],
-  "last_updated": "2026-08-27",
+  "last_updated": "2026-08-28",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
