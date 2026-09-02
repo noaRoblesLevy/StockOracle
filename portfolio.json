@@ -1,6 +1,6 @@
 {
   "initial_balance": 50000.0,
-  "cash": 8165.296929092408,
+  "cash": 8393.026909561158,
   "positions": {
     "MA": {
       "shares": 16,
@@ -10,14 +10,6 @@
       "entry_conf": 0.6,
       "entry_pred_pct": 1.6
     },
-    "XLF": {
-      "shares": 160,
-      "entry_price": 57.71,
-      "peak_price": 57.71,
-      "entry_date": "2026-09-01",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 2.14
-    },
     "V": {
       "shares": 14,
       "entry_price": 379.37,
@@ -26,21 +18,29 @@
       "entry_conf": 0.7,
       "entry_pred_pct": 1.9
     },
-    "DIA": {
-      "shares": 17,
-      "entry_price": 531.57,
-      "peak_price": 531.57,
-      "entry_date": "2026-09-01",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 0.87
+    "SHOP": {
+      "shares": 39,
+      "entry_price": 141.87,
+      "peak_price": 141.87,
+      "entry_date": "2026-09-02",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 5.69
+    },
+    "MSFT": {
+      "shares": 18,
+      "entry_price": 496.82,
+      "peak_price": 496.82,
+      "entry_date": "2026-09-02",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 1.86
     },
     "AMGN": {
-      "shares": 12,
-      "entry_price": 429.88,
-      "peak_price": 429.88,
-      "entry_date": "2026-09-01",
+      "shares": 20,
+      "entry_price": 442.84,
+      "peak_price": 442.84,
+      "entry_date": "2026-09-02",
       "entry_conf": 0.55,
-      "entry_pred_pct": 2.05
+      "entry_pred_pct": 0.58
     }
   },
   "trades": [
@@ -3381,6 +3381,72 @@
       "pred_pct": 2.05,
       "confidence": 0.55,
       "reason": "Top pick #5, conf=55%, pred=+2.0%, alloc=11%"
+    },
+    {
+      "date": "2026-09-02",
+      "ticker": "AMGN",
+      "action": "SELL",
+      "shares": 12,
+      "price": 442.84,
+      "value": 5314.08,
+      "pnl": 155.52,
+      "reason": "Take-profit: +3.0% reached target +2.0%"
+    },
+    {
+      "date": "2026-09-02",
+      "ticker": "XLF",
+      "action": "SELL",
+      "shares": 160,
+      "price": 57.66,
+      "value": 9225.6,
+      "pnl": -8.0,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-09-02",
+      "ticker": "DIA",
+      "action": "SELL",
+      "shares": 17,
+      "price": 530.62,
+      "value": 9020.54,
+      "pnl": -16.15,
+      "reason": "Dropped from top picks"
+    },
+    {
+      "date": "2026-09-02",
+      "ticker": "SHOP",
+      "action": "BUY",
+      "shares": 39,
+      "price": 141.87,
+      "value": 5532.93,
+      "pnl": null,
+      "pred_pct": 5.69,
+      "confidence": 0.575,
+      "reason": "Top pick #2, conf=57%, pred=+5.7%, alloc=12%"
+    },
+    {
+      "date": "2026-09-02",
+      "ticker": "MSFT",
+      "action": "BUY",
+      "shares": 18,
+      "price": 496.82,
+      "value": 8942.76,
+      "pnl": null,
+      "pred_pct": 1.86,
+      "confidence": 0.625,
+      "reason": "Top pick #4, conf=62%, pred=+1.9%, alloc=24%"
+    },
+    {
+      "date": "2026-09-02",
+      "ticker": "AMGN",
+      "action": "BUY",
+      "shares": 20,
+      "price": 442.84,
+      "value": 8856.8,
+      "pnl": null,
+      "pred_pct": 0.58,
+      "confidence": 0.55,
+      "reason": "Top pick #5, conf=55%, pred=+0.6%, alloc=19%"
     }
   ],
   "daily_values": [
@@ -4230,9 +4296,16 @@
       "cash": 8165.3,
       "positions_value": 38168.99,
       "spy_close": 767.05
+    },
+    {
+      "date": "2026-09-02",
+      "value": 46433.36,
+      "cash": 8393.03,
+      "positions_value": 38040.33,
+      "spy_close": 765.16
     }
   ],
-  "last_updated": "2026-09-01",
+  "last_updated": "2026-09-02",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
