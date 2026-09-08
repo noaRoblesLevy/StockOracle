@@ -1,48 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 9127.135475845338,
-  "positions": {
-    "MA": {
-      "shares": 16,
-      "entry_price": 591.73,
-      "peak_price": 591.73,
-      "entry_date": "2026-08-28",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 1.6
-    },
-    "V": {
-      "shares": 14,
-      "entry_price": 379.37,
-      "peak_price": 379.37,
-      "entry_date": "2026-09-01",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 1.9
-    },
-    "MSFT": {
-      "shares": 18,
-      "entry_price": 499.7,
-      "peak_price": 499.7,
-      "entry_date": "2026-09-04",
-      "entry_conf": 0.675,
-      "entry_pred_pct": 2.99
-    },
-    "ADBE": {
-      "shares": 17,
-      "entry_price": 266.51,
-      "peak_price": 266.51,
-      "entry_date": "2026-09-04",
-      "entry_conf": 0.75,
-      "entry_pred_pct": 5.14
-    },
-    "AMGN": {
-      "shares": 21,
-      "entry_price": 437.23,
-      "peak_price": 437.23,
-      "entry_date": "2026-09-04",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 2.19
-    }
-  },
+  "cash": 44943.42658302307,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -3557,6 +3516,56 @@
       "pred_pct": 2.19,
       "confidence": 0.575,
       "reason": "Top pick #5, conf=57%, pred=+2.2%, alloc=22%"
+    },
+    {
+      "date": "2026-09-08",
+      "ticker": "MA",
+      "action": "SELL",
+      "shares": 16,
+      "price": 570.89,
+      "value": 9134.24,
+      "pnl": -333.44,
+      "reason": "Circuit breaker: portfolio down 15.1% from ATH"
+    },
+    {
+      "date": "2026-09-08",
+      "ticker": "V",
+      "action": "SELL",
+      "shares": 14,
+      "price": 368.64,
+      "value": 5160.96,
+      "pnl": -150.22,
+      "reason": "Circuit breaker: portfolio down 15.1% from ATH"
+    },
+    {
+      "date": "2026-09-08",
+      "ticker": "MSFT",
+      "action": "SELL",
+      "shares": 18,
+      "price": 493.95,
+      "value": 8891.1,
+      "pnl": -103.5,
+      "reason": "Circuit breaker: portfolio down 15.1% from ATH"
+    },
+    {
+      "date": "2026-09-08",
+      "ticker": "ADBE",
+      "action": "SELL",
+      "shares": 17,
+      "price": 257.26,
+      "value": 4373.42,
+      "pnl": -157.25,
+      "reason": "Circuit breaker: portfolio down 15.1% from ATH"
+    },
+    {
+      "date": "2026-09-08",
+      "ticker": "AMGN",
+      "action": "SELL",
+      "shares": 21,
+      "price": 393.17,
+      "value": 8256.57,
+      "pnl": -925.26,
+      "reason": "Circuit breaker: portfolio down 15.1% from ATH"
     }
   ],
   "daily_values": [
@@ -4429,7 +4438,7 @@
       "spy_close": 770.19
     }
   ],
-  "last_updated": "2026-09-04",
+  "last_updated": "2026-09-08",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
