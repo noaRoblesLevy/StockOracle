@@ -1,7 +1,40 @@
 {
   "initial_balance": 50000.0,
-  "cash": 44943.42658302307,
-  "positions": {},
+  "cash": 13927.566609115602,
+  "positions": {
+    "MSFT": {
+      "shares": 18,
+      "entry_price": 491.65,
+      "peak_price": 491.65,
+      "entry_date": "2026-09-09",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 4.22
+    },
+    "AMGN": {
+      "shares": 12,
+      "entry_price": 391.27,
+      "peak_price": 391.27,
+      "entry_date": "2026-09-09",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 8.55
+    },
+    "XLF": {
+      "shares": 157,
+      "entry_price": 57.06,
+      "peak_price": 57.06,
+      "entry_date": "2026-09-09",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 2.43
+    },
+    "MA": {
+      "shares": 15,
+      "entry_price": 567.5,
+      "peak_price": 567.5,
+      "entry_date": "2026-09-09",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 3.52
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -3566,6 +3599,54 @@
       "value": 8256.57,
       "pnl": -925.26,
       "reason": "Circuit breaker: portfolio down 15.1% from ATH"
+    },
+    {
+      "date": "2026-09-09",
+      "ticker": "MSFT",
+      "action": "BUY",
+      "shares": 18,
+      "price": 491.65,
+      "value": 8849.7,
+      "pnl": null,
+      "pred_pct": 4.22,
+      "confidence": 0.65,
+      "reason": "Top pick #1, conf=65%, pred=+4.2%, alloc=20%"
+    },
+    {
+      "date": "2026-09-09",
+      "ticker": "AMGN",
+      "action": "BUY",
+      "shares": 12,
+      "price": 391.27,
+      "value": 4695.24,
+      "pnl": null,
+      "pred_pct": 8.55,
+      "confidence": 0.575,
+      "reason": "Top pick #2, conf=57%, pred=+8.6%, alloc=11%"
+    },
+    {
+      "date": "2026-09-09",
+      "ticker": "XLF",
+      "action": "BUY",
+      "shares": 157,
+      "price": 57.06,
+      "value": 8958.42,
+      "pnl": null,
+      "pred_pct": 2.43,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+2.4%, alloc=36%"
+    },
+    {
+      "date": "2026-09-09",
+      "ticker": "MA",
+      "action": "BUY",
+      "shares": 15,
+      "price": 567.5,
+      "value": 8512.5,
+      "pnl": null,
+      "pred_pct": 3.52,
+      "confidence": 0.575,
+      "reason": "Top pick #5, conf=57%, pred=+3.5%, alloc=23%"
     }
   ],
   "daily_values": [
@@ -4436,9 +4517,16 @@
       "cash": 9127.14,
       "positions_value": 37225.44,
       "spy_close": 770.19
+    },
+    {
+      "date": "2026-09-09",
+      "value": 44943.43,
+      "cash": 13927.57,
+      "positions_value": 31015.86,
+      "spy_close": 762.4
     }
   ],
-  "last_updated": "2026-09-08",
+  "last_updated": "2026-09-09",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
