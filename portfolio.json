@@ -1,7 +1,40 @@
 {
   "initial_balance": 50000.0,
-  "cash": 44790.26642677307,
-  "positions": {},
+  "cash": 14549.396630020143,
+  "positions": {
+    "MSFT": {
+      "shares": 18,
+      "entry_price": 495.63,
+      "peak_price": 495.63,
+      "entry_date": "2026-09-11",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 4.22
+    },
+    "XLE": {
+      "shares": 137,
+      "entry_price": 65.14,
+      "peak_price": 65.14,
+      "entry_date": "2026-09-11",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 1.32
+    },
+    "SNOW": {
+      "shares": 11,
+      "entry_price": 328.99,
+      "peak_price": 328.99,
+      "entry_date": "2026-09-11",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 5.21
+    },
+    "CVX": {
+      "shares": 41,
+      "entry_price": 214.06,
+      "peak_price": 214.06,
+      "entry_date": "2026-09-11",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.72
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -3654,6 +3687,54 @@
       "value": 8480.55,
       "pnl": -31.95,
       "reason": "Circuit breaker: portfolio down 15.3% from ATH"
+    },
+    {
+      "date": "2026-09-11",
+      "ticker": "MSFT",
+      "action": "BUY",
+      "shares": 18,
+      "price": 495.63,
+      "value": 8921.34,
+      "pnl": null,
+      "pred_pct": 4.22,
+      "confidence": 0.6,
+      "reason": "Top pick #1, conf=60%, pred=+4.2%, alloc=28%"
+    },
+    {
+      "date": "2026-09-11",
+      "ticker": "XLE",
+      "action": "BUY",
+      "shares": 137,
+      "price": 65.14,
+      "value": 8924.18,
+      "pnl": null,
+      "pred_pct": 1.32,
+      "confidence": 0.6,
+      "reason": "Top pick #2, conf=60%, pred=+1.3%, alloc=39%"
+    },
+    {
+      "date": "2026-09-11",
+      "ticker": "SNOW",
+      "action": "BUY",
+      "shares": 11,
+      "price": 328.99,
+      "value": 3618.89,
+      "pnl": null,
+      "pred_pct": 5.21,
+      "confidence": 0.6,
+      "reason": "Top pick #3, conf=60%, pred=+5.2%, alloc=8%"
+    },
+    {
+      "date": "2026-09-11",
+      "ticker": "CVX",
+      "action": "BUY",
+      "shares": 41,
+      "price": 214.06,
+      "value": 8776.46,
+      "pnl": null,
+      "pred_pct": 0.72,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+0.7%, alloc=24%"
     }
   ],
   "daily_values": [
@@ -4531,9 +4612,16 @@
       "cash": 13927.57,
       "positions_value": 31015.86,
       "spy_close": 762.4
+    },
+    {
+      "date": "2026-09-11",
+      "value": 44790.27,
+      "cash": 14549.4,
+      "positions_value": 30240.87,
+      "spy_close": 764.29
     }
   ],
-  "last_updated": "2026-09-10",
+  "last_updated": "2026-09-11",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
