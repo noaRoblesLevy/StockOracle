@@ -1,40 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 14549.396630020143,
-  "positions": {
-    "MSFT": {
-      "shares": 18,
-      "entry_price": 495.63,
-      "peak_price": 495.63,
-      "entry_date": "2026-09-11",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 4.22
-    },
-    "XLE": {
-      "shares": 137,
-      "entry_price": 65.14,
-      "peak_price": 65.14,
-      "entry_date": "2026-09-11",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 1.32
-    },
-    "SNOW": {
-      "shares": 11,
-      "entry_price": 328.99,
-      "peak_price": 328.99,
-      "entry_date": "2026-09-11",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 5.21
-    },
-    "CVX": {
-      "shares": 41,
-      "entry_price": 214.06,
-      "peak_price": 214.06,
-      "entry_date": "2026-09-11",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 0.72
-    }
-  },
+  "cash": 44842.20652076721,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -3735,6 +3702,46 @@
       "pred_pct": 0.72,
       "confidence": 0.55,
       "reason": "Top pick #4, conf=55%, pred=+0.7%, alloc=24%"
+    },
+    {
+      "date": "2026-09-14",
+      "ticker": "MSFT",
+      "action": "SELL",
+      "shares": 18,
+      "price": 505.41,
+      "value": 9097.38,
+      "pnl": 176.04,
+      "reason": "Circuit breaker: portfolio down 15.3% from ATH"
+    },
+    {
+      "date": "2026-09-14",
+      "ticker": "XLE",
+      "action": "SELL",
+      "shares": 137,
+      "price": 64.53,
+      "value": 8840.61,
+      "pnl": -83.57,
+      "reason": "Circuit breaker: portfolio down 15.3% from ATH"
+    },
+    {
+      "date": "2026-09-14",
+      "ticker": "SNOW",
+      "action": "SELL",
+      "shares": 11,
+      "price": 332.35,
+      "value": 3655.85,
+      "pnl": 36.96,
+      "reason": "Circuit breaker: portfolio down 15.3% from ATH"
+    },
+    {
+      "date": "2026-09-14",
+      "ticker": "CVX",
+      "action": "SELL",
+      "shares": 41,
+      "price": 212.17,
+      "value": 8698.97,
+      "pnl": -77.49,
+      "reason": "Circuit breaker: portfolio down 15.3% from ATH"
     }
   ],
   "daily_values": [
@@ -4621,7 +4628,7 @@
       "spy_close": 764.29
     }
   ],
-  "last_updated": "2026-09-11",
+  "last_updated": "2026-09-14",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
