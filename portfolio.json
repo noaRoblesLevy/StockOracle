@@ -1,7 +1,48 @@
 {
   "initial_balance": 50000.0,
-  "cash": 44842.20652076721,
-  "positions": {},
+  "cash": 8553.315972061158,
+  "positions": {
+    "MSFT": {
+      "shares": 18,
+      "entry_price": 497.12,
+      "peak_price": 497.12,
+      "entry_date": "2026-09-15",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 5.39
+    },
+    "SNOW": {
+      "shares": 10,
+      "entry_price": 322.98,
+      "peak_price": 322.98,
+      "entry_date": "2026-09-15",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 6.37
+    },
+    "XLE": {
+      "shares": 136,
+      "entry_price": 65.93,
+      "peak_price": 65.93,
+      "entry_date": "2026-09-15",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 0.87
+    },
+    "XOM": {
+      "shares": 47,
+      "entry_price": 169.32,
+      "peak_price": 169.32,
+      "entry_date": "2026-09-15",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.91
+    },
+    "CVX": {
+      "shares": 33,
+      "entry_price": 217.77,
+      "peak_price": 217.77,
+      "entry_date": "2026-09-15",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 0.52
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -3742,6 +3783,66 @@
       "value": 8698.97,
       "pnl": -77.49,
       "reason": "Circuit breaker: portfolio down 15.3% from ATH"
+    },
+    {
+      "date": "2026-09-15",
+      "ticker": "MSFT",
+      "action": "BUY",
+      "shares": 18,
+      "price": 497.12,
+      "value": 8948.16,
+      "pnl": null,
+      "pred_pct": 5.39,
+      "confidence": 0.55,
+      "reason": "Top pick #1, conf=55%, pred=+5.4%, alloc=26%"
+    },
+    {
+      "date": "2026-09-15",
+      "ticker": "SNOW",
+      "action": "BUY",
+      "shares": 10,
+      "price": 322.98,
+      "value": 3229.8,
+      "pnl": null,
+      "pred_pct": 6.37,
+      "confidence": 0.625,
+      "reason": "Top pick #2, conf=62%, pred=+6.4%, alloc=7%"
+    },
+    {
+      "date": "2026-09-15",
+      "ticker": "XLE",
+      "action": "BUY",
+      "shares": 136,
+      "price": 65.93,
+      "value": 8966.48,
+      "pnl": null,
+      "pred_pct": 0.87,
+      "confidence": 0.65,
+      "reason": "Top pick #3, conf=65%, pred=+0.9%, alloc=32%"
+    },
+    {
+      "date": "2026-09-15",
+      "ticker": "XOM",
+      "action": "BUY",
+      "shares": 47,
+      "price": 169.32,
+      "value": 7958.04,
+      "pnl": null,
+      "pred_pct": 0.91,
+      "confidence": 0.55,
+      "reason": "Top pick #4, conf=55%, pred=+0.9%, alloc=18%"
+    },
+    {
+      "date": "2026-09-15",
+      "ticker": "CVX",
+      "action": "BUY",
+      "shares": 33,
+      "price": 217.77,
+      "value": 7186.41,
+      "pnl": null,
+      "pred_pct": 0.52,
+      "confidence": 0.65,
+      "reason": "Top pick #5, conf=65%, pred=+0.5%, alloc=16%"
     }
   ],
   "daily_values": [
@@ -4626,9 +4727,16 @@
       "cash": 14549.4,
       "positions_value": 30240.87,
       "spy_close": 764.29
+    },
+    {
+      "date": "2026-09-15",
+      "value": 44842.21,
+      "cash": 8553.32,
+      "positions_value": 36288.89,
+      "spy_close": 757.39
     }
   ],
-  "last_updated": "2026-09-14",
+  "last_updated": "2026-09-15",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
