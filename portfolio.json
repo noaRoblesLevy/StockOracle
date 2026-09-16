@@ -1,48 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 8553.315972061158,
-  "positions": {
-    "MSFT": {
-      "shares": 18,
-      "entry_price": 497.12,
-      "peak_price": 497.12,
-      "entry_date": "2026-09-15",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 5.39
-    },
-    "SNOW": {
-      "shares": 10,
-      "entry_price": 322.98,
-      "peak_price": 322.98,
-      "entry_date": "2026-09-15",
-      "entry_conf": 0.625,
-      "entry_pred_pct": 6.37
-    },
-    "XLE": {
-      "shares": 136,
-      "entry_price": 65.93,
-      "peak_price": 65.93,
-      "entry_date": "2026-09-15",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 0.87
-    },
-    "XOM": {
-      "shares": 47,
-      "entry_price": 169.32,
-      "peak_price": 169.32,
-      "entry_date": "2026-09-15",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 0.91
-    },
-    "CVX": {
-      "shares": 33,
-      "entry_price": 217.77,
-      "peak_price": 217.77,
-      "entry_date": "2026-09-15",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 0.52
-    }
-  },
+  "cash": 44053.855599136354,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -3843,6 +3802,56 @@
       "pred_pct": 0.52,
       "confidence": 0.65,
       "reason": "Top pick #5, conf=65%, pred=+0.5%, alloc=16%"
+    },
+    {
+      "date": "2026-09-16",
+      "ticker": "MSFT",
+      "action": "SELL",
+      "shares": 18,
+      "price": 490.3,
+      "value": 8825.4,
+      "pnl": -122.76,
+      "reason": "Circuit breaker: portfolio down 16.7% from ATH"
+    },
+    {
+      "date": "2026-09-16",
+      "ticker": "SNOW",
+      "action": "SELL",
+      "shares": 10,
+      "price": 331.02,
+      "value": 3310.2,
+      "pnl": 80.4,
+      "reason": "Circuit breaker: portfolio down 16.7% from ATH"
+    },
+    {
+      "date": "2026-09-16",
+      "ticker": "XLE",
+      "action": "SELL",
+      "shares": 136,
+      "price": 64.03,
+      "value": 8708.08,
+      "pnl": -258.4,
+      "reason": "Circuit breaker: portfolio down 16.7% from ATH"
+    },
+    {
+      "date": "2026-09-16",
+      "ticker": "XOM",
+      "action": "SELL",
+      "shares": 47,
+      "price": 163.32,
+      "value": 7676.04,
+      "pnl": -282.0,
+      "reason": "Circuit breaker: portfolio down 16.7% from ATH"
+    },
+    {
+      "date": "2026-09-16",
+      "ticker": "CVX",
+      "action": "SELL",
+      "shares": 33,
+      "price": 211.54,
+      "value": 6980.82,
+      "pnl": -205.59,
+      "reason": "Circuit breaker: portfolio down 16.7% from ATH"
     }
   ],
   "daily_values": [
@@ -4736,7 +4745,7 @@
       "spy_close": 757.39
     }
   ],
-  "last_updated": "2026-09-15",
+  "last_updated": "2026-09-16",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
