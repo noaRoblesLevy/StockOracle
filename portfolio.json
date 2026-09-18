@@ -1,48 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 10404.884346694947,
-  "positions": {
-    "XLE": {
-      "shares": 136,
-      "entry_price": 64.48,
-      "peak_price": 64.48,
-      "entry_date": "2026-09-17",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 2.74
-    },
-    "CVX": {
-      "shares": 41,
-      "entry_price": 211.57,
-      "peak_price": 211.57,
-      "entry_date": "2026-09-17",
-      "entry_conf": 0.7,
-      "entry_pred_pct": 2.77
-    },
-    "XOM": {
-      "shares": 50,
-      "entry_price": 163.27,
-      "peak_price": 163.27,
-      "entry_date": "2026-09-17",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 3.39
-    },
-    "CRM": {
-      "shares": 15,
-      "entry_price": 242.85,
-      "peak_price": 242.85,
-      "entry_date": "2026-09-17",
-      "entry_conf": 0.625,
-      "entry_pred_pct": 4.95
-    },
-    "SNOW": {
-      "shares": 13,
-      "entry_price": 338.39,
-      "peak_price": 338.39,
-      "entry_date": "2026-09-17",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 3.83
-    }
-  },
+  "cash": 43808.34333106995,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -3953,6 +3912,56 @@
       "pred_pct": 3.83,
       "confidence": 0.575,
       "reason": "Top pick #5, conf=57%, pred=+3.8%, alloc=10%"
+    },
+    {
+      "date": "2026-09-18",
+      "ticker": "XLE",
+      "action": "SELL",
+      "shares": 136,
+      "price": 64.31,
+      "value": 8746.16,
+      "pnl": -23.12,
+      "reason": "Circuit breaker: portfolio down 17.2% from ATH"
+    },
+    {
+      "date": "2026-09-18",
+      "ticker": "CVX",
+      "action": "SELL",
+      "shares": 41,
+      "price": 209.51,
+      "value": 8589.91,
+      "pnl": -84.46,
+      "reason": "Circuit breaker: portfolio down 17.2% from ATH"
+    },
+    {
+      "date": "2026-09-18",
+      "ticker": "XOM",
+      "action": "SELL",
+      "shares": 50,
+      "price": 163.54,
+      "value": 8177.0,
+      "pnl": 13.5,
+      "reason": "Circuit breaker: portfolio down 17.2% from ATH"
+    },
+    {
+      "date": "2026-09-18",
+      "ticker": "CRM",
+      "action": "SELL",
+      "shares": 15,
+      "price": 237.92,
+      "value": 3568.8,
+      "pnl": -73.95,
+      "reason": "Circuit breaker: portfolio down 17.2% from ATH"
+    },
+    {
+      "date": "2026-09-18",
+      "ticker": "SNOW",
+      "action": "SELL",
+      "shares": 13,
+      "price": 332.43,
+      "value": 4321.59,
+      "pnl": -77.48,
+      "reason": "Circuit breaker: portfolio down 17.2% from ATH"
     }
   ],
   "daily_values": [
@@ -4853,7 +4862,7 @@
       "spy_close": 762.6
     }
   ],
-  "last_updated": "2026-09-17",
+  "last_updated": "2026-09-18",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
