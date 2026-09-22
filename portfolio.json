@@ -1,7 +1,48 @@
 {
   "initial_balance": 50000.0,
-  "cash": 43808.34333106995,
-  "positions": {},
+  "cash": 9652.994209976197,
+  "positions": {
+    "CVX": {
+      "shares": 41,
+      "entry_price": 209.51,
+      "peak_price": 209.51,
+      "entry_date": "2026-09-22",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 3.46
+    },
+    "XLE": {
+      "shares": 136,
+      "entry_price": 64.31,
+      "peak_price": 64.31,
+      "entry_date": "2026-09-22",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 2.96
+    },
+    "XOM": {
+      "shares": 51,
+      "entry_price": 163.54,
+      "peak_price": 163.54,
+      "entry_date": "2026-09-22",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 3.31
+    },
+    "NOW": {
+      "shares": 38,
+      "entry_price": 135.47,
+      "peak_price": 135.47,
+      "entry_date": "2026-09-22",
+      "entry_conf": 0.6,
+      "entry_pred_pct": 4.23
+    },
+    "CRM": {
+      "shares": 14,
+      "entry_price": 237.92,
+      "peak_price": 237.92,
+      "entry_date": "2026-09-22",
+      "entry_conf": 0.625,
+      "entry_pred_pct": 5.28
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -3962,6 +4003,66 @@
       "value": 4321.59,
       "pnl": -77.48,
       "reason": "Circuit breaker: portfolio down 17.2% from ATH"
+    },
+    {
+      "date": "2026-09-22",
+      "ticker": "CVX",
+      "action": "BUY",
+      "shares": 41,
+      "price": 209.51,
+      "value": 8589.91,
+      "pnl": null,
+      "pred_pct": 3.46,
+      "confidence": 0.65,
+      "reason": "Top pick #1, conf=65%, pred=+3.5%, alloc=34%"
+    },
+    {
+      "date": "2026-09-22",
+      "ticker": "XLE",
+      "action": "BUY",
+      "shares": 136,
+      "price": 64.31,
+      "value": 8746.16,
+      "pnl": null,
+      "pred_pct": 2.96,
+      "confidence": 0.65,
+      "reason": "Top pick #2, conf=65%, pred=+3.0%, alloc=27%"
+    },
+    {
+      "date": "2026-09-22",
+      "ticker": "XOM",
+      "action": "BUY",
+      "shares": 51,
+      "price": 163.54,
+      "value": 8340.54,
+      "pnl": null,
+      "pred_pct": 3.31,
+      "confidence": 0.6,
+      "reason": "Top pick #3, conf=60%, pred=+3.3%, alloc=19%"
+    },
+    {
+      "date": "2026-09-22",
+      "ticker": "NOW",
+      "action": "BUY",
+      "shares": 38,
+      "price": 135.47,
+      "value": 5147.86,
+      "pnl": null,
+      "pred_pct": 4.23,
+      "confidence": 0.6,
+      "reason": "Top pick #4, conf=60%, pred=+4.2%, alloc=12%"
+    },
+    {
+      "date": "2026-09-22",
+      "ticker": "CRM",
+      "action": "BUY",
+      "shares": 14,
+      "price": 237.92,
+      "value": 3330.88,
+      "pnl": null,
+      "pred_pct": 5.28,
+      "confidence": 0.625,
+      "reason": "Top pick #5, conf=62%, pred=+5.3%, alloc=8%"
     }
   ],
   "daily_values": [
@@ -4860,9 +4961,16 @@
       "cash": 10404.88,
       "positions_value": 33648.97,
       "spy_close": 762.6
+    },
+    {
+      "date": "2026-09-22",
+      "value": 43808.34,
+      "cash": 9652.99,
+      "positions_value": 34155.35,
+      "spy_close": 761.69
     }
   ],
-  "last_updated": "2026-09-18",
+  "last_updated": "2026-09-22",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
