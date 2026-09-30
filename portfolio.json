@@ -1,24 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 26440.423454971315,
-  "positions": {
-    "PLTR": {
-      "shares": 45,
-      "entry_price": 189.67,
-      "peak_price": 189.67,
-      "entry_date": "2026-09-29",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 3.63
-    },
-    "SNOW": {
-      "shares": 25,
-      "entry_price": 335.94,
-      "peak_price": 335.94,
-      "entry_date": "2026-09-29",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 3.97
-    }
-  },
+  "cash": 43080.02314064026,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -4157,6 +4140,26 @@
       "pred_pct": 3.97,
       "confidence": 0.575,
       "reason": "Top pick #2, conf=57%, pred=+4.0%, alloc=41%"
+    },
+    {
+      "date": "2026-09-30",
+      "ticker": "PLTR",
+      "action": "SELL",
+      "shares": 45,
+      "price": 187.48,
+      "value": 8436.6,
+      "pnl": -98.55,
+      "reason": "Circuit breaker: portfolio down 18.6% from ATH"
+    },
+    {
+      "date": "2026-09-30",
+      "ticker": "SNOW",
+      "action": "SELL",
+      "shares": 25,
+      "price": 328.12,
+      "value": 8203.0,
+      "pnl": -195.5,
+      "reason": "Circuit breaker: portfolio down 18.6% from ATH"
     }
   ],
   "daily_values": [
@@ -5078,7 +5081,7 @@
       "spy_close": 771.35
     }
   ],
-  "last_updated": "2026-09-29",
+  "last_updated": "2026-09-30",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
