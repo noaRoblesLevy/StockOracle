@@ -1,7 +1,32 @@
 {
   "initial_balance": 50000.0,
-  "cash": 43286.9132926178,
-  "positions": {},
+  "cash": 17648.46286079407,
+  "positions": {
+    "PLTR": {
+      "shares": 45,
+      "entry_price": 192.07,
+      "peak_price": 192.07,
+      "entry_date": "2026-10-08",
+      "entry_conf": 0.675,
+      "entry_pred_pct": 5.0
+    },
+    "SNOW": {
+      "shares": 25,
+      "entry_price": 335.95,
+      "peak_price": 335.95,
+      "entry_date": "2026-10-08",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 3.29
+    },
+    "ARKK": {
+      "shares": 95,
+      "entry_price": 90.49,
+      "peak_price": 90.49,
+      "entry_date": "2026-10-08",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 1.36
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -4314,6 +4339,42 @@
       "value": 6211.26,
       "pnl": 0.0,
       "reason": "Circuit breaker: portfolio down 18.2% from ATH"
+    },
+    {
+      "date": "2026-10-08",
+      "ticker": "PLTR",
+      "action": "BUY",
+      "shares": 45,
+      "price": 192.07,
+      "value": 8643.15,
+      "pnl": null,
+      "pred_pct": 5.0,
+      "confidence": 0.675,
+      "reason": "Top pick #1, conf=68%, pred=+5.0%, alloc=35%"
+    },
+    {
+      "date": "2026-10-08",
+      "ticker": "SNOW",
+      "action": "BUY",
+      "shares": 25,
+      "price": 335.95,
+      "value": 8398.75,
+      "pnl": null,
+      "pred_pct": 3.29,
+      "confidence": 0.65,
+      "reason": "Top pick #2, conf=65%, pred=+3.3%, alloc=36%"
+    },
+    {
+      "date": "2026-10-08",
+      "ticker": "ARKK",
+      "action": "BUY",
+      "shares": 95,
+      "price": 90.49,
+      "value": 8596.55,
+      "pnl": null,
+      "pred_pct": 1.36,
+      "confidence": 0.575,
+      "reason": "Top pick #3, conf=57%, pred=+1.4%, alloc=29%"
     }
   ],
   "daily_values": [
@@ -5247,9 +5308,16 @@
       "cash": 20077.9,
       "positions_value": 23209.01,
       "spy_close": 774.83
+    },
+    {
+      "date": "2026-10-08",
+      "value": 43286.91,
+      "cash": 17648.46,
+      "positions_value": 25638.45,
+      "spy_close": 779.09
     }
   ],
-  "last_updated": "2026-10-07",
+  "last_updated": "2026-10-08",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
