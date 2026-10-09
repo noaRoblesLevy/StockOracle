@@ -1,32 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 17648.46286079407,
-  "positions": {
-    "PLTR": {
-      "shares": 45,
-      "entry_price": 192.07,
-      "peak_price": 192.07,
-      "entry_date": "2026-10-08",
-      "entry_conf": 0.675,
-      "entry_pred_pct": 5.0
-    },
-    "SNOW": {
-      "shares": 25,
-      "entry_price": 335.95,
-      "peak_price": 335.95,
-      "entry_date": "2026-10-08",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 3.29
-    },
-    "ARKK": {
-      "shares": 95,
-      "entry_price": 90.49,
-      "peak_price": 90.49,
-      "entry_date": "2026-10-08",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 1.36
-    }
-  },
+  "cash": 43093.61308357239,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -4375,6 +4350,36 @@
       "pred_pct": 1.36,
       "confidence": 0.575,
       "reason": "Top pick #3, conf=57%, pred=+1.4%, alloc=29%"
+    },
+    {
+      "date": "2026-10-09",
+      "ticker": "PLTR",
+      "action": "SELL",
+      "shares": 45,
+      "price": 194.12,
+      "value": 8735.4,
+      "pnl": 92.25,
+      "reason": "Circuit breaker: portfolio down 18.6% from ATH"
+    },
+    {
+      "date": "2026-10-09",
+      "ticker": "SNOW",
+      "action": "SELL",
+      "shares": 25,
+      "price": 332.85,
+      "value": 8321.25,
+      "pnl": -77.5,
+      "reason": "Circuit breaker: portfolio down 18.6% from ATH"
+    },
+    {
+      "date": "2026-10-09",
+      "ticker": "ARKK",
+      "action": "SELL",
+      "shares": 95,
+      "price": 88.3,
+      "value": 8388.5,
+      "pnl": -208.05,
+      "reason": "Circuit breaker: portfolio down 18.6% from ATH"
     }
   ],
   "daily_values": [
@@ -5317,7 +5322,7 @@
       "spy_close": 779.09
     }
   ],
-  "last_updated": "2026-10-08",
+  "last_updated": "2026-10-09",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
