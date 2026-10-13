@@ -1,7 +1,32 @@
 {
   "initial_balance": 50000.0,
-  "cash": 43093.61308357239,
-  "positions": {},
+  "cash": 19973.012848587037,
+  "positions": {
+    "SMCI": {
+      "shares": 152,
+      "entry_price": 39.98,
+      "peak_price": 39.98,
+      "entry_date": "2026-10-13",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 8.67
+    },
+    "NVDA": {
+      "shares": 38,
+      "entry_price": 226.32,
+      "peak_price": 226.32,
+      "entry_date": "2026-10-13",
+      "entry_conf": 0.575,
+      "entry_pred_pct": 1.87
+    },
+    "XLK": {
+      "shares": 43,
+      "entry_price": 196.36,
+      "peak_price": 196.36,
+      "entry_date": "2026-10-13",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 1.11
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -4380,6 +4405,42 @@
       "value": 8388.5,
       "pnl": -208.05,
       "reason": "Circuit breaker: portfolio down 18.6% from ATH"
+    },
+    {
+      "date": "2026-10-13",
+      "ticker": "SMCI",
+      "action": "BUY",
+      "shares": 152,
+      "price": 39.98,
+      "value": 6076.96,
+      "pnl": null,
+      "pred_pct": 8.67,
+      "confidence": 0.65,
+      "reason": "Top pick #1, conf=65%, pred=+8.7%, alloc=14%"
+    },
+    {
+      "date": "2026-10-13",
+      "ticker": "NVDA",
+      "action": "BUY",
+      "shares": 38,
+      "price": 226.32,
+      "value": 8600.16,
+      "pnl": null,
+      "pred_pct": 1.87,
+      "confidence": 0.575,
+      "reason": "Top pick #2, conf=57%, pred=+1.9%, alloc=38%"
+    },
+    {
+      "date": "2026-10-13",
+      "ticker": "XLK",
+      "action": "BUY",
+      "shares": 43,
+      "price": 196.36,
+      "value": 8443.48,
+      "pnl": null,
+      "pred_pct": 1.11,
+      "confidence": 0.55,
+      "reason": "Top pick #3, conf=55%, pred=+1.1%, alloc=48%"
     }
   ],
   "daily_values": [
@@ -5320,9 +5381,16 @@
       "cash": 17648.46,
       "positions_value": 25638.45,
       "spy_close": 779.09
+    },
+    {
+      "date": "2026-10-13",
+      "value": 43093.61,
+      "cash": 19973.01,
+      "positions_value": 23120.6,
+      "spy_close": 778.1
     }
   ],
-  "last_updated": "2026-10-09",
+  "last_updated": "2026-10-13",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
