@@ -1,32 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 19973.012848587037,
-  "positions": {
-    "SMCI": {
-      "shares": 152,
-      "entry_price": 39.98,
-      "peak_price": 39.98,
-      "entry_date": "2026-10-13",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 8.67
-    },
-    "NVDA": {
-      "shares": 38,
-      "entry_price": 226.32,
-      "peak_price": 226.32,
-      "entry_date": "2026-10-13",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 1.87
-    },
-    "XLK": {
-      "shares": 43,
-      "entry_price": 196.36,
-      "peak_price": 196.36,
-      "entry_date": "2026-10-13",
-      "entry_conf": 0.55,
-      "entry_pred_pct": 1.11
-    }
-  },
+  "cash": 43093.61308357239,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -4441,6 +4416,36 @@
       "pred_pct": 1.11,
       "confidence": 0.55,
       "reason": "Top pick #3, conf=55%, pred=+1.1%, alloc=48%"
+    },
+    {
+      "date": "2026-10-14",
+      "ticker": "SMCI",
+      "action": "SELL",
+      "shares": 152,
+      "price": 39.98,
+      "value": 6076.96,
+      "pnl": -0.0,
+      "reason": "Circuit breaker: portfolio down 18.6% from ATH"
+    },
+    {
+      "date": "2026-10-14",
+      "ticker": "NVDA",
+      "action": "SELL",
+      "shares": 38,
+      "price": 226.32,
+      "value": 8600.16,
+      "pnl": 0.0,
+      "reason": "Circuit breaker: portfolio down 18.6% from ATH"
+    },
+    {
+      "date": "2026-10-14",
+      "ticker": "XLK",
+      "action": "SELL",
+      "shares": 43,
+      "price": 196.36,
+      "value": 8443.48,
+      "pnl": 0.0,
+      "reason": "Circuit breaker: portfolio down 18.6% from ATH"
     }
   ],
   "daily_values": [
@@ -5390,7 +5395,7 @@
       "spy_close": 778.1
     }
   ],
-  "last_updated": "2026-10-13",
+  "last_updated": "2026-10-14",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
