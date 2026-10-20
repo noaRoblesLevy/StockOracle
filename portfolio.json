@@ -1,7 +1,24 @@
 {
   "initial_balance": 50000.0,
-  "cash": 42066.1024634552,
-  "positions": {},
+  "cash": 25890.91288825989,
+  "positions": {
+    "OKTA": {
+      "shares": 44,
+      "entry_price": 187.26,
+      "peak_price": 187.26,
+      "entry_date": "2026-10-20",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 11.86
+    },
+    "MSFT": {
+      "shares": 15,
+      "entry_price": 529.05,
+      "peak_price": 529.05,
+      "entry_date": "2026-10-20",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 3.69
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -4490,6 +4507,30 @@
       "value": 7677.66,
       "pnl": -871.66,
       "reason": "Circuit breaker: portfolio down 20.5% from ATH"
+    },
+    {
+      "date": "2026-10-20",
+      "ticker": "OKTA",
+      "action": "BUY",
+      "shares": 44,
+      "price": 187.26,
+      "value": 8239.44,
+      "pnl": null,
+      "pred_pct": 11.86,
+      "confidence": 0.65,
+      "reason": "Top pick #1, conf=65%, pred=+11.9%, alloc=26%"
+    },
+    {
+      "date": "2026-10-20",
+      "ticker": "MSFT",
+      "action": "BUY",
+      "shares": 15,
+      "price": 529.05,
+      "value": 7935.75,
+      "pnl": null,
+      "pred_pct": 3.69,
+      "confidence": 0.55,
+      "reason": "Top pick #2, conf=55%, pred=+3.7%, alloc=74%"
     }
   ],
   "daily_values": [
@@ -5444,9 +5485,16 @@
       "cash": 26452.69,
       "positions_value": 16640.92,
       "spy_close": 771.79
+    },
+    {
+      "date": "2026-10-20",
+      "value": 42066.1,
+      "cash": 25890.91,
+      "positions_value": 16175.19,
+      "spy_close": 763.25
     }
   ],
-  "last_updated": "2026-10-16",
+  "last_updated": "2026-10-20",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
