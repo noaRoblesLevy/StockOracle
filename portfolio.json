@@ -1,7 +1,32 @@
 {
   "initial_balance": 50000.0,
-  "cash": 42482.40306159973,
-  "positions": {},
+  "cash": 20500.87313911438,
+  "positions": {
+    "AAPL": {
+      "shares": 25,
+      "entry_price": 338.32,
+      "peak_price": 338.32,
+      "entry_date": "2026-11-03",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 2.84
+    },
+    "ZS": {
+      "shares": 23,
+      "entry_price": 223.79,
+      "peak_price": 223.79,
+      "entry_date": "2026-11-03",
+      "entry_conf": 0.65,
+      "entry_pred_pct": 4.84
+    },
+    "ABBV": {
+      "shares": 29,
+      "entry_price": 288.84,
+      "peak_price": 288.84,
+      "entry_date": "2026-11-03",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.55
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -4556,6 +4581,42 @@
       "value": 8330.4,
       "pnl": 76.56,
       "reason": "Circuit breaker: portfolio down 19.7% from ATH"
+    },
+    {
+      "date": "2026-11-03",
+      "ticker": "AAPL",
+      "action": "BUY",
+      "shares": 25,
+      "price": 338.32,
+      "value": 8458.0,
+      "pnl": null,
+      "pred_pct": 2.84,
+      "confidence": 0.65,
+      "reason": "Top pick #1, conf=65%, pred=+2.8%, alloc=51%"
+    },
+    {
+      "date": "2026-11-03",
+      "ticker": "ZS",
+      "action": "BUY",
+      "shares": 23,
+      "price": 223.79,
+      "value": 5147.17,
+      "pnl": null,
+      "pred_pct": 4.84,
+      "confidence": 0.65,
+      "reason": "Top pick #2, conf=65%, pred=+4.8%, alloc=12%"
+    },
+    {
+      "date": "2026-11-03",
+      "ticker": "ABBV",
+      "action": "BUY",
+      "shares": 29,
+      "price": 288.84,
+      "value": 8376.36,
+      "pnl": null,
+      "pred_pct": 0.55,
+      "confidence": 0.55,
+      "reason": "Top pick #3, conf=55%, pred=+0.6%, alloc=36%"
     }
   ],
   "daily_values": [
@@ -5545,9 +5606,16 @@
       "cash": 42482.4,
       "positions_value": 0.0,
       "spy_close": 772.31
+    },
+    {
+      "date": "2026-11-03",
+      "value": 42482.4,
+      "cash": 20500.87,
+      "positions_value": 21981.53,
+      "spy_close": 752.1
     }
   ],
-  "last_updated": "2026-10-30",
+  "last_updated": "2026-11-03",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
