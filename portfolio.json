@@ -1,32 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 20263.653305740358,
-  "positions": {
-    "AAPL": {
-      "shares": 25,
-      "entry_price": 331.9,
-      "peak_price": 331.9,
-      "entry_date": "2026-11-05",
-      "entry_conf": 0.6,
-      "entry_pred_pct": 3.86
-    },
-    "ZS": {
-      "shares": 25,
-      "entry_price": 225.09,
-      "peak_price": 225.09,
-      "entry_date": "2026-11-05",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 4.45
-    },
-    "ABBV": {
-      "shares": 29,
-      "entry_price": 286.0,
-      "peak_price": 286.0,
-      "entry_date": "2026-11-05",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 1.13
-    }
-  },
+  "cash": 43162.47322151184,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -4683,6 +4658,36 @@
       "pred_pct": 1.13,
       "confidence": 0.575,
       "reason": "Top pick #3, conf=57%, pred=+1.1%, alloc=37%"
+    },
+    {
+      "date": "2026-11-06",
+      "ticker": "AAPL",
+      "action": "SELL",
+      "shares": 25,
+      "price": 349.51,
+      "value": 8737.75,
+      "pnl": 440.25,
+      "reason": "Circuit breaker: portfolio down 18.4% from ATH"
+    },
+    {
+      "date": "2026-11-06",
+      "ticker": "ZS",
+      "action": "SELL",
+      "shares": 25,
+      "price": 224.44,
+      "value": 5611.0,
+      "pnl": -16.25,
+      "reason": "Circuit breaker: portfolio down 18.4% from ATH"
+    },
+    {
+      "date": "2026-11-06",
+      "ticker": "ABBV",
+      "action": "SELL",
+      "shares": 29,
+      "price": 294.83,
+      "value": 8550.07,
+      "pnl": 256.07,
+      "reason": "Circuit breaker: portfolio down 18.4% from ATH"
     }
   ],
   "daily_values": [
@@ -5688,7 +5693,7 @@
       "spy_close": 754.35
     }
   ],
-  "last_updated": "2026-11-05",
+  "last_updated": "2026-11-06",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
