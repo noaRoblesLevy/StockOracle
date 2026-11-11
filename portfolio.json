@@ -1,16 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 34586.302902908326,
-  "positions": {
-    "TXN": {
-      "shares": 29,
-      "entry_price": 295.73,
-      "peak_price": 295.73,
-      "entry_date": "2026-11-10",
-      "entry_conf": 0.65,
-      "entry_pred_pct": 0.52
-    }
-  },
+  "cash": 43162.47322151184,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -4709,6 +4700,16 @@
       "pred_pct": 0.52,
       "confidence": 0.65,
       "reason": "Top pick #1, conf=65%, pred=+0.5%, alloc=100%"
+    },
+    {
+      "date": "2026-11-11",
+      "ticker": "TXN",
+      "action": "SELL",
+      "shares": 29,
+      "price": 295.73,
+      "value": 8576.17,
+      "pnl": 0.0,
+      "reason": "Circuit breaker: portfolio down 18.4% from ATH"
     }
   ],
   "daily_values": [
@@ -5721,7 +5722,7 @@
       "spy_close": 752.69
     }
   ],
-  "last_updated": "2026-11-10",
+  "last_updated": "2026-11-11",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
