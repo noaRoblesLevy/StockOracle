@@ -1,16 +1,7 @@
 {
   "initial_balance": 50000.0,
-  "cash": 34608.052902908326,
-  "positions": {
-    "ABBV": {
-      "shares": 29,
-      "entry_price": 294.98,
-      "peak_price": 294.98,
-      "entry_date": "2026-11-13",
-      "entry_conf": 0.575,
-      "entry_pred_pct": 0.31
-    }
-  },
+  "cash": 43150.00254890442,
+  "positions": {},
   "trades": [
     {
       "date": "2026-03-06",
@@ -4731,6 +4722,16 @@
       "pred_pct": 0.31,
       "confidence": 0.575,
       "reason": "Top pick #1, conf=57%, pred=+0.3%, alloc=100%"
+    },
+    {
+      "date": "2026-11-17",
+      "ticker": "ABBV",
+      "action": "SELL",
+      "shares": 29,
+      "price": 294.55,
+      "value": 8541.95,
+      "pnl": -12.47,
+      "reason": "Circuit breaker: portfolio down 18.4% from ATH"
     }
   ],
   "daily_values": [
@@ -5757,7 +5758,7 @@
       "spy_close": 759.81
     }
   ],
-  "last_updated": "2026-11-13",
+  "last_updated": "2026-11-17",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
