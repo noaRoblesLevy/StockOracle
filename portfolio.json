@@ -1,7 +1,16 @@
 {
   "initial_balance": 50000.0,
-  "cash": 42759.512741775514,
-  "positions": {},
+  "cash": 34261.832565994264,
+  "positions": {
+    "AAPL": {
+      "shares": 24,
+      "entry_price": 354.07,
+      "peak_price": 354.07,
+      "entry_date": "2026-11-25",
+      "entry_conf": 0.55,
+      "entry_pred_pct": 0.65
+    }
+  },
   "trades": [
     {
       "date": "2026-03-06",
@@ -4930,6 +4939,18 @@
       "value": 4625.52,
       "pnl": 20.88,
       "reason": "Circuit breaker: portfolio down 19.2% from ATH"
+    },
+    {
+      "date": "2026-11-25",
+      "ticker": "AAPL",
+      "action": "BUY",
+      "shares": 24,
+      "price": 354.07,
+      "value": 8497.68,
+      "pnl": null,
+      "pred_pct": 0.65,
+      "confidence": 0.55,
+      "reason": "Top pick #1, conf=55%, pred=+0.7%, alloc=100%"
     }
   ],
   "daily_values": [
@@ -5968,9 +5989,16 @@
       "cash": 8750.17,
       "positions_value": 34193.42,
       "spy_close": 730.2
+    },
+    {
+      "date": "2026-11-25",
+      "value": 42759.51,
+      "cash": 34261.83,
+      "positions_value": 8497.68,
+      "spy_close": 718.78
     }
   ],
-  "last_updated": "2026-11-24",
+  "last_updated": "2026-11-25",
   "created": "2026-03-06",
   "all_time_high": 52911.79
 }
